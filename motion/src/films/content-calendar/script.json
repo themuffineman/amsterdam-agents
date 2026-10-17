@@ -1,0 +1,47 @@
+{
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "segments": [
+    {
+      "id": "hook1",
+      "text": "Buffer followed over a hundred thousand accounts for {w1}twenty-six weeks, and scored each one by how many of those weeks had {w2}at least one post."
+    },
+    {
+      "id": "hook2",
+      "text": "Accounts that posted in {w3}twenty weeks or more got {w4}over five times the engagement per post of accounts that posted in {w5}four or fewer."
+    },
+    {
+      "id": "turn",
+      "text": "So build your calendar around the week. Pick {k1}the number of posts you can make every week, including the bad ones."
+    },
+    {
+      "id": "cad",
+      "text": "If you want a number, Buffer's study of over eleven million TikTok posts suggests {c1}two to five a week. Start at {c2}the bottom of that range."
+    },
+    {
+      "id": "tpl1",
+      "text": "The template is one row per post. {k1}Date, {k2}platform, {k3}format, {k4}the idea, and {k5}which pillar it belongs to."
+    },
+    {
+      "id": "tpl2",
+      "text": "Pillars are the {p1}three to five topics you keep coming back to. Add {s1}a status column: idea, draft, ready."
+    },
+    {
+      "id": "batch1",
+      "text": "Fill it in one sitting. Later puts a monthly planning session at {b1}forty-five to sixty minutes, and Hootsuite says most teams plan {b2}one to four weeks ahead."
+    },
+    {
+      "id": "batch2",
+      "text": "Jade Beason's advice is to start by batching {j1}one week, on one platform."
+    },
+    {
+      "id": "bank",
+      "text": "Then keep {k1}a bank of ready posts for the weeks that fall apart. Buffer recommends it, and its best results came at {k2}twenty-one weeks out of twenty-six, so a few weeks off still count."
+    },
+    {
+      "id": "close",
+      "text": "Start with the number of posts you can make in a bad week. Plan one week ahead, batch it, and raise the number once that holds."
+    }
+  ],
+  "_note": "No prompt: the backend prepends it to each segment and Gemini flash-lite reads it aloud."
+}

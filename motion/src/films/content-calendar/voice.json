@@ -1,0 +1,87 @@
+{
+  "film": "content-calendar",
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "createdAt": "2026-10-17T23:41:30.365Z",
+  "segments": {
+    "hook1": {
+      "file": "films/content-calendar/audio/hook1.wav",
+      "durationSec": 7.09,
+      "marks": {
+        "w1": 0.3786,
+        "w2": 0.8714
+      }
+    },
+    "hook2": {
+      "file": "films/content-calendar/audio/hook2.wav",
+      "durationSec": 8.31,
+      "marks": {
+        "w3": 0.1846,
+        "w4": 0.3769,
+        "w5": 0.8923
+      }
+    },
+    "turn": {
+      "file": "films/content-calendar/audio/turn.wav",
+      "durationSec": 6.38,
+      "marks": {
+        "k1": 0.3982
+      }
+    },
+    "cad": {
+      "file": "films/content-calendar/audio/cad.wav",
+      "durationSec": 8.39,
+      "marks": {
+        "c1": 0.6029,
+        "c2": 0.8162
+      }
+    },
+    "tpl1": {
+      "file": "films/content-calendar/audio/tpl1.wav",
+      "durationSec": 7.69,
+      "marks": {
+        "k1": 0.3434,
+        "k2": 0.404,
+        "k3": 0.5051,
+        "k4": 0.5859,
+        "k5": 0.7273
+      }
+    },
+    "tpl2": {
+      "file": "films/content-calendar/audio/tpl2.wav",
+      "durationSec": 7.81,
+      "marks": {
+        "p1": 0.1569,
+        "s1": 0.6471
+      }
+    },
+    "batch1": {
+      "file": "films/content-calendar/audio/batch1.wav",
+      "durationSec": 9.22,
+      "marks": {
+        "b1": 0.4248,
+        "b2": 0.8431
+      }
+    },
+    "batch2": {
+      "file": "films/content-calendar/audio/batch2.wav",
+      "durationSec": 4.48,
+      "marks": {
+        "j1": 0.6338
+      }
+    },
+    "bank": {
+      "file": "films/content-calendar/audio/bank.wav",
+      "durationSec": 9.76,
+      "marks": {
+        "k1": 0.0552,
+        "k2": 0.6298
+      }
+    },
+    "close": {
+      "file": "films/content-calendar/audio/close.wav",
+      "durationSec": 7.6,
+      "marks": {}
+    }
+  }
+}

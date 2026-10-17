@@ -8,6 +8,7 @@ import { PROOF_WORDS_WHOLE, ProofWordsWhole } from "./compositions/ProofWordsWho
 import { INSTAGRAM_BEST_TIMES, InstagramBestTimes } from "./compositions/InstagramBestTimes";
 import { BEST_TIMES, BestTimes } from "./compositions/BestTimes";
 import { CONSISTENCY, Consistency } from "./compositions/Consistency";
+import { CONTENT_CALENDAR, ContentCalendar } from "./compositions/ContentCalendar";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -34,6 +35,12 @@ export const RemotionRoot: React.FC = () => {
         id="Consistency"
         component={Consistency}
         durationInFrames={CONSISTENCY.durationInFrames}
+        {...LANDSCAPE}
+      />
+      <Composition
+        id="ContentCalendar"
+        component={ContentCalendar}
+        durationInFrames={CONTENT_CALENDAR.durationInFrames}
         {...LANDSCAPE}
       />
     </>
