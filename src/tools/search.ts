@@ -3,10 +3,15 @@
  * Each search is one tiny chat request (max 16 output tokens) whose results come back as
  * url_citation annotations: we keep the results and ignore the model's reply.
  *
- * Engines (checked 2026-10-17): "exa" ($0.007 a search, up to 10 results) finds YouTube,
- * TikTok and LinkedIn posts and ordinary pages well, but returns nothing for Instagram and
- * X; "parallel" ($0.005) does find Instagram reels and X posts.
+ * Engines (checked 2026-10-17): Parallel in "turbo" mode costs about $0.001 a search and
+ * finds ordinary pages plus YouTube, TikTok, Instagram and X posts well; it's the default.
+ * Exa ($0.007) is only used for LinkedIn posts, which Parallel doesn't find.
+ *
+ * What searches cost (OpenRouter reports it per request) adds up in searchCost, which the
+ * runner reads and resets per topic.
  */
+
+export const searchCost = { total: 0, count: 0 };
 
 export type SearchResult = { title: string; url: string; snippet: string };
 
@@ -18,7 +23,9 @@ export async function search(
 ): Promise<SearchResult[]> {
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) throw new Error("OPENROUTER_API_KEY is not set");
-  const plugin: Record<string, unknown> = { id: "web", engine: opts.engine ?? "exa", max_results: opts.max ?? 8 };
+  const engine = opts.engine ?? "parallel";
+  const plugin: Record<string, unknown> = { id: "web", engine, max_results: opts.max ?? 8 };
+  if (engine === "parallel") plugin.mode = "turbo";
   if (opts.domains?.length) plugin.include_domains = opts.domains;
 
   const res = await fetch("https://openrouter.ai/api/v1/chat/completions", {
@@ -29,11 +36,14 @@ export async function search(
       max_tokens: 16,
       messages: [{ role: "user", content: query }],
       plugins: [plugin],
+      usage: { include: true },
     }),
     signal: AbortSignal.timeout(60_000),
   });
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(`search failed (${res.status}): ${body?.error?.message ?? "no details"}`);
+  searchCost.total += Number(body.usage?.cost) || 0;
+  searchCost.count++;
 
   const seen = new Set<string>();
   const results: SearchResult[] = [];

@@ -1,21 +1,29 @@
 import { defineTool } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 
+import { isPostUrl } from "./examples.ts";
 import { formatResults, search } from "./search.ts";
 
-/** Most of a page the agent gets back, so one long page can't fill its context. */
-const PAGE_LIMIT = 15_000;
+/**
+ * Most of a page the agent gets back. Everything it reads stays in the conversation and is
+ * sent again on every later step, so this is the main lever on input cost.
+ */
+const PAGE_LIMIT = 5_000;
 
 const text = (t: string) => ({ content: [{ type: "text" as const, text: t }], details: {} });
 
-export const webSearch = defineTool({
+/** web_search also turns up real posts; they count as found for submit_page, like find_examples results. */
+export const webSearchTool = (found: Set<string>) =>
+  defineTool({
   name: "web_search",
   label: "Web search",
   description: "Search the web. Returns titles, URLs and snippets. Use specific queries; read the best pages with read_page.",
   parameters: Type.Object({ query: Type.String({ description: "What to search for" }) }),
   execute: async (_id, { query }) => {
     try {
-      return text(formatResults(await search(query)));
+      const results = await search(query);
+      for (const r of results) if (isPostUrl(r.url)) found.add(r.url);
+      return text(formatResults(results));
     } catch (e) {
       return text(`Search failed: ${(e as Error).message}`);
     }
@@ -50,7 +58,7 @@ async function readText(url: string): Promise<string> {
 export const readPage = defineTool({
   name: "read_page",
   label: "Read page",
-  description: "Read a web page as text (the first 15,000 characters). Use it on search results before relying on them.",
+  description: "Read a web page as text (the first 5,000 characters). Use it on search results before relying on them.",
   parameters: Type.Object({ url: Type.String({ description: "The page's full URL" }) }),
   execute: async (_id, { url }) => {
     try {

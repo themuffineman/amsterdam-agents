@@ -19,16 +19,16 @@ repo is public on purpose (free Actions minutes): nothing secret is in it.
 4. If nothing got saved (limits hit, error, out of submissions), the topic is reported `failed` with the reason. The
    studio puts it back in the queue, or marks it failed after 3 tries.
 
-Limits per topic: `maxTurns`, `maxCostUsd` (model tokens plus about $0.008 a search), `timeoutMinutes`.
+Limits per topic: `maxTurns`, `maxCostUsd` (model tokens plus search fees, as OpenRouter reports them), `timeoutMinutes`.
 
 ## Tools
 
 | Tool | What it does |
 | --- | --- |
-| `web_search` | Web search via OpenRouter's web plugin (Exa engine, $0.007 a search) |
-| `read_page` | Reads a page as text (Jina Reader, falls back to stripped HTML), first 15,000 characters |
-| `find_examples` | Searches one platform for real posts and keeps only single-post links. Exa for YouTube, TikTok, LinkedIn; Parallel for Instagram and X (Exa finds nothing there) |
-| `submit_page` | Sends the page to the studio. Refuses example URLs that `find_examples` didn't return |
+| `web_search` | Web search via OpenRouter's web plugin (Parallel turbo, about $0.001 a search) |
+| `read_page` | Reads a page as text (Jina Reader, falls back to stripped HTML), first 5,000 characters |
+| `find_examples` | Searches one platform for real posts and keeps only single-post links. Parallel turbo for YouTube, TikTok, Instagram and X; Exa ($0.007) for LinkedIn only (Parallel finds no LinkedIn posts) |
+| `submit_page` | Sends the page to the studio. Drops Instagram examples no search returned (the studio can't verify Instagram) |
 
 ## Agents
 

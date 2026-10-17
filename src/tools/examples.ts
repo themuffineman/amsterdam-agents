@@ -11,8 +11,9 @@ import { formatResults, search } from "./search.ts";
  */
 
 const PLATFORMS = {
-  youtube: { domains: ["youtube.com"], engine: "exa" },
-  tiktok: { domains: ["tiktok.com"], engine: "exa" },
+  youtube: { domains: ["youtube.com"], engine: "parallel" },
+  tiktok: { domains: ["tiktok.com"], engine: "parallel" },
+  // Parallel finds no LinkedIn posts; Exa does.
   linkedin: { domains: ["linkedin.com"], engine: "exa" },
   instagram: { domains: ["instagram.com"], engine: "parallel" },
   x: { domains: ["x.com", "twitter.com"], engine: "parallel" },

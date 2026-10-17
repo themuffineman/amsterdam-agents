@@ -5,19 +5,30 @@ import { submitWork } from "../studio.ts";
 
 /**
  * submit_page: sends the finished page to the studio, which checks it and saves it, or
- * answers with the problems to fix. Before sending, example post URLs are checked against
- * the ones find_examples returned (`found`). `state` tells the runner what happened.
+ * answers with the problems to fix. `state` tells the runner what happened.
+ *
+ * Instagram examples whose URL no search returned (`found`) are dropped before sending:
+ * Instagram is the one platform the studio can't check, so a made-up link would get
+ * through. Other platforms' links go as they are; the studio checks them and drops fakes.
+ * Dropping instead of refusing saves the model from resending the whole page.
  */
 
 export type SubmitState = { submissions: number; savedUrl: string | null; lastProblems: string[] };
 
-/** Every example post URL in the page: the `url` of any `example` object, however deep. */
-function exampleUrls(value: unknown): string[] {
-  if (Array.isArray(value)) return value.flatMap(exampleUrls);
+const isInstagram = (url: string) => /^https?:\/\/(www\.)?instagram\.com\//.test(url);
+
+/** Removes every `example` (however deep) whose URL is an Instagram link no search returned; returns those URLs. */
+function dropUnfoundInstagram(value: unknown, found: Set<string>): string[] {
+  if (Array.isArray(value)) return value.flatMap((v) => dropUnfoundInstagram(v, found));
   if (!value || typeof value !== "object") return [];
   const obj = value as Record<string, unknown>;
-  const own = obj.example && typeof (obj.example as { url?: unknown }).url === "string" ? [(obj.example as { url: string }).url] : [];
-  return [...own, ...Object.values(obj).flatMap(exampleUrls)];
+  const dropped: string[] = [];
+  const url = (obj.example as { url?: unknown } | undefined)?.url;
+  if (typeof url === "string" && isInstagram(url) && !found.has(url)) {
+    delete obj.example;
+    dropped.push(url);
+  }
+  return [...dropped, ...Object.values(obj).flatMap((v) => dropUnfoundInstagram(v, found))];
 }
 
 export function submitPageTool(opts: {
@@ -51,12 +62,7 @@ export function submitPageTool(opts: {
         }
       }
 
-      const invented = exampleUrls(content).filter((u) => !opts.found.has(u));
-      if (invented.length) {
-        return reply(
-          `These example URLs weren't returned by find_examples, so they can't be used (copy URLs exactly as find_examples gives them, or drop the example):\n${invented.join("\n")}\nNothing was submitted.`,
-        );
-      }
+      const dropped = dropUnfoundInstagram(content, opts.found);
 
       state.submissions++;
       const result = await submitWork(opts.campaign, opts.topicId, content, opts.model);
@@ -65,6 +71,7 @@ export function submitPageTool(opts: {
         return reply(`saved: ${state.savedUrl}`);
       }
       state.lastProblems = result.problems.length ? result.problems : [result.error];
+      if (dropped.length) state.lastProblems.push(`dropped Instagram examples no search returned: ${dropped.join(", ")}`);
       const left = opts.maxSubmissions - state.submissions;
       return reply(
         `Not saved. Fix every problem and submit again (${left} submission${left === 1 ? "" : "s"} left):\n- ${state.lastProblems.join("\n- ")}`,

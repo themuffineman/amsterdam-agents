@@ -24,8 +24,9 @@ import {
 
 import { claimTopic, failTopic, type Claimed } from "./studio.ts";
 import { findExamplesTool } from "./tools/examples.ts";
+import { searchCost } from "./tools/search.ts";
 import { submitPageTool, type SubmitState } from "./tools/submit.ts";
-import { readPage, webSearch } from "./tools/web.ts";
+import { readPage, webSearchTool } from "./tools/web.ts";
 
 type AgentConfig = {
   /** The studio campaign (/api/agent/<campaign>). */
@@ -40,9 +41,6 @@ type AgentConfig = {
   timeoutMinutes: number;
   maxSubmissions: number;
 };
-
-/** What one search costs on OpenRouter (Exa $0.007, Parallel $0.005, plus a few tokens). Pi only counts model tokens. */
-const SEARCH_COST = 0.008;
 
 const SYSTEM_PROMPT = `You are an autonomous research and writing agent running unattended in a scheduled job.
 Nobody will read your messages or answer questions: never ask, decide and keep going.
@@ -66,7 +64,7 @@ const short = (v: unknown, n = 160) => {
 /** All the tools an agent config can ask for, built fresh per topic. */
 function buildTools(topic: Claimed, found: Set<string>, state: SubmitState): Record<string, ToolDefinition> {
   return {
-    web_search: webSearch,
+    web_search: webSearchTool(found),
     read_page: readPage,
     find_examples: findExamplesTool(found),
     submit_page: submitPageTool({
@@ -123,7 +121,8 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
 
   // Stop the run if it goes past its turn, cost or time limit.
   let turns = 0;
-  let searches = 0;
+  searchCost.total = 0;
+  searchCost.count = 0;
   let stopReason: string | null = null;
   const stop = (reason: string) => {
     if (stopReason) return;
@@ -136,7 +135,6 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
   session.subscribe((event) => {
     if (event.type === "tool_execution_start") {
       log(`→ ${event.toolName} ${short(event.args)}`);
-      if (event.toolName === "web_search" || event.toolName === "find_examples") searches++;
     }
     // The studio's answer to a submission (problems to fix, or saved) goes in the log too.
     if (event.type === "tool_execution_end" && event.toolName === "submit_page") {
@@ -145,7 +143,7 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
     }
     if (event.type === "turn_end") {
       turns++;
-      const cost = session.getSessionStats().cost + searches * SEARCH_COST;
+      const cost = session.getSessionStats().cost + searchCost.total;
       if (turns >= config.maxTurns) stop(`${turns} turns (max ${config.maxTurns})`);
       else if (cost > config.maxCostUsd) stop(`cost $${cost.toFixed(3)} (max $${config.maxCostUsd})`);
       if (state.savedUrl) stop("page saved");
@@ -161,10 +159,12 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
   }
 
   const stats = session.getSessionStats();
-  const cost = stats.cost + searches * SEARCH_COST;
+  const cost = stats.cost + searchCost.total;
+  const t = stats.tokens;
   log(
-    `turns ${turns}, tool calls ${stats.toolCalls} (${searches} searches), tokens in ${stats.tokens.input} / out ${stats.tokens.output} / cache ${stats.tokens.cacheRead}, cost ~$${cost.toFixed(4)} (model $${stats.cost.toFixed(4)})`,
+    `turns ${turns}, tool calls ${stats.toolCalls}, tokens: in ${t.input}, out ${t.output}, cache read ${t.cacheRead}, cache write ${t.cacheWrite}`,
   );
+  log(`cost $${cost.toFixed(4)} = model $${stats.cost.toFixed(4)} + ${searchCost.count} searches $${searchCost.total.toFixed(4)}`);
   const lastText = session.getLastAssistantText() ?? "";
   session.dispose();
 
