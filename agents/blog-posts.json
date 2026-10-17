@@ -3,10 +3,6 @@
   "model": "anthropic/claude-haiku-5.5",
   "thinking": "low",
   "tools": [
-    "web_search",
-    "read_page",
-    "watch_video",
-    "screenshot",
     "write",
     "edit",
     "read",

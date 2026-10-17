@@ -63,6 +63,15 @@ sycamore.to/ideas/{platform}/{niche}: rendered from idea_pages on first visit, c
 - `src/tools/web.ts`: `web_search` and `read_page` (Jina Reader `r.jina.ai`, falls back to stripped HTML; **5,000
   characters max**, because everything read stays in context and is resent every turn). Both record every URL they
   return or read in `seen`, for `checkLinks`.
+- **Standard tools** (`STANDARD_TOOLS` in run.ts): every agent gets `web_search`, `read_page`, `watch_video`,
+  `screenshot` and `find_logo` whatever its config lists, so a new campaign can use them; its config adds the rest
+  (`find_examples`, Pi's file tools, `submit_page`). The studio's prompt says which ones to use and how. Add a new
+  general-purpose tool here too.
+- `src/tools/logo.ts`: `find_logo(name, website?)`: SVGL (`api.svgl.app?search=`, free; the dark-background variant,
+  since article pages are dark), else the site's own icon from Google's favicon service at 128px (a small generic globe
+  is rejected), stored through the studio upload with `?kind=logo` (bucket `agent-logos/`). Pages accept logos only
+  from those two places (`isLogoUrl` in sycamore-mono's `lib/blog-posts.ts` and `lib/idea-pages.ts`); blog posts show
+  them inline next to a tool's link, ideas pages next to `tips.tools[].name` (`logo` field).
 - `src/tools/watch.ts`: `watch_video(url)`: a YouTube/TikTok/Instagram/X/Facebook video as text (creator, date, views,
   caption, transcript with [m:ss]; 7,000 characters max). Ported from sycamore-motion `scripts/watch.mjs` without the
   frames: yt-dlp captions first (free; the workflows `pipx install yt-dlp`), then Supadata (`SUPADATA_API_KEY`, free plan
@@ -72,7 +81,9 @@ sycamore.to/ideas/{platform}/{niche}: rendered from idea_pages on first visit, c
   puppeteer-core with the runner's own Chrome (`/usr/bin/google-chrome` on GitHub; `CHROME_PATH` elsewhere). The image
   goes to the studio (`POST /api/agent/<campaign>/<id>/screenshot`, stored in the Supabase bucket under
   `agent-screens/<campaign>/`), which returns the public URL; the tool returns it plus the text visible in the shot. Max 15
-  per topic. Blog posts may embed only these URLs (`isScreenshotUrl` in sycamore-mono `lib/blog-posts.ts`).
+  per topic, one Chrome at a time (models ask for several per turn; parallel browsers starve a small machine). Comparison
+  posts put each tool's homepage hero under its `## Tool` heading, with its logo and a link (prompt), and need at least
+  3 (alternatives, best), 2 (versus) or 1 (review) screenshots (`MIN_SCREENSHOTS` in the studio's save.ts). Blog posts may embed only these URLs (`isScreenshotUrl` in sycamore-mono `lib/blog-posts.ts`).
 - `src/tools/examples.ts`: `find_examples(platform, query)`: platform-scoped search, keeps only single-post URLs
   (`isPostUrl`, which must stay in step with `parsePostUrl` in sycamore-mono's `lib/idea-pages.ts`).
 - `src/tools/submit.ts`: `submit_page()` takes **no arguments**: it reads `page.json` from the topic's temp folder,

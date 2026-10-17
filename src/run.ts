@@ -26,6 +26,7 @@ import { claimTopic, failTopic, reportRun, type Claimed, type RunReport } from "
 import { findExamplesTool } from "./tools/examples.ts";
 import { searchCost } from "./tools/search.ts";
 import { submitPageTool, type SubmitState } from "./tools/submit.ts";
+import { findLogoTool } from "./tools/logo.ts";
 import { screenshotTool } from "./tools/screenshot.ts";
 import { watchVideoTool } from "./tools/watch.ts";
 import { readPageTool, webSearchTool, type Seen } from "./tools/web.ts";
@@ -68,6 +69,14 @@ const short = (v: unknown, n = 160) => {
 };
 
 /**
+ * Research tools every agent gets, whatever its config lists: search and read the web, watch
+ * videos, take screenshots, find logos. A new campaign can use them without asking; its
+ * config adds the rest (find_examples, Pi's file tools, submit_page). The studio's prompt
+ * says which ones a campaign should use and how.
+ */
+const STANDARD_TOOLS = ["web_search", "read_page", "watch_video", "screenshot", "find_logo"];
+
+/**
  * Our own tools an agent config can ask for, built fresh per topic. A config may also list
  * Pi's built-in file tools (read, write, edit): they work inside the topic's own temporary
  * folder, where the agent keeps its draft (page.json).
@@ -81,6 +90,7 @@ function buildTools(topic: Claimed, cwd: string, found: Set<string>, seen: Seen,
     find_examples: findExamplesTool(found),
     watch_video: watchVideoTool(found, seen),
     screenshot: screenshotTool({ campaign: config.campaign, topicId: topic.id, seen }),
+    find_logo: findLogoTool({ campaign: config.campaign, topicId: topic.id, seen }),
     submit_page: submitPageTool({
       campaign: config.campaign,
       topicId: topic.id,
@@ -102,7 +112,8 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
   const state: SubmitState = { submissions: 0, savedUrl: null, lastProblems: [] };
   const cwd = mkdtempSync(join(tmpdir(), `agent-${name}-`));
   const all = buildTools(topic, cwd, found, seen, state);
-  const customTools = config.tools
+  const toolNames = [...new Set([...STANDARD_TOOLS, ...config.tools])];
+  const customTools = toolNames
     .filter((t) => !PI_FILE_TOOLS.has(t))
     .map((t) => {
       if (!all[t]) throw new Error(`agents/${name}.json asks for an unknown tool "${t}"`);
@@ -134,7 +145,7 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
     thinkingLevel: config.thinking,
     modelRuntime,
     resourceLoader,
-    tools: config.tools,
+    tools: toolNames,
     customTools,
     sessionManager: SessionManager.inMemory(cwd),
     settingsManager: SettingsManager.inMemory({ compaction: { enabled: true }, retry: { enabled: true, maxRetries: 3 } }),
@@ -158,6 +169,11 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
       log(`→ ${event.toolName} ${short(event.args)}`);
     }
     // The studio's answer to a submission (problems to fix, or saved) goes in the log too.
+    // Research tools that failed (a site that blocks screenshots, a video with no transcript).
+    if (event.type === "tool_execution_end" && ["screenshot", "find_logo", "watch_video", "read_page"].includes(event.toolName)) {
+      const reply = (event.result?.content ?? []).map((c: { text?: string }) => c.text ?? "").join("");
+      if (/^(Couldn't|No logo|Screenshots aren't)/.test(reply)) log(`← ${event.toolName}: ${short(reply, 300)}`);
+    }
     if (event.type === "tool_execution_end" && event.toolName === "submit_page") {
       const reply = (event.result?.content ?? []).map((c: { text?: string }) => c.text ?? "").join("");
       log(`← submit_page: ${short(reply, 2000)}`);

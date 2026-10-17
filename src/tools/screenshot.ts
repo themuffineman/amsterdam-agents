@@ -4,7 +4,7 @@ import { defineTool } from "@earendil-works/pi-coding-agent";
 import puppeteer, { type ElementHandle, type Page } from "puppeteer-core";
 import { Type } from "typebox";
 
-import { uploadScreenshot } from "../studio.ts";
+import { uploadImage } from "../studio.ts";
 import { normalUrl, type Seen } from "./web.ts";
 
 /**
@@ -37,6 +37,17 @@ function chromePath(): string | undefined {
 }
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+/**
+ * One Chrome at a time: models often ask for several screenshots in one turn, and parallel
+ * browsers fight for memory (minutes per shot on a small machine, crashes on a busy one).
+ */
+let queue: Promise<unknown> = Promise.resolve();
+function oneAtATime<T>(job: () => Promise<T>): Promise<T> {
+  const run = queue.then(job, job);
+  queue = run.catch(() => {});
+  return run;
+}
 
 /** Click an obvious cookie "accept" button; hide leftover fixed consent banners. (Runs in the page.) */
 function pageDismiss() {
@@ -174,7 +185,7 @@ export function screenshotTool(opts: { campaign: string; topicId: string; seen: 
       url: Type.String({ description: "The page's full URL" }),
       find: Type.Optional(Type.String({ description: "Text on the page to screenshot the block around, e.g. a heading like \"Pricing\". Leave out for the hero." })),
     }),
-    execute: async (_id, { url, find }) => {
+    execute: (_id, { url, find }) => oneAtATime(async () => {
       if (taken >= MAX_PER_TOPIC) return reply(`You've taken ${MAX_PER_TOPIC} screenshots, the most for one post. Use the ones you have.`);
       const executablePath = chromePath();
       if (!executablePath) return reply("Screenshots aren't available here (no Chrome found).");
@@ -185,9 +196,10 @@ export function screenshotTool(opts: { campaign: string; topicId: string; seen: 
           "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36",
         );
         const shot = await capture(page, url, find?.trim() || undefined);
-        const imageUrl = await uploadScreenshot(opts.campaign, opts.topicId, shot.image);
-        taken++;
+        // The page loaded, so it exists: the agent may link it even if storing the image fails.
         opts.seen.add(normalUrl(url));
+        const imageUrl = await uploadImage(opts.campaign, opts.topicId, shot.image);
+        taken++;
         opts.seen.add(normalUrl(imageUrl));
         return reply(
           [
@@ -205,6 +217,6 @@ export function screenshotTool(opts: { campaign: string; topicId: string; seen: 
       } finally {
         await browser.close().catch(() => {});
       }
-    },
+    }),
   });
 }

@@ -91,14 +91,23 @@ export async function failTopic(campaign: string, id: string, error: string): Pr
   return res.ok ? body.status : `couldn't report the failure (${res.status})`;
 }
 
-/** Stores a screenshot for a claimed topic in the studio's bucket; returns its public URL. */
-export async function uploadScreenshot(campaign: string, id: string, image: Uint8Array): Promise<string> {
-  const res = await fetch(`${base()}/api/agent/${campaign}/${id}/screenshot`, {
+/**
+ * Stores an image for a claimed topic in the studio's bucket (a screenshot, or a logo the
+ * site doesn't have elsewhere); returns its public URL.
+ */
+export async function uploadImage(
+  campaign: string,
+  id: string,
+  image: Uint8Array,
+  type: "image/jpeg" | "image/png" = "image/jpeg",
+  kind: "screenshot" | "logo" = "screenshot",
+): Promise<string> {
+  const res = await fetch(`${base()}/api/agent/${campaign}/${id}/screenshot?kind=${kind}`, {
     method: "POST",
-    headers: { ...headers(), "Content-Type": "image/jpeg" },
-    body: new Blob([new Uint8Array(image)], { type: "image/jpeg" }),
+    headers: { ...headers(), "Content-Type": type },
+    body: new Blob([new Uint8Array(image)], { type }),
   });
   const body = await res.json().catch(() => ({}));
-  if (!res.ok || !body.url) throw new Error(`the studio couldn't store the screenshot (${res.status}): ${body.error ?? "no details"}`);
+  if (!res.ok || !body.url) throw new Error(`the studio couldn't store the ${kind} (${res.status}): ${body.error ?? "no details"}`);
   return body.url;
 }
