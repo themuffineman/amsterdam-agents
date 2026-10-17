@@ -1,0 +1,37 @@
+# Content ideas pages agent (sycamore.to/ideas/...). Claims one topic from the studio,
+# researches and writes the page with Pi, and the studio checks and saves it.
+# Run it by hand from the Actions tab ("Run workflow") or let the schedule do it.
+name: ideas agent
+
+on:
+  schedule:
+    - cron: "17 */2 * * *" # every 2 hours, at :17 (GitHub delays runs at :00)
+  workflow_dispatch:
+    inputs:
+      topics:
+        description: "How many topics this run (default from agents/ideas.json)"
+        required: false
+
+# One run at a time: a slow run makes the next one wait instead of overlapping.
+concurrency:
+  group: ideas-agent
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Run agent
+        env:
+          STUDIO_URL: ${{ secrets.STUDIO_URL }}
+          AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          TOPICS_PER_RUN: ${{ inputs.topics }}
+        run: node src/run.ts ideas
