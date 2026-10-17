@@ -14,8 +14,10 @@ repo is public on purpose (free Actions minutes): nothing secret is in it.
 
 1. `POST {STUDIO_URL}/api/agent/<campaign>/next` claims a topic and returns its prompt.
 2. A Pi session runs that prompt with only the tools the config lists (`src/tools/`).
-3. The agent calls `submit_page`. The studio checks the page and answers with problems (the agent fixes them and
-   submits again, up to `maxSubmissions`) or saves it.
+3. The agent writes its page to `page.json` in a temporary folder (Pi's `write` tool) and calls `submit_page`, which
+   reads the file, repairs small JSON mistakes and sends it. The studio fixes mechanical problems itself and answers
+   with the rest; the agent fixes those with `edit` (only the lines that need it, not the whole page) and submits
+   again, up to `maxSubmissions`.
 4. If nothing got saved (limits hit, error, out of submissions), the topic is reported `failed` with the reason. The
    studio puts it back in the queue, or marks it failed after 3 tries.
 
@@ -28,7 +30,8 @@ Limits per topic: `maxTurns`, `maxCostUsd` (model tokens plus search fees, as Op
 | `web_search` | Web search via OpenRouter's web plugin (Parallel turbo, about $0.001 a search) |
 | `read_page` | Reads a page as text (Jina Reader, falls back to stripped HTML), first 5,000 characters |
 | `find_examples` | Searches one platform for real posts and keeps only single-post links. Parallel turbo for YouTube, TikTok, Instagram and X; Exa ($0.007) for LinkedIn only (Parallel finds no LinkedIn posts) |
-| `submit_page` | Sends the page to the studio. Drops Instagram examples no search returned (the studio can't verify Instagram) |
+| `submit_page` | Reads `page.json`, repairs it with jsonrepair, drops Instagram examples no search returned (the studio can't verify Instagram), sends it to the studio |
+| `write` / `edit` / `read` | Pi's built-in file tools, inside the topic's temporary folder |
 
 ## Agents
 

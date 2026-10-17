@@ -1,11 +1,21 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
 import { defineTool } from "@earendil-works/pi-coding-agent";
+import { jsonrepair } from "jsonrepair";
 import { Type } from "typebox";
 
 import { submitWork } from "../studio.ts";
 
 /**
- * submit_page: sends the finished page to the studio, which checks it and saves it, or
- * answers with the problems to fix. `state` tells the runner what happened.
+ * submit_page: sends the page to the studio, which checks it and saves it, or answers
+ * with the problems to fix. `state` tells the runner what happened.
+ *
+ * The page isn't passed to the tool: the agent writes it to page.json in its folder (Pi's
+ * write tool) and calls submit_page with no arguments. To fix problems it edits only the
+ * lines that need it (Pi's edit tool) and submits again, instead of writing the whole page
+ * out again, which is most of the cost of a fix. Small JSON mistakes in the file are
+ * repaired here (jsonrepair) rather than sent back.
  *
  * Instagram examples whose URL no search returned (`found`) are dropped before sending:
  * Instagram is the one platform the studio can't check, so a made-up link would get
@@ -36,6 +46,8 @@ export function submitPageTool(opts: {
   topicId: string;
   model: string;
   maxSubmissions: number;
+  /** The agent's folder, where it writes page.json. */
+  cwd: string;
   found: Set<string>;
   state: SubmitState;
 }) {
@@ -46,20 +58,23 @@ export function submitPageTool(opts: {
     name: "submit_page",
     label: "Submit page",
     description:
-      "Send the finished page (the JSON object from your instructions) to be checked and saved. Answers 'saved' with the URL, or the problems to fix.",
-    parameters: Type.Object({ page: Type.Unknown({ description: "The page JSON object" }) }),
-    execute: async (_id, { page }) => {
+      "Check and save the page you wrote to page.json (no arguments). Answers 'saved' with the URL, or the problems to fix: fix them by editing page.json, then call submit_page again.",
+    parameters: Type.Object({}),
+    execute: async () => {
       if (state.savedUrl) return reply(`Already saved: ${state.savedUrl}. You're done.`);
       if (state.submissions >= opts.maxSubmissions) return reply("No submissions left. Stop.");
 
-      // Models sometimes send the JSON as a string.
-      let content = page;
-      if (typeof content === "string") {
-        try {
-          content = JSON.parse(content);
-        } catch {
-          return reply("page must be a JSON object, and this isn't valid JSON. Fix it and submit again.");
-        }
+      let text: string;
+      try {
+        text = readFileSync(join(opts.cwd, "page.json"), "utf8");
+      } catch {
+        return reply("There's no page.json yet. Write the page to page.json with the write tool, then call submit_page.");
+      }
+      let content: unknown;
+      try {
+        content = JSON.parse(jsonrepair(text));
+      } catch (e) {
+        return reply(`page.json isn't valid JSON and couldn't be repaired (${(e as Error).message}). Fix that spot with the edit tool and submit again.`);
       }
 
       const dropped = dropUnfoundInstagram(content, opts.found);

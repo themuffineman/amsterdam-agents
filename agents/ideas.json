@@ -2,7 +2,15 @@
   "campaign": "ideas",
   "model": "anthropic/claude-haiku-5.5",
   "thinking": "low",
-  "tools": ["web_search", "read_page", "find_examples", "submit_page"],
+  "tools": [
+    "web_search",
+    "read_page",
+    "find_examples",
+    "write",
+    "edit",
+    "read",
+    "submit_page"
+  ],
   "topicsPerRun": 1,
   "maxTurns": 70,
   "maxCostUsd": 1.5,

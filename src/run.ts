@@ -61,8 +61,14 @@ const short = (v: unknown, n = 160) => {
   return s.length > n ? `${s.slice(0, n)}…` : s;
 };
 
-/** All the tools an agent config can ask for, built fresh per topic. */
-function buildTools(topic: Claimed, found: Set<string>, state: SubmitState): Record<string, ToolDefinition> {
+/**
+ * Our own tools an agent config can ask for, built fresh per topic. A config may also list
+ * Pi's built-in file tools (read, write, edit): they work inside the topic's own temporary
+ * folder, where the agent keeps its draft (page.json).
+ */
+const PI_FILE_TOOLS = new Set(["read", "write", "edit"]);
+
+function buildTools(topic: Claimed, cwd: string, found: Set<string>, state: SubmitState): Record<string, ToolDefinition> {
   return {
     web_search: webSearchTool(found),
     read_page: readPage,
@@ -72,6 +78,7 @@ function buildTools(topic: Claimed, found: Set<string>, state: SubmitState): Rec
       topicId: topic.id,
       model: config.model,
       maxSubmissions: config.maxSubmissions,
+      cwd,
       found,
       state,
     }),
@@ -81,11 +88,14 @@ function buildTools(topic: Claimed, found: Set<string>, state: SubmitState): Rec
 async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ saved: boolean; cost: number }> {
   const found = new Set<string>();
   const state: SubmitState = { submissions: 0, savedUrl: null, lastProblems: [] };
-  const all = buildTools(topic, found, state);
-  const customTools = config.tools.map((t) => {
-    if (!all[t]) throw new Error(`agents/${name}.json asks for an unknown tool "${t}"`);
-    return all[t];
-  });
+  const cwd = mkdtempSync(join(tmpdir(), `agent-${name}-`));
+  const all = buildTools(topic, cwd, found, state);
+  const customTools = config.tools
+    .filter((t) => !PI_FILE_TOOLS.has(t))
+    .map((t) => {
+      if (!all[t]) throw new Error(`agents/${name}.json asks for an unknown tool "${t}"`);
+      return all[t];
+    });
 
   const model = modelRuntime.getModel("openrouter", config.model);
   if (!model) throw new Error(`Pi doesn't know the model openrouter/${config.model}`);
@@ -105,7 +115,6 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
     reload: async () => {},
   };
 
-  const cwd = mkdtempSync(join(tmpdir(), `agent-${name}-`));
   const { session } = await createAgentSession({
     cwd,
     agentDir: cwd,
