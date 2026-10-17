@@ -118,7 +118,7 @@ export function submitPageTool(opts: {
         const unseen = unseenLinks(content as Record<string, unknown>, opts.seen);
         if (unseen.length) {
           return reply(
-            `Not sent (this didn't use a submission). These links weren't in any search result or page you read, so they may not exist. Replace each with the exact URL of a page you found, or remove it:\n- ${unseen.join("\n- ")}`,
+            `Not sent (this didn't use a submission). These links weren't in any search result or page you read, so they may not exist. Replace each with the exact URL of a page you found, or read_page it first if it's a real page (then it counts), or remove it:\n- ${unseen.join("\n- ")}`,
           );
         }
       }
