@@ -54,9 +54,24 @@ sycamore.to/ideas/{platform}/{niche}: rendered from idea_pages on first visit, c
 ## This repo
 
 - `src/run.ts`: the runner. Reads `agents/<name>.json`, loops up to `topicsPerRun` (a safety cap; the studio decides
-  how many are due), runs one Pi session per topic with limits on `maxTurns`, `maxCostUsd` (model tokens + search
-  fees) and `timeoutMinutes`, then reports. No discovery: a hand-built `ResourceLoader`, so no AGENTS.md, skills or
-  extensions from the machine leak into the agent. In-memory sessions.
+  how many are due), runs each topic on its **engine** (below) with limits on `maxTurns`, `maxCostUsd` (model tokens +
+  search fees; Pi only) and `timeoutMinutes`, then reports. Pi: no discovery, a hand-built `ResourceLoader`, so no
+  AGENTS.md, skills or extensions from the machine leak into the agent. In-memory sessions.
+- `src/agent.ts`: what both engines share: config (`loadConfig`), `SYSTEM_PROMPT`, `STANDARD_TOOLS`, `buildTools`.
+- **Engines.** Each campaign has an engine, switched on the studio's `/agents` screen (`agent_campaign_settings.engine`,
+  sent as `engine` with every claim); a manual run can force one (workflow input `engine`, env `ENGINE`).
+  - `pi`: Pi + the OpenRouter model in `model`. Paid per token.
+  - `claude-code` (`src/claude.ts`): `claude -p` on the **Claude subscription** (`CLAUDE_CODE_OAUTH_TOKEN` from
+    `claude setup-token`; any `ANTHROPIC_API_KEY` is removed from its env so it can't bill the API). Model
+    `claudeModel` (default `haiku`). Runs in the topic folder with `--restricted` (no shell, no web fetch, file tools
+    only inside that folder, none of the machine's settings), `--tools Read,Write,Edit`, our system prompt, the
+    studio's prompt on stdin. Our tools come from `src/mcp.ts`, an MCP stdio server around the same `buildTools`; it
+    writes how submitting went and the search cost to a state file the runner reads (it's Claude Code's child
+    process). Searches still cost (OpenRouter), the model costs $0; reports say model `claude-code/haiku`.
+    Usage limits are shared with the subscription owner's own Claude Code use. On a usage limit, overload or a
+    Claude Code that can't start, the topic is redone with Pi in the same run (`fallback`; the report's model says
+    so). Local test: `CLAUDE_BIN=<path to claude.exe>` (the VS Code extension's `resources/native-binary/claude.exe`
+    on Windows; the npm package's binary doesn't run there).
 - `src/studio.ts`: the studio API client (claim, submit, fail, report).
 - `src/tools/search.ts`: web search through **OpenRouter's web plugin** (same key as the model). Each search is a tiny
   chat request whose `url_citation` annotations are the results. Cost per request comes back in `usage.cost`.
@@ -221,7 +236,8 @@ the studio can fix itself instead of rejecting saves a round, so prefer auto-fix
   pages to production and count toward the day's pacing.
 - `npm run typecheck`. Node 22.19+ runs the TypeScript directly; imports use `.ts` extensions.
 - GitHub secrets: `STUDIO_URL`, `AGENT_API_KEY` (same as the studio's Vercel env), `OPENROUTER_API_KEY`,
-  `SUPADATA_API_KEY` (watch_video's fallback; same key as sycamore-motion's `.env`).
+  `SUPADATA_API_KEY` (watch_video's fallback; same key as sycamore-motion's `.env`), `CLAUDE_CODE_OAUTH_TOKEN`
+  (the claude-code engine; `claude setup-token`, valid a year).
 - Turn a campaign off, or change its pages per day: the studio's `/agents` screen. Disabling the workflow in GitHub
   also works, but leave the schedule alone otherwise.
 - Quality control: `/agents` lists every run with the live page and the Actions log; Rewrite requeues the topic,

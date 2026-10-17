@@ -1,14 +1,21 @@
 /**
  * Runs one agent: `node src/run.ts <agent>` (config in agents/<agent>.json).
  *
- * For each topic (up to topicsPerRun): claim it from the studio, start a Pi agent session
- * with the studio's prompt and this agent's tools, let it research, write and submit, then
- * give the topic back as failed if it never got saved. Limits on turns, cost and time stop
- * a run that goes wrong. Everything is logged to stdout (the GitHub Actions log).
+ * For each topic (up to topicsPerRun): claim it from the studio, let an engine research,
+ * write and submit it, then give the topic back as failed if it never got saved. Limits on
+ * turns, cost and time stop a run that goes wrong. Everything is logged to stdout (the GitHub
+ * Actions log).
  *
- * Needs STUDIO_URL, AGENT_API_KEY and OPENROUTER_API_KEY.
+ * Two engines, chosen per campaign on the studio's /agents screen (sent with each claim), or
+ * for one manual run with ENGINE=pi|claude-code:
+ *   pi           Pi with an OpenRouter model, in this process (below).
+ *   claude-code  the Claude Code CLI on the Claude subscription (claude.ts). If it hits a
+ *                usage limit or can't start, the topic is done with Pi instead.
+ *
+ * Needs STUDIO_URL, AGENT_API_KEY and OPENROUTER_API_KEY (Pi's model, and web search on both
+ * engines); CLAUDE_CODE_OAUTH_TOKEN for claude-code.
  */
-import { mkdtempSync, readFileSync } from "node:fs";
+import { mkdtempSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -19,108 +26,55 @@ import {
   SessionManager,
   SettingsManager,
   type ResourceLoader,
-  type ToolDefinition,
 } from "@earendil-works/pi-coding-agent";
 
+import { RUN_URL, SYSTEM_PROMPT, buildTools, loadConfig, log, newTopicState, short, toolNamesFor, type Engine } from "./agent.ts";
+import { runTopicClaude } from "./claude.ts";
 import { claimTopic, failTopic, reportRun, type Claimed, type RunReport } from "./studio.ts";
-import { findExamplesTool } from "./tools/examples.ts";
 import { searchCost } from "./tools/search.ts";
-import { submitPageTool, type SubmitState } from "./tools/submit.ts";
-import { findLogoTool } from "./tools/logo.ts";
-import { screenshotTool } from "./tools/screenshot.ts";
-import { watchVideoTool } from "./tools/watch.ts";
-import { readPageTool, webSearchTool, type Seen } from "./tools/web.ts";
-
-type AgentConfig = {
-  /** The studio campaign (/api/agent/<campaign>). */
-  campaign: string;
-  /** OpenRouter model id. */
-  model: string;
-  thinking: "off" | "minimal" | "low" | "medium" | "high";
-  tools: string[];
-  topicsPerRun: number;
-  maxTurns: number;
-  maxCostUsd: number;
-  timeoutMinutes: number;
-  maxSubmissions: number;
-  /** A Markdown file the agent writes the long text to, sent as the page's `body` (blog posts: "post.md"). */
-  bodyFile?: string;
-  /** Refuse submissions whose links no search or read turned up (made-up URLs). */
-  checkLinks?: boolean;
-};
-
-const SYSTEM_PROMPT = `You are an autonomous research and writing agent running unattended in a scheduled job.
-Nobody will read your messages or answer questions: never ask, decide and keep going.
-Use only the tools you have. Follow the task's instructions exactly, and finish by getting your work saved with submit_page.`;
+import type { SubmitState } from "./tools/submit.ts";
 
 const name = process.argv[2];
 if (!name) {
   console.error("Usage: node src/run.ts <agent>   (an agents/<agent>.json file)");
   process.exit(1);
 }
-const config: AgentConfig = JSON.parse(readFileSync(new URL(`../agents/${name}.json`, import.meta.url), "utf8"));
+const config = loadConfig(name);
 // A manual run can ask for more or fewer topics (the workflow's "topics" input).
 if (Number(process.env.TOPICS_PER_RUN) > 0) config.topicsPerRun = Number(process.env.TOPICS_PER_RUN);
+// ...or force an engine for this run (the workflow's "engine" input).
+const ENGINE_OVERRIDE = (["pi", "claude-code"] as const).find((e) => e === process.env.ENGINE);
 
-const log = (msg: string) => console.log(`[${new Date().toISOString().slice(11, 19)}] ${msg}`);
-const short = (v: unknown, n = 160) => {
-  const s = typeof v === "string" ? v : JSON.stringify(v);
-  return s.length > n ? `${s.slice(0, n)}…` : s;
+/** What a topic's run did, whichever engine ran it. */
+type Outcome = {
+  submit: SubmitState;
+  /** Why it stopped, when it didn't save. */
+  why: string | null;
+  report: Omit<RunReport, "outcome" | "pageUrl" | "error" | "runUrl">;
 };
 
-/**
- * Research tools every agent gets, whatever its config lists: search and read the web, watch
- * videos, take screenshots, find logos. A new campaign can use them without asking; its
- * config adds the rest (find_examples, Pi's file tools, submit_page). The studio's prompt
- * says which ones a campaign should use and how.
- */
-const STANDARD_TOOLS = ["web_search", "read_page", "watch_video", "screenshot", "find_logo"];
+// ---------------------------------------------------------------- Pi engine
 
-/**
- * Our own tools an agent config can ask for, built fresh per topic. A config may also list
- * Pi's built-in file tools (read, write, edit): they work inside the topic's own temporary
- * folder, where the agent keeps its draft (page.json).
- */
-const PI_FILE_TOOLS = new Set(["read", "write", "edit"]);
+let modelRuntime: ModelRuntime | null = null;
 
-function buildTools(topic: Claimed, cwd: string, found: Set<string>, seen: Seen, state: SubmitState): Record<string, ToolDefinition> {
-  return {
-    web_search: webSearchTool(found, seen),
-    read_page: readPageTool(seen),
-    find_examples: findExamplesTool(found),
-    watch_video: watchVideoTool(found, seen),
-    screenshot: screenshotTool({ campaign: config.campaign, topicId: topic.id, seen }),
-    find_logo: findLogoTool({ campaign: config.campaign, topicId: topic.id, seen }),
-    submit_page: submitPageTool({
-      campaign: config.campaign,
-      topicId: topic.id,
-      model: config.model,
-      maxSubmissions: config.maxSubmissions,
-      cwd,
-      found,
-      state,
-      seen,
-      bodyFile: config.bodyFile,
-      checkLinks: config.checkLinks,
-    }),
-  } as Record<string, ToolDefinition>;
+async function piRuntime(): Promise<ModelRuntime> {
+  if (modelRuntime) return modelRuntime;
+  const key = process.env.OPENROUTER_API_KEY;
+  if (!key) throw new Error("OPENROUTER_API_KEY is not set");
+  const dir = mkdtempSync(join(tmpdir(), "pi-runtime-"));
+  modelRuntime = await ModelRuntime.create({ authPath: join(dir, "auth.json"), modelsPath: null, refreshOnCreate: false });
+  await modelRuntime.setRuntimeApiKey("openrouter", key);
+  return modelRuntime;
 }
 
-async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ saved: boolean; cost: number }> {
-  const found = new Set<string>();
-  const seen: Seen = new Set<string>();
-  const state: SubmitState = { submissions: 0, savedUrl: null, lastProblems: [] };
+async function runTopicPi(topic: Claimed): Promise<Outcome> {
+  const runtime = await piRuntime();
+  const s = newTopicState();
   const cwd = mkdtempSync(join(tmpdir(), `agent-${name}-`));
-  const all = buildTools(topic, cwd, found, seen, state);
-  const toolNames = [...new Set([...STANDARD_TOOLS, ...config.tools])];
-  const customTools = toolNames
-    .filter((t) => !PI_FILE_TOOLS.has(t))
-    .map((t) => {
-      if (!all[t]) throw new Error(`agents/${name}.json asks for an unknown tool "${t}"`);
-      return all[t];
-    });
+  const toolNames = toolNamesFor(config);
+  const customTools = buildTools(config, topic.id, cwd, config.model, s);
 
-  const model = modelRuntime.getModel("openrouter", config.model);
+  const model = runtime.getModel("openrouter", config.model);
   if (!model) throw new Error(`Pi doesn't know the model openrouter/${config.model}`);
 
   // No discovery: no AGENTS.md, skills or extensions from the machine, only what's here.
@@ -143,7 +97,7 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
     agentDir: cwd,
     model,
     thinkingLevel: config.thinking,
-    modelRuntime,
+    modelRuntime: runtime,
     resourceLoader,
     tools: toolNames,
     customTools,
@@ -168,12 +122,12 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
     if (event.type === "tool_execution_start") {
       log(`→ ${event.toolName} ${short(event.args)}`);
     }
-    // The studio's answer to a submission (problems to fix, or saved) goes in the log too.
     // Research tools that failed (a site that blocks screenshots, a video with no transcript).
     if (event.type === "tool_execution_end" && ["screenshot", "find_logo", "watch_video", "read_page"].includes(event.toolName)) {
       const reply = (event.result?.content ?? []).map((c: { text?: string }) => c.text ?? "").join("");
       if (/^(Couldn't|No logo|Screenshots aren't)/.test(reply)) log(`← ${event.toolName}: ${short(reply, 300)}`);
     }
+    // The studio's answer to a submission (problems to fix, or saved) goes in the log too.
     if (event.type === "tool_execution_end" && event.toolName === "submit_page") {
       const reply = (event.result?.content ?? []).map((c: { text?: string }) => c.text ?? "").join("");
       log(`← submit_page: ${short(reply, 2000)}`);
@@ -183,7 +137,7 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
       const cost = session.getSessionStats().cost + searchCost.total;
       if (turns >= config.maxTurns) stop(`${turns} turns (max ${config.maxTurns})`);
       else if (cost > config.maxCostUsd) stop(`cost $${cost.toFixed(3)} (max $${config.maxCostUsd})`);
-      if (state.savedUrl) stop("page saved");
+      if (s.submit.savedUrl) stop("page saved");
     }
   });
 
@@ -214,53 +168,86 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
       : null;
   session.dispose();
 
-  // What the run did and cost, for the studio's /agents screen.
-  const report: RunReport = {
-    outcome: state.savedUrl ? "saved" : "failed",
-    pageUrl: state.savedUrl,
-    error: null,
-    model: config.model,
-    costUsd: cost,
-    modelCostUsd: stats.cost,
-    searchCostUsd: searchCost.total,
-    searches: searchCost.count,
-    tokensIn: t.input,
-    tokensOut: t.output,
-    cacheRead: t.cacheRead,
-    cacheWrite: t.cacheWrite,
-    turns,
-    submissions: state.submissions,
-    runUrl: RUN_URL,
-  };
-
-  if (state.savedUrl) {
-    log(`saved ${topic.label}: ${state.savedUrl}`);
-    await reportRun(config.campaign, topic.runId, report);
-    return { saved: true, cost };
-  }
-  const why =
-    state.lastProblems.length > 0
-      ? `not saved after ${state.submissions} submission(s); last problems: ${state.lastProblems.join("; ")}`
+  const why = s.submit.savedUrl
+    ? null
+    : s.submit.lastProblems.length > 0
+      ? `not saved after ${s.submit.submissions} submission(s); last problems: ${s.submit.lastProblems.join("; ")}`
       : `not saved: ${stopReason ?? modelError ?? "the agent stopped without submitting"}. Last message: ${short(lastText, 300) || "(none)"}`;
+  return {
+    submit: s.submit,
+    why,
+    report: {
+      model: config.model,
+      costUsd: cost,
+      modelCostUsd: stats.cost,
+      searchCostUsd: searchCost.total,
+      searches: searchCost.count,
+      tokensIn: t.input,
+      tokensOut: t.output,
+      cacheRead: t.cacheRead,
+      cacheWrite: t.cacheWrite,
+      turns,
+      submissions: s.submit.submissions,
+    },
+  };
+}
+
+// ---------------------------------------------------------------- one topic, either engine
+
+async function runTopic(topic: Claimed): Promise<{ saved: boolean; cost: number }> {
+  const engine: Engine = ENGINE_OVERRIDE ?? topic.engine;
+  let outcome: Outcome;
+  if (engine === "claude-code") {
+    log(`engine: claude-code (${config.claudeModel ?? "haiku"}, subscription)`);
+    const c = await runTopicClaude(name, config, topic);
+    if (c.fallback) {
+      log(`claude code couldn't do it (${c.why}); doing this topic with Pi instead`);
+      outcome = await runTopicPi(topic);
+      // The searches Claude Code already paid for count too.
+      outcome.report.costUsd += c.searchCostUsd;
+      outcome.report.searchCostUsd += c.searchCostUsd;
+      outcome.report.searches += c.searches;
+      outcome.report.model = `${outcome.report.model} (after claude-code hit: ${short(c.why ?? "", 80)})`;
+    } else {
+      outcome = {
+        submit: c.submit,
+        why: c.why,
+        report: {
+          model: c.model,
+          costUsd: c.searchCostUsd,
+          modelCostUsd: 0,
+          searchCostUsd: c.searchCostUsd,
+          searches: c.searches,
+          tokensIn: c.tokensIn,
+          tokensOut: c.tokensOut,
+          cacheRead: c.cacheRead,
+          cacheWrite: c.cacheWrite,
+          turns: c.turns,
+          submissions: c.submit.submissions,
+        },
+      };
+    }
+  } else {
+    log(`engine: pi (${config.model})`);
+    outcome = await runTopicPi(topic);
+  }
+
+  // What the run did and cost, for the studio's /agents screen.
+  const savedUrl = outcome.submit.savedUrl;
+  const report: RunReport = { ...outcome.report, outcome: savedUrl ? "saved" : "failed", pageUrl: savedUrl, error: null, runUrl: RUN_URL };
+  if (savedUrl) {
+    log(`saved ${topic.label}: ${savedUrl}`);
+    await reportRun(config.campaign, topic.runId, report);
+    return { saved: true, cost: report.costUsd };
+  }
+  const why = outcome.why ?? "not saved";
   const status = await failTopic(config.campaign, topic.id, why);
   log(`gave back ${topic.label} (${status}): ${why}`);
   await reportRun(config.campaign, topic.runId, { ...report, error: why });
-  return { saved: false, cost };
+  return { saved: false, cost: report.costUsd };
 }
 
-/** This GitHub Actions run's page (the log), when running there. */
-const RUN_URL =
-  process.env.GITHUB_SERVER_URL && process.env.GITHUB_REPOSITORY && process.env.GITHUB_RUN_ID
-    ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
-    : null;
-
 async function main() {
-  const key = process.env.OPENROUTER_API_KEY;
-  if (!key) throw new Error("OPENROUTER_API_KEY is not set");
-  const dir = mkdtempSync(join(tmpdir(), "pi-runtime-"));
-  const modelRuntime = await ModelRuntime.create({ authPath: join(dir, "auth.json"), modelsPath: null, refreshOnCreate: false });
-  await modelRuntime.setRuntimeApiKey("openrouter", key);
-
   let saved = 0;
   let cost = 0;
   // The studio decides how many pages are due (pages per day on /agents); topicsPerRun is
@@ -273,7 +260,7 @@ async function main() {
     }
     const topic = claim.topic;
     log(`claimed ${topic.label} (${topic.id})`);
-    const result = await runTopic(topic, modelRuntime);
+    const result = await runTopic(topic);
     if (result.saved) saved++;
     cost += result.cost;
   }

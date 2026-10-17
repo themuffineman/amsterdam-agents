@@ -2,7 +2,7 @@
  * Talks to the marketing studio's agent API (amsterdam/sycamore, /api/agent/<campaign>/...).
  * The studio owns the topic queues, the prompts and the checks; this repo only runs agents.
  *
- *   POST  /api/agent/<campaign>/next          -> claim a topic if one is due: { topic, runId, prompt },
+ *   POST  /api/agent/<campaign>/next          -> claim a topic if one is due: { topic, runId, prompt, engine },
  *                                               or { topic: null, reason, nextAt }
  *   PATCH /api/agent/<campaign>/<id>          -> { status: "done", content, model } or { status: "failed", error }
  *   POST  /api/agent/<campaign>/runs/<runId>  -> what the run did and cost (shown on the studio's /agents)
@@ -23,7 +23,14 @@ function headers() {
   return { Authorization: `Bearer ${key}`, "Content-Type": "application/json" };
 }
 
-export type Claimed = { id: string; label: string; prompt: string; runId: string };
+export type Claimed = {
+  id: string;
+  label: string;
+  prompt: string;
+  runId: string;
+  /** Which engine to run it with (the campaign's setting on /agents; "pi" from an older studio). */
+  engine: "pi" | "claude-code";
+};
 
 /** Claims the next topic if one is due; otherwise says why not (paused, not due, queue empty). */
 export async function claimTopic(campaign: string): Promise<{ topic: Claimed } | { topic: null; reason: string; nextAt: string | null }> {
@@ -31,7 +38,15 @@ export async function claimTopic(campaign: string): Promise<{ topic: Claimed } |
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(`Claiming a ${campaign} topic failed (${res.status}): ${body.error ?? "no details"}`);
   if (!body.topic) return { topic: null, reason: body.reason ?? "nothing to do", nextAt: body.nextAt ?? null };
-  return { topic: { id: body.topic.id, label: body.topic.label, prompt: body.prompt, runId: body.runId } };
+  return {
+    topic: {
+      id: body.topic.id,
+      label: body.topic.label,
+      prompt: body.prompt,
+      runId: body.runId,
+      engine: body.engine === "claude-code" ? "claude-code" : "pi",
+    },
+  };
 }
 
 export type RunReport = {
