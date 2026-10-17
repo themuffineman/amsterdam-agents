@@ -1,0 +1,63 @@
+{
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "segments": [
+    {
+      "id": "hook1",
+      "text": "YouTube has studied upload timing for years. Its help page says {q}growth in views across uploads is not correlated with time between uploads."
+    },
+    {
+      "id": "hook2",
+      "text": "So the algorithm isn't checking your calendar. Posting more still pays off, though."
+    },
+    {
+      "id": "each1",
+      "text": "YouTube judges {f1}each video on its own fresh data. {f2}Who clicks, how long they watch, likes, shares, and {f3}not-interested feedback."
+    },
+    {
+      "id": "each2",
+      "text": "TikTok, in twenty twenty: {t1}the amount of videos you post won't impact how your content is recommended."
+    },
+    {
+      "id": "break1",
+      "text": "Breaks don't hurt either. YouTube {b1}found no correlation between break length and changes in views."
+    },
+    {
+      "id": "break2",
+      "text": "Your audience {b2}may just need time to warm up again."
+    },
+    {
+      "id": "weeks1",
+      "text": "Buffer tracked over a hundred thousand accounts for {w1}twenty-six weeks."
+    },
+    {
+      "id": "weeks2",
+      "text": "Those who posted in {w2}at least twenty of them got {w3}four hundred and fifty percent more engagement per post than those who posted in four or fewer."
+    },
+    {
+      "id": "vol1",
+      "text": "vidIQ looked at {v1}ten million YouTube channels over a year."
+    },
+    {
+      "id": "vol2",
+      "text": "Under {v2}one upload a month, median view growth was zero point five three percent a month. At {v3}twelve or more, two point one eight. {v4}About four times."
+    },
+    {
+      "id": "vol3",
+      "text": "vidIQ calls it {c1}correlation, not causation. Bigger channels can afford to post more."
+    },
+    {
+      "id": "why1",
+      "text": "So to an algorithm, consistency means more videos to score. TikTok's feed {r1}generally pulls from the last ninety days."
+    },
+    {
+      "id": "why2",
+      "text": "And YouTube lists {r2}uploading less frequently than usual as one reason recommended traffic drops."
+    },
+    {
+      "id": "close",
+      "text": "Post as often as you can keep the quality up. Take breaks when you need them, and judge each video on its own numbers."
+    }
+  ],
+  "_note": "No prompt: the backend prepends it to each segment and Gemini flash-lite reads it aloud."
+}

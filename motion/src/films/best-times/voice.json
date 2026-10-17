@@ -1,0 +1,106 @@
+{
+  "film": "best-times",
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "createdAt": "2026-10-15T23:31:08.777Z",
+  "segments": {
+    "hook1": {
+      "file": "films/best-times/audio/hook1.wav",
+      "durationSec": 8.93,
+      "marks": {
+        "ig": 0.3566,
+        "yt": 0.4336,
+        "li": 0.4965,
+        "tt": 0.5874
+      }
+    },
+    "hook2": {
+      "file": "films/best-times/audio/hook2.wav",
+      "durationSec": 2.61,
+      "marks": {}
+    },
+    "ig1": {
+      "file": "films/best-times/audio/ig1.wav",
+      "durationSec": 9.35,
+      "marks": {
+        "t1": 0.3212,
+        "t2": 0.5985,
+        "t3": 0.7664
+      }
+    },
+    "ig2": {
+      "file": "films/best-times/audio/ig2.wav",
+      "durationSec": 5.92,
+      "marks": {
+        "f1": 0.0331,
+        "f2": 0.595
+      }
+    },
+    "yt1": {
+      "file": "films/best-times/audio/yt1.wav",
+      "durationSec": 6.89,
+      "marks": {
+        "t1": 0.629,
+        "t2": 0.75,
+        "t3": 0.879
+      }
+    },
+    "yt2": {
+      "file": "films/best-times/audio/yt2.wav",
+      "durationSec": 9.38,
+      "marks": {
+        "f1": 0,
+        "f2": 0.5952
+      }
+    },
+    "li1": {
+      "file": "films/best-times/audio/li1.wav",
+      "durationSec": 7.1,
+      "marks": {
+        "f1": 0.3228
+      }
+    },
+    "li2": {
+      "file": "films/best-times/audio/li2.wav",
+      "durationSec": 7.55,
+      "marks": {
+        "t1": 0.2162,
+        "t2": 0.4324,
+        "t3": 0.6216,
+        "f2": 0.7658
+      }
+    },
+    "tt1": {
+      "file": "films/best-times/audio/tt1.wav",
+      "durationSec": 7.06,
+      "marks": {
+        "f1": 0.1475,
+        "f2": 0.6557
+      }
+    },
+    "tt2": {
+      "file": "films/best-times/audio/tt2.wav",
+      "durationSec": 7.66,
+      "marks": {
+        "t1": 0.3762,
+        "t2": 0.5842,
+        "t3": 0.8218
+      }
+    },
+    "recap": {
+      "file": "films/best-times/audio/recap.wav",
+      "durationSec": 9.61,
+      "marks": {
+        "ig": 0.0345,
+        "yt": 0.2845,
+        "li": 0.5,
+        "tt": 0.7672
+      }
+    },
+    "close": {
+      "file": "films/best-times/audio/close.wav",
+      "durationSec": 6.28,
+      "marks": {}
+    }
+  }
+}

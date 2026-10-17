@@ -1,0 +1,107 @@
+{
+  "film": "consistency-myth",
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "createdAt": "2026-10-17T18:44:18.252Z",
+  "segments": {
+    "hook1": {
+      "file": "films/consistency-myth/audio/hook1.wav",
+      "durationSec": 8.57,
+      "marks": {
+        "q": 0.4604
+      }
+    },
+    "hook2": {
+      "file": "films/consistency-myth/audio/hook2.wav",
+      "durationSec": 4.34,
+      "marks": {}
+    },
+    "each1": {
+      "file": "films/consistency-myth/audio/each1.wav",
+      "durationSec": 9.5,
+      "marks": {
+        "f1": 0.12,
+        "f2": 0.392,
+        "f3": 0.808
+      }
+    },
+    "each2": {
+      "file": "films/consistency-myth/audio/each2.wav",
+      "durationSec": 5.82,
+      "marks": {
+        "t1": 0.2574
+      }
+    },
+    "break1": {
+      "file": "films/consistency-myth/audio/break1.wav",
+      "durationSec": 5.34,
+      "marks": {
+        "b1": 0.3505
+      }
+    },
+    "break2": {
+      "file": "films/consistency-myth/audio/break2.wav",
+      "durationSec": 2.61,
+      "marks": {
+        "b2": 0.28
+      }
+    },
+    "weeks1": {
+      "file": "films/consistency-myth/audio/weeks1.wav",
+      "durationSec": 4.01,
+      "marks": {
+        "w1": 0.7536
+      }
+    },
+    "weeks2": {
+      "file": "films/consistency-myth/audio/weeks2.wav",
+      "durationSec": 8.77,
+      "marks": {
+        "w2": 0.1399,
+        "w3": 0.3357
+      }
+    },
+    "vol1": {
+      "file": "films/consistency-myth/audio/vol1.wav",
+      "durationSec": 5.19,
+      "marks": {
+        "v1": 0.2807
+      }
+    },
+    "vol2": {
+      "file": "films/consistency-myth/audio/vol2.wav",
+      "durationSec": 9.51,
+      "marks": {
+        "v2": 0.0414,
+        "v3": 0.6276,
+        "v4": 0.8828
+      }
+    },
+    "vol3": {
+      "file": "films/consistency-myth/audio/vol3.wav",
+      "durationSec": 5.7,
+      "marks": {
+        "c1": 0.1807
+      }
+    },
+    "why1": {
+      "file": "films/consistency-myth/audio/why1.wav",
+      "durationSec": 7.65,
+      "marks": {
+        "r1": 0.6379
+      }
+    },
+    "why2": {
+      "file": "films/consistency-myth/audio/why2.wav",
+      "durationSec": 5.43,
+      "marks": {
+        "r2": 0.1895
+      }
+    },
+    "close": {
+      "file": "films/consistency-myth/audio/close.wav",
+      "durationSec": 7.04,
+      "marks": {}
+    }
+  }
+}

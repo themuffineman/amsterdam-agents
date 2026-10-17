@@ -1,0 +1,35 @@
+{
+  "_note": "Background music allowed in explainers. Picked from amsterdam background_music (calm set, user-approved 2026-10-15). Phonk/trap/dancehall/Brazilian funk excluded. Add a track here to allow it.",
+  "tracks": [
+    {
+      "id": 1,
+      "name": "Gordon Crumb - Family Gathering",
+      "url": "https://dysbmcaqwlxcbjivzlif.supabase.co/storage/v1/object/public/sycamore-bucket/bg-music/Gordon%20Crumb%20-%20Family%20Gathering.mp3"
+    },
+    {
+      "id": 2,
+      "name": "Gordon Crumb - Rich Life",
+      "url": "https://dysbmcaqwlxcbjivzlif.supabase.co/storage/v1/object/public/sycamore-bucket/bg-music/Gordon%20Crumb%20-%20Rich%20Life.mp3"
+    },
+    {
+      "id": 3,
+      "name": "Gordon Crumb - Sasori",
+      "url": "https://dysbmcaqwlxcbjivzlif.supabase.co/storage/v1/object/public/sycamore-bucket/bg-music/Gordon%20Crumb%20-%20Sasori.mp3"
+    },
+    {
+      "id": 11,
+      "name": "nastelbom-hiphop-409090",
+      "url": "https://dysbmcaqwlxcbjivzlif.supabase.co/storage/v1/object/public/sycamore-bucket/bg-music/nastelbom-hiphop-409090.mp3"
+    },
+    {
+      "id": 12,
+      "name": "nastelbom-hiphop-background-355726",
+      "url": "https://dysbmcaqwlxcbjivzlif.supabase.co/storage/v1/object/public/sycamore-bucket/bg-music/nastelbom-hiphop-background-355726.mp3"
+    },
+    {
+      "id": 13,
+      "name": "ornave-hiphop-rainy-window-553434",
+      "url": "https://dysbmcaqwlxcbjivzlif.supabase.co/storage/v1/object/public/sycamore-bucket/bg-music/ornave-hiphop-rainy-window-553434.mp3"
+    }
+  ]
+}

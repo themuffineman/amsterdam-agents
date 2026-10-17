@@ -1,0 +1,214 @@
+{
+  "url": "https://support.google.com/youtube/answer/141805?hl=en",
+  "finalUrl": "https://support.google.com/youtube/answer/141805?hl=en",
+  "slug": "youtube-help",
+  "capturedAt": "2026-10-17T18:02:05.553Z",
+  "viewport": {
+    "width": 1440,
+    "height": 900,
+    "deviceScaleFactor": 2
+  },
+  "name": "YouTube performance FAQ & Troubleshooting",
+  "theme": "light",
+  "colors": {
+    "ground": "#ffffff",
+    "surface": "#f2f2f2",
+    "ink": "#1f1f1f",
+    "inkSoft": "#0b57d0",
+    "accents": [
+      "#0b57d0"
+    ],
+    "grounds": [
+      {
+        "hex": "#ffffff",
+        "share": 0.96
+      },
+      {
+        "hex": "#f2f2f2",
+        "share": 0.026
+      },
+      {
+        "hex": "#1f1f1f",
+        "share": 0.014
+      },
+      {
+        "hex": "#0b57d0",
+        "share": 0.001
+      }
+    ],
+    "text": [
+      {
+        "hex": "#0b57d0",
+        "share": 0.59
+      },
+      {
+        "hex": "#1f1f1f",
+        "share": 0.296
+      },
+      {
+        "hex": "#444746",
+        "share": 0.112
+      },
+      {
+        "hex": "#ffffff",
+        "share": 0.003
+      }
+    ],
+    "ctaBackgrounds": [
+      "#ffffff"
+    ],
+    "cssVariables": {}
+  },
+  "fonts": {
+    "inUse": [
+      {
+        "family": "Google Sans Text",
+        "weight": 400,
+        "share": 0.778
+      },
+      {
+        "family": "Google Sans",
+        "weight": 500,
+        "share": 0.112
+      },
+      {
+        "family": "Google Sans",
+        "weight": 400,
+        "share": 0.068
+      },
+      {
+        "family": "Google Sans Text",
+        "weight": 500,
+        "share": 0.032
+      },
+      {
+        "family": "Arial",
+        "weight": 400,
+        "share": 0.01
+      }
+    ],
+    "loadedFaces": [
+      {
+        "family": "Roboto",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "family": "Roboto",
+        "weight": "500",
+        "style": "normal"
+      },
+      {
+        "family": "Google Sans",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "family": "Google Sans",
+        "weight": "500",
+        "style": "normal"
+      },
+      {
+        "family": "Google Sans Text",
+        "weight": "400",
+        "style": "normal"
+      },
+      {
+        "family": "Google Sans Text",
+        "weight": "500",
+        "style": "normal"
+      }
+    ],
+    "fileUrls": [
+      "https://fonts.gstatic.com/s/roboto/v18/KFOmCnqEu92Fr1Mu4mxK.woff2",
+      "https://fonts.gstatic.com/s/googlesans/v16/4UaGrENHsxJlGDuGo1OIlL3Owp4.woff2",
+      "https://fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmEU9fBBc4.woff2",
+      "https://fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfBBc4.woff2",
+      "https://fonts.gstatic.com/s/googlesans/v16/4UabrENHsxJlGDuGo1OIlLU94YtzCwY.woff2",
+      "https://fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfChc4EsA.woff2",
+      "https://fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfCxc4EsA.woff2",
+      "https://fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfBxc4EsA.woff2",
+      "https://fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfABc4EsA.woff2",
+      "https://fonts.gstatic.com/s/roboto/v18/KFOlCnqEu92Fr1MmWUlfCRc4EsA.woff2"
+    ],
+    "downloaded": []
+  },
+  "logo": {
+    "file": "logo/logo.svg",
+    "source": "inline <svg> (in-header, top, left)",
+    "candidates": [
+      {
+        "score": 6,
+        "why": [
+          "in-header",
+          "top",
+          "left"
+        ],
+        "tag": "svg",
+        "rect": {
+          "x": 24,
+          "y": 20,
+          "w": 24,
+          "h": 24
+        },
+        "label": "",
+        "src": null
+      },
+      {
+        "score": 5,
+        "why": [
+          "in-header",
+          "top"
+        ],
+        "tag": "svg",
+        "rect": {
+          "x": 1291,
+          "y": 21,
+          "w": 24,
+          "h": 24
+        },
+        "label": "Google apps",
+        "src": null
+      },
+      {
+        "score": 5,
+        "why": [
+          "in-header",
+          "top"
+        ],
+        "tag": "svg",
+        "rect": {
+          "x": 1396,
+          "y": 83,
+          "w": 24,
+          "h": 24
+        },
+        "label": "YouTube (Open in a new window)",
+        "src": null
+      }
+    ],
+    "favicon": "logo/favicon.ico",
+    "appIcon": null,
+    "faviconSource": "linked by the page"
+  },
+  "screens": [
+    {
+      "file": "screens/00-hero.png",
+      "y": 0,
+      "label": "above the fold"
+    },
+    {
+      "file": "screens/s1-do-i-need-to-upload-daily.png",
+      "label": "Do I need to upload daily",
+      "target": "find"
+    },
+    {
+      "file": "screens/s2-if-i-take-a-break-from-uploading.png",
+      "label": "If I take a break from uploading",
+      "target": "find"
+    }
+  ],
+  "ogImage": null,
+  "copyFile": "copy.json",
+  "warnings": []
+}

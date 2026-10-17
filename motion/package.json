@@ -1,0 +1,40 @@
+{
+  "name": "motion",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Remotion explainer films for Sycamore (amsterdam-agents/motion). Not hosted.",
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "remotion studio",
+    "render": "remotion render",
+    "still": "remotion still",
+    "review": "node scripts/review.mjs",
+    "brand": "node scripts/brand-capture.mjs",
+    "typecheck": "tsc --noEmit",
+    "voice": "node --env-file=.env scripts/voice.mjs",
+    "music": "node scripts/music.mjs",
+    "final": "node scripts/final.mjs",
+    "cloud": "node scripts/cloud.mjs",
+    "watch": "node --env-file=.env scripts/watch.mjs"
+  },
+  "dependencies": {
+    "@remotion/bundler": "4.0.520",
+    "@remotion/cli": "4.0.520",
+    "@remotion/google-fonts": "4.0.520",
+    "@remotion/renderer": "4.0.520",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "remotion": "4.0.520"
+  },
+  "devDependencies": {
+    "@google-cloud/storage": "^8.4.0",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "puppeteer": "^25.14.0",
+    "typescript": "^7.0.2"
+  }
+}

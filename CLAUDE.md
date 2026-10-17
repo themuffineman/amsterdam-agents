@@ -21,6 +21,12 @@ that work together. Read this before changing anything here or adding a new camp
 Why the split: prompts and checks change often and the studio is where all marketing work lives, so agents stay generic
 runners. The repo is public for unlimited free Actions minutes, which is safe because nothing secret is in it.
 
+**`motion/`**: the Remotion explainer films (moved in from the standalone `sycamore-motion` repo on 2026-10-17, without
+its history). A separate npm project: `cd motion` for anything there; its own `CLAUDE.md`, `.claude/skills`
+(motion-craft), `.env` (gitignored) and `node_modules`. The root runner doesn't use it yet. Published as-is: the
+`src/ui-kit/` files are AGPL-3.0 (Databuddy; licence in `motion/src/ui-kit/LICENSE-AGPL-3.0`, keep the file
+headers); creator transcripts in `motion/research/` stay local (gitignored).
+
 ## One run, end to end
 
 ```

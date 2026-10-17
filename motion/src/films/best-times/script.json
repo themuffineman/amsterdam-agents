@@ -1,0 +1,55 @@
+{
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "segments": [
+    {
+      "id": "hook1",
+      "text": "Buffer analysed over twenty-three million posts on {ig}Instagram, {yt}YouTube, {li}LinkedIn and {tt}TikTok, and measured when each one got the most engagement."
+    },
+    {
+      "id": "hook2",
+      "text": "Here's when to post on each one, in your own local time."
+    },
+    {
+      "id": "ig1",
+      "text": "On Instagram, midweek wins. The top slot is {t1}Thursday at nine in the morning, then {t2}Wednesday at noon, and {t3}Wednesday at six in the evening."
+    },
+    {
+      "id": "ig2",
+      "text": "The {f1}worst window is the same every day: one to five in the morning. And {f2}Friday and Saturday are the weakest days overall."
+    },
+    {
+      "id": "yt1",
+      "text": "YouTube is the odd one out. For long-form videos, Sunday morning is the peak: {t1}ten a.m., then {t2}nine a.m., then {t3}Friday at noon."
+    },
+    {
+      "id": "yt2",
+      "text": "{f1}Thursday is the weakest day, and two p.m. on Thursday is one of the lowest slots of the whole week. {f2}Shorts are different: they do best in the evening, from six to nine."
+    },
+    {
+      "id": "li1",
+      "text": "LinkedIn rewards the end of the workday. {f1}Late afternoon into the evening, from three to eight p.m., drives the most engagement."
+    },
+    {
+      "id": "li2",
+      "text": "The best single slot is {t1}Wednesday at four, then {t2}Friday at three, and {t3}Friday at four. {f2}Monday is the weakest day."
+    },
+    {
+      "id": "tt1",
+      "text": "TikTok runs late. {f1}Engagement peaks in the evening, from six to eleven p.m., and {f2}Saturday is the strongest day of the week."
+    },
+    {
+      "id": "tt2",
+      "text": "But the top single slots are daytime: {t1}Sunday at nine a.m., {t2}Monday at one p.m., and {t3}Sunday at one p.m."
+    },
+    {
+      "id": "recap",
+      "text": "So. {ig}Instagram: Thursday morning. {yt}YouTube: Sunday morning. {li}LinkedIn: Wednesday afternoon. {tt}TikTok: Sunday morning too."
+    },
+    {
+      "id": "close",
+      "text": "Other studies disagree on the exact hours, so treat these as a starting point, then test them against your own audience."
+    }
+  ],
+  "_note": "No prompt: the backend prepends it to each segment and Gemini flash-lite reads it aloud."
+}

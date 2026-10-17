@@ -1,0 +1,11 @@
+node_modules
+out
+review
+_reference
+.env
+.env.*
+public/music
+research/*/*/frames
+
+# Research notes (creator transcripts, frames) stay local: other people's content.
+research/
