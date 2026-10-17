@@ -1,0 +1,54 @@
+# Film agent: makes the explainer films queued with "Make film" on the studio's /motion-gen.
+# Every 10 minutes it asks the studio for a queued film; most runs find none and stop in
+# seconds. A claimed film takes 1-2 hours: Claude Code (on the Claude subscription) runs the
+# Motion Film Brief in motion/, the runner renders it on Modal, pushes the film's code to a
+# film/<slug> branch and sends it to the studio for review. Nothing is posted from here.
+name: film agent
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+# One film at a time. A poll that fires while a film is being made waits (and only the
+# newest waiting one is kept).
+concurrency:
+  group: film-agent
+  cancel-in-progress: false
+
+permissions:
+  contents: write # push the film's branch
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+          cache-dependency-path: |
+            package-lock.json
+            motion/package-lock.json
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: |
+          git config user.name "film agent"
+          git config user.email "film-agent@users.noreply.github.com"
+      - name: Make a film (if one is queued)
+        env:
+          STUDIO_URL: ${{ secrets.STUDIO_URL }}
+          AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+          # Claude Code on the subscription (`claude setup-token`)
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # npm run voice: TTS through the Sycamore backend
+          SYCAMORE_BACKEND_URL: ${{ secrets.SYCAMORE_BACKEND_URL }}
+          SYCAMORE_INTERNAL_API_KEY: ${{ secrets.SYCAMORE_INTERNAL_API_KEY }}
+          # npm run watch: Instagram/TikTok transcripts (free plan: 100 credits a month)
+          SUPADATA_API_KEY: ${{ secrets.SUPADATA_API_KEY }}
+          # npm run cloud (the runner only, never the agent): Modal render + GCS upload
+          GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
+          GOOGLE_APPLICATION_CREDENTIALS_JSON_B64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON_B64 }}
+          MODAL_RENDER_TOKEN: ${{ secrets.MODAL_RENDER_TOKEN }}
+        run: node src/film.ts

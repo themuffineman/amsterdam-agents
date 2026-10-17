@@ -78,7 +78,9 @@ AI-made. Work from this folder (`cd motion`): it has its own `package.json`, `no
 ## Rendering
 
 - Final renders go to Modal: `npm run cloud -- <id>` (bundle -> GCS `marketing-bundles/films-*` ->
-  marketing Modal app -> `out/<id>.mp4`, -14 LUFS). ~2-3 min for a 1.5 min film. Drafts and
+  marketing Modal app -> `out/<id>.mp4`, -14 LUFS; that final is also uploaded to the public
+  `renders-marketing/films/` and its URL written to `out/<id>.json`, for posting). The cloud film agent
+  (`../src/film.ts`) runs this itself after the agent finishes; see the root CLAUDE.md. ~2-3 min for a 1.5 min film. Drafts and
   stills stay local (`npm run review`, `npx remotion still`). `npm run cloud -- --prune 10`
   cleans old film bundles.
 - Remotion stays pinned at exactly 4.0.520 (the Modal renderer's version). Upgrade both

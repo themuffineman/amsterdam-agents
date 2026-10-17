@@ -27,6 +27,39 @@ its history). A separate npm project: `cd motion` for anything there; its own `C
 `src/ui-kit/` files are AGPL-3.0 (Databuddy; licence in `motion/src/ui-kit/LICENSE-AGPL-3.0`, keep the file
 headers); creator transcripts in `motion/research/` stay local (gitignored).
 
+## The film agent (`src/film.ts`, `.github/workflows/films.yml`)
+
+Not a campaign like the page agents: one film is a 1-2 hour coding job in `motion/`, and a person reviews it.
+
+- **Start:** studio `/motion-gen` → draw a title → **Make film** (landscape or portrait) → a `motion_films` row
+  `queued` (studio `lib/motion-films/`, migration 0032). No schedule yet (the user wants the button first).
+- **Run:** the workflow polls every 10 minutes (`POST /api/agent/films/next`, Bearer `AGENT_API_KEY`); empty polls
+  stop in seconds. A claim gets the **Motion Film Brief** in agent mode (studio `lib/motion-films/prompt.ts`, the
+  same brief as the copy-paste flow) and the previous attempt's branch for a redo. The runner: branches
+  `film/<slug>-<id>` (from the previous branch on a redo), installs motion's packages + Claude Code + yt-dlp, runs
+  `claude -p` (model in `agents/films.json`, default **opus**; the subscription token) in `motion/`, which ends by
+  writing `motion/out/film-result.json` (compositionId, YouTube title, description ending with one Sycamore plug
+  line, claims + sources, gates, weak, changed). Then the **runner** renders (`npm run cloud`, which uploads the
+  normalised mp4 to the public GCS bucket and writes `out/<Id>.json` with its URL), commits + pushes the branch, and
+  PATCHes `/api/agent/films/<id>` `review` (or `failed` with the reason; a partial branch is pushed too).
+- **Keys:** Claude Code's environment has only its token and the TTS/Supadata keys; the GCS/Modal keys and the
+  studio key stay in the runner (a web page can't talk the agent into leaking them). Its tools are an allow list
+  (`ALLOWED_TOOLS`: file tools, web search/fetch, `npm run`, `npx remotion`, `node`, ffmpeg, plain shell file
+  commands); anything else is refused (`--permission-prompts none`). Read-only git is allowed by Claude Code; the
+  brief says not to use git.
+- **Review (studio):** the film card on `/motion-gen`: video, claims to check, the agent's notes, editable title +
+  description, **Generate thumbnail** (the AI Thumbnail generator; Google/OpenAI models first, our thumbnails as the
+  style reference), Approve, Redo with notes (a new queued attempt building on this branch), Drop. **Post**:
+  landscape straight to YouTube (`uploadToYouTube`, can be scheduled), portrait as a Short through Buffer; counted
+  in /analytics as `motion-film`; the title leaves the queue.
+- **Usage:** a film is a long Claude session (a big share of a 5-hour subscription window). A usage limit fails the
+  film with that reason; Make film again later.
+- **Secrets** (besides the page agents'): `CLAUDE_CODE_OAUTH_TOKEN`, `SYCAMORE_BACKEND_URL`,
+  `SYCAMORE_INTERNAL_API_KEY` (TTS), `GCS_BUCKET`, `GOOGLE_APPLICATION_CREDENTIALS_JSON_B64`, `MODAL_RENDER_TOKEN`
+  (all in sycamore-mono `backend/.env` or motion's `.env`). The workflow needs `contents: write` to push branches.
+- **Not tested end to end yet** (2026-10-17): claim → prompt → review report → review card → thumbnail were tested
+  against the real studio API with a fake result; a real film run on GitHub hasn't happened.
+
 ## One run, end to end
 
 ```

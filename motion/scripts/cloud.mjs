@@ -11,9 +11,12 @@
 //     (the "films-" prefix keeps it out of the backend's "newest tutorial-* bundle" pick).
 //  4. Ask the marketing Modal app to render it (parallel picture chunks + one audio pass).
 //  5. Download the result and normalise loudness for YouTube -> out/<id>.mp4.
+//  6. Upload that final file to gs://androme/renders-marketing/films/ (public) and write its
+//     URL to out/<id>.json, so the studio can post it (the cloud film agent reads it).
 //
 // Needs GCS_BUCKET, GOOGLE_APPLICATION_CREDENTIALS_JSON (or _B64) and MODAL_RENDER_TOKEN,
-// read from this project's .env, then ../sycamore-mono/backend/.env for anything missing.
+// read from the environment, this project's .env, then sycamore-mono/backend/.env (next to
+// the amsterdam-agents folder) for anything missing.
 // Remotion here must match the Modal renderer's version (4.0.520), or the render fails.
 
 import { bundle } from "@remotion/bundler";
@@ -38,7 +41,8 @@ const loadEnv = (file) => {
   }
 };
 loadEnv(path.resolve(".env"));
-loadEnv(path.resolve("../sycamore-mono/backend/.env"));
+// This project lives in amsterdam-agents/motion; sycamore-mono sits next to amsterdam-agents.
+loadEnv(path.resolve("../../sycamore-mono/backend/.env"));
 
 const SUBMIT_URL = process.env.MODAL_MARKETING_SUBMIT_URL ?? "https://pendorastudios--marketing-submit-render.modal.run";
 const STATUS_URL = process.env.MODAL_MARKETING_STATUS_URL ?? "https://pendorastudios--marketing-get-render-status.modal.run";
@@ -48,7 +52,7 @@ const TIMEOUT_MIN = 40;
 
 const need = (k) => {
   if (!process.env[k]) {
-    console.error(`${k} is not set (.env or ../sycamore-mono/backend/.env)`);
+    console.error(`${k} is not set (environment, .env or sycamore-mono/backend/.env)`);
     process.exit(1);
   }
   return process.env[k];
@@ -210,4 +214,16 @@ const norm = spawnSync("ffmpeg", ["-v", "error", "-y", "-i", raw, "-c:v", "copy"
 if (norm.status !== 0) process.exit(norm.status ?? 1);
 fs.unlinkSync(raw);
 console.log(`downloaded + normalised in ${secs(t)}`);
-console.log(`\n${final}  (total ${((Date.now() - tStart) / 60000).toFixed(1)} min)\nremote: ${videoUrl}`);
+
+// 6. the final (normalised) file, public, for posting
+t = Date.now();
+const stamp = new Date().toISOString().slice(0, 19).replace(/[-:T]/g, "");
+const destination = `renders-marketing/films/${id.toLowerCase()}-${stamp}.mp4`;
+await bucket.upload(final, { destination, resumable: true, metadata: { contentType: "video/mp4", cacheControl: "public, max-age=31536000, immutable" } });
+const url = `https://storage.googleapis.com/${bucket.name}/${destination}`;
+fs.writeFileSync(
+  `out/${id}.json`,
+  JSON.stringify({ id, url, width: comp.width, height: comp.height, fps: comp.fps, durationSec: +(comp.durationInFrames / comp.fps).toFixed(2) }, null, 2),
+);
+console.log(`uploaded in ${secs(t)}`);
+console.log(`\n${final}  (total ${((Date.now() - tStart) / 60000).toFixed(1)} min)\nurl: ${url}`);

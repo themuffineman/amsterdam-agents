@@ -1,0 +1,5 @@
+{
+  "claudeModel": "opus",
+  "maxTurns": 600,
+  "timeoutMinutes": 200
+}
