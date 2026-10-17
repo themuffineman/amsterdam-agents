@@ -17,28 +17,29 @@ import { submitWork } from "../studio.ts";
  * out again, which is most of the cost of a fix. Small JSON mistakes in the file are
  * repaired here (jsonrepair) rather than sent back.
  *
- * Instagram examples whose URL no search returned (`found`) are dropped before sending:
- * Instagram is the one platform the studio can't check, so a made-up link would get
- * through. Other platforms' links go as they are; the studio checks them and drops fakes.
+ * Instagram and Facebook examples whose URL no search returned (`found`) are dropped
+ * before sending: they're the platforms the studio can't check, so a made-up link would
+ * get through. Other platforms' links go as they are; the studio checks them and drops fakes.
  * Dropping instead of refusing saves the model from resending the whole page.
  */
 
 export type SubmitState = { submissions: number; savedUrl: string | null; lastProblems: string[] };
 
-const isInstagram = (url: string) => /^https?:\/\/(www\.)?instagram\.com\//.test(url);
+/** Platforms the studio can't check a post on. */
+const isUncheckable = (url: string) => /^https?:\/\/(www\.|m\.)?(instagram|facebook)\.com\//.test(url);
 
-/** Removes every `example` (however deep) whose URL is an Instagram link no search returned; returns those URLs. */
-function dropUnfoundInstagram(value: unknown, found: Set<string>): string[] {
-  if (Array.isArray(value)) return value.flatMap((v) => dropUnfoundInstagram(v, found));
+/** Removes every `example` (however deep) whose URL is an Instagram/Facebook link no search returned; returns those URLs. */
+function dropUnfound(value: unknown, found: Set<string>): string[] {
+  if (Array.isArray(value)) return value.flatMap((v) => dropUnfound(v, found));
   if (!value || typeof value !== "object") return [];
   const obj = value as Record<string, unknown>;
   const dropped: string[] = [];
   const url = (obj.example as { url?: unknown } | undefined)?.url;
-  if (typeof url === "string" && isInstagram(url) && !found.has(url)) {
+  if (typeof url === "string" && isUncheckable(url) && !found.has(url)) {
     delete obj.example;
     dropped.push(url);
   }
-  return [...dropped, ...Object.values(obj).flatMap((v) => dropUnfoundInstagram(v, found))];
+  return [...dropped, ...Object.values(obj).flatMap((v) => dropUnfound(v, found))];
 }
 
 export function submitPageTool(opts: {
@@ -77,7 +78,7 @@ export function submitPageTool(opts: {
         return reply(`page.json isn't valid JSON and couldn't be repaired (${(e as Error).message}). Fix that spot with the edit tool and submit again.`);
       }
 
-      const dropped = dropUnfoundInstagram(content, opts.found);
+      const dropped = dropUnfound(content, opts.found);
 
       state.submissions++;
       const result = await submitWork(opts.campaign, opts.topicId, content, opts.model);
@@ -86,7 +87,7 @@ export function submitPageTool(opts: {
         return reply(`saved: ${state.savedUrl}`);
       }
       state.lastProblems = result.problems.length ? result.problems : [result.error];
-      if (dropped.length) state.lastProblems.push(`dropped Instagram examples no search returned: ${dropped.join(", ")}`);
+      if (dropped.length) state.lastProblems.push(`dropped Instagram/Facebook examples no search returned: ${dropped.join(", ")}`);
       const left = opts.maxSubmissions - state.submissions;
       return reply(
         `Not saved. Fix every problem and submit again (${left} submission${left === 1 ? "" : "s"} left):\n- ${state.lastProblems.join("\n- ")}`,

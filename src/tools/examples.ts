@@ -17,6 +17,9 @@ const PLATFORMS = {
   linkedin: { domains: ["linkedin.com"], engine: "exa" },
   instagram: { domains: ["instagram.com"], engine: "parallel" },
   x: { domains: ["x.com", "twitter.com"], engine: "parallel" },
+  facebook: { domains: ["facebook.com"], engine: "parallel" },
+  // Mostly boards come back; only single pins (/pin/...) are kept.
+  pinterest: { domains: ["pinterest.com"], engine: "parallel" },
 } as const;
 
 /**
@@ -38,6 +41,14 @@ export function isPostUrl(url: string): boolean {
   if (host === "instagram.com") return /^\/(?:[\w.]+\/)?(?:p|reel|reels)\/[\w-]+/.test(p);
   if (host === "x.com" || host === "twitter.com") return /^\/\w+\/status\/\d+/.test(p);
   if (host === "linkedin.com") return /activity[-:]\d{15,}/.test(p);
+  if (host === "facebook.com") {
+    return (
+      // Not group posts (private groups can't be embedded).
+      (!p.startsWith("/groups/") && /^\/(?:[\w.-]+\/(?:posts|photos|videos)\/(?:[^/]+\/)*\d+|reel\/\d+)\/?$/.test(p)) ||
+      (p.replace(/\/$/, "") === "/watch" && /^\d+$/.test(u.searchParams.get("v") ?? ""))
+    );
+  }
+  if (/(^|\.)pinterest\.[a-z.]+$/.test(host)) return /^\/pin\/(?:[^/]*--)?\d+\/?$/.test(p);
   return false;
 }
 
@@ -46,9 +57,11 @@ export function findExamplesTool(found: Set<string>) {
     name: "find_examples",
     label: "Find example posts",
     description:
-      "Search one platform for real posts (youtube, tiktok, instagram, linkedin or x). Returns only links to single posts, with title and snippet. Describe the post you want, e.g. 'realtor video things I wish I knew before moving to a city'.",
+      "Search one platform for real posts (youtube, tiktok, instagram, linkedin, x, facebook or pinterest). Returns only links to single posts, with title and snippet. Describe the post you want, e.g. 'realtor video things I wish I knew before moving to a city'.",
     parameters: Type.Object({
-      platform: Type.Union(Object.keys(PLATFORMS).map((p) => Type.Literal(p)) as never, { description: "youtube, tiktok, instagram, linkedin or x" }),
+      platform: Type.Union(Object.keys(PLATFORMS).map((p) => Type.Literal(p)) as never, {
+        description: "youtube, tiktok, instagram, linkedin, x, facebook or pinterest",
+      }),
       query: Type.String({ description: "What the post is about" }),
     }),
     execute: async (_id, { platform, query }) => {
