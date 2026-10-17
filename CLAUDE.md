@@ -63,6 +63,16 @@ sycamore.to/ideas/{platform}/{niche}: rendered from idea_pages on first visit, c
 - `src/tools/web.ts`: `web_search` and `read_page` (Jina Reader `r.jina.ai`, falls back to stripped HTML; **5,000
   characters max**, because everything read stays in context and is resent every turn). Both record every URL they
   return or read in `seen`, for `checkLinks`.
+- `src/tools/watch.ts`: `watch_video(url)`: a YouTube/TikTok/Instagram/X/Facebook video as text (creator, date, views,
+  caption, transcript with [m:ss]; 7,000 characters max). Ported from sycamore-motion `scripts/watch.mjs` without the
+  frames: yt-dlp captions first (free; the workflows `pipx install yt-dlp`), then Supadata (`SUPADATA_API_KEY`, free plan
+  100 credits/month) for Instagram and videos without captions. Adds the URL to `seen` (and `found` if it's a post).
+- `src/tools/screenshot.ts`: `screenshot(url, find?)`: the hero at 1440x900, or the block around some text (at least 60%
+  of the screen wide, fixed/sticky headers hidden), JPEG. Ported from sycamore-motion `scripts/brand-capture.mjs`.
+  puppeteer-core with the runner's own Chrome (`/usr/bin/google-chrome` on GitHub; `CHROME_PATH` elsewhere). The image
+  goes to the studio (`POST /api/agent/<campaign>/<id>/screenshot`, stored in the Supabase bucket under
+  `agent-screens/<campaign>/`), which returns the public URL; the tool returns it plus the text visible in the shot. Max 15
+  per topic. Blog posts may embed only these URLs (`isScreenshotUrl` in sycamore-mono `lib/blog-posts.ts`).
 - `src/tools/examples.ts`: `find_examples(platform, query)`: platform-scoped search, keeps only single-post URLs
   (`isPostUrl`, which must stay in step with `parsePostUrl` in sycamore-mono's `lib/idea-pages.ts`).
 - `src/tools/submit.ts`: `submit_page()` takes **no arguments**: it reads `page.json` from the topic's temp folder,
@@ -195,11 +205,12 @@ the studio can fix itself instead of rejecting saves a round, so prefer auto-fix
 ## Running and operating
 
 - Local run (studio on `npm run dev`, port 4000):
-  `STUDIO_URL=http://localhost:4000 AGENT_API_KEY=... OPENROUTER_API_KEY=... TOPICS_PER_RUN=1 node src/run.ts ideas`
+  `STUDIO_URL=http://localhost:4000 AGENT_API_KEY=... OPENROUTER_API_KEY=... SUPADATA_API_KEY=... TOPICS_PER_RUN=1 node src/run.ts ideas`
   (keys from `amsterdam/sycamore/.env.local`; the OpenRouter one is `OPEN_ROUTER_KEY` there). Local runs write real
   pages to production and count toward the day's pacing.
 - `npm run typecheck`. Node 22.19+ runs the TypeScript directly; imports use `.ts` extensions.
-- GitHub secrets: `STUDIO_URL`, `AGENT_API_KEY` (same as the studio's Vercel env), `OPENROUTER_API_KEY`.
+- GitHub secrets: `STUDIO_URL`, `AGENT_API_KEY` (same as the studio's Vercel env), `OPENROUTER_API_KEY`,
+  `SUPADATA_API_KEY` (watch_video's fallback; same key as sycamore-motion's `.env`).
 - Turn a campaign off, or change its pages per day: the studio's `/agents` screen. Disabling the workflow in GitHub
   also works, but leave the schedule alone otherwise.
 - Quality control: `/agents` lists every run with the live page and the Actions log; Rewrite requeues the topic,

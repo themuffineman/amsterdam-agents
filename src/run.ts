@@ -26,6 +26,8 @@ import { claimTopic, failTopic, reportRun, type Claimed, type RunReport } from "
 import { findExamplesTool } from "./tools/examples.ts";
 import { searchCost } from "./tools/search.ts";
 import { submitPageTool, type SubmitState } from "./tools/submit.ts";
+import { screenshotTool } from "./tools/screenshot.ts";
+import { watchVideoTool } from "./tools/watch.ts";
 import { readPageTool, webSearchTool, type Seen } from "./tools/web.ts";
 
 type AgentConfig = {
@@ -77,6 +79,8 @@ function buildTools(topic: Claimed, cwd: string, found: Set<string>, seen: Seen,
     web_search: webSearchTool(found, seen),
     read_page: readPageTool(seen),
     find_examples: findExamplesTool(found),
+    watch_video: watchVideoTool(found, seen),
+    screenshot: screenshotTool({ campaign: config.campaign, topicId: topic.id, seen }),
     submit_page: submitPageTool({
       campaign: config.campaign,
       topicId: topic.id,

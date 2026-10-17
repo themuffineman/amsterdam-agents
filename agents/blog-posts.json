@@ -5,6 +5,8 @@
   "tools": [
     "web_search",
     "read_page",
+    "watch_video",
+    "screenshot",
     "write",
     "edit",
     "read",

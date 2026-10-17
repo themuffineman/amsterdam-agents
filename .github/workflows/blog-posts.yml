@@ -32,10 +32,14 @@ jobs:
           node-version: "24"
           cache: npm
       - run: npm ci --ignore-scripts --no-audit --no-fund
+      # watch_video reads videos with yt-dlp (screenshot uses the runner's own Chrome).
+      - run: pipx install yt-dlp
       - name: Run agent
         env:
           STUDIO_URL: ${{ secrets.STUDIO_URL }}
           AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # watch_video's fallback for Instagram and videos without captions (free plan: 100 credits a month)
+          SUPADATA_API_KEY: ${{ secrets.SUPADATA_API_KEY }}
           TOPICS_PER_RUN: ${{ inputs.topics }}
         run: node src/run.ts blog-posts
