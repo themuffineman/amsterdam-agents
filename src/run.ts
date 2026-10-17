@@ -26,7 +26,7 @@ import { claimTopic, failTopic, reportRun, type Claimed, type RunReport } from "
 import { findExamplesTool } from "./tools/examples.ts";
 import { searchCost } from "./tools/search.ts";
 import { submitPageTool, type SubmitState } from "./tools/submit.ts";
-import { readPage, webSearchTool } from "./tools/web.ts";
+import { readPageTool, webSearchTool, type Seen } from "./tools/web.ts";
 
 type AgentConfig = {
   /** The studio campaign (/api/agent/<campaign>). */
@@ -40,6 +40,10 @@ type AgentConfig = {
   maxCostUsd: number;
   timeoutMinutes: number;
   maxSubmissions: number;
+  /** A Markdown file the agent writes the long text to, sent as the page's `body` (blog posts: "post.md"). */
+  bodyFile?: string;
+  /** Refuse submissions whose links no search or read turned up (made-up URLs). */
+  checkLinks?: boolean;
 };
 
 const SYSTEM_PROMPT = `You are an autonomous research and writing agent running unattended in a scheduled job.
@@ -68,10 +72,10 @@ const short = (v: unknown, n = 160) => {
  */
 const PI_FILE_TOOLS = new Set(["read", "write", "edit"]);
 
-function buildTools(topic: Claimed, cwd: string, found: Set<string>, state: SubmitState): Record<string, ToolDefinition> {
+function buildTools(topic: Claimed, cwd: string, found: Set<string>, seen: Seen, state: SubmitState): Record<string, ToolDefinition> {
   return {
-    web_search: webSearchTool(found),
-    read_page: readPage,
+    web_search: webSearchTool(found, seen),
+    read_page: readPageTool(seen),
     find_examples: findExamplesTool(found),
     submit_page: submitPageTool({
       campaign: config.campaign,
@@ -81,15 +85,19 @@ function buildTools(topic: Claimed, cwd: string, found: Set<string>, state: Subm
       cwd,
       found,
       state,
+      seen,
+      bodyFile: config.bodyFile,
+      checkLinks: config.checkLinks,
     }),
   } as Record<string, ToolDefinition>;
 }
 
 async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ saved: boolean; cost: number }> {
   const found = new Set<string>();
+  const seen: Seen = new Set<string>();
   const state: SubmitState = { submissions: 0, savedUrl: null, lastProblems: [] };
   const cwd = mkdtempSync(join(tmpdir(), `agent-${name}-`));
-  const all = buildTools(topic, cwd, found, state);
+  const all = buildTools(topic, cwd, found, seen, state);
   const customTools = config.tools
     .filter((t) => !PI_FILE_TOOLS.has(t))
     .map((t) => {

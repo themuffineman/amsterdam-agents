@@ -1,0 +1,20 @@
+{
+  "campaign": "blog-posts",
+  "model": "anthropic/claude-haiku-5.5",
+  "thinking": "low",
+  "tools": [
+    "web_search",
+    "read_page",
+    "write",
+    "edit",
+    "read",
+    "submit_page"
+  ],
+  "topicsPerRun": 3,
+  "maxTurns": 80,
+  "maxCostUsd": 1.5,
+  "timeoutMinutes": 35,
+  "maxSubmissions": 4,
+  "bodyFile": "post.md",
+  "checkLinks": true
+}

@@ -6,6 +6,7 @@ import { jsonrepair } from "jsonrepair";
 import { Type } from "typebox";
 
 import { submitWork } from "../studio.ts";
+import { normalUrl, type Seen } from "./web.ts";
 
 /**
  * submit_page: sends the page to the studio, which checks it and saves it, or answers
@@ -21,9 +22,26 @@ import { submitWork } from "../studio.ts";
  * before sending: they're the platforms the studio can't check, so a made-up link would
  * get through. Other platforms' links go as they are; the studio checks them and drops fakes.
  * Dropping instead of refusing saves the model from resending the whole page.
+ *
+ * Campaigns that write long prose (blog posts) keep it in a Markdown file (`bodyFile`, e.g.
+ * post.md) next to page.json, because a long article is easier to write and fix as a file
+ * than as one JSON string; it's sent as the page's `body`. With `checkLinks`, every link in
+ * the body and every source must be a URL the agent saw (a search result or a page it read),
+ * or the submission goes back unsent, without using up one of its submissions.
  */
 
 export type SubmitState = { submissions: number; savedUrl: string | null; lastProblems: string[] };
+
+/** Our own site: the studio checks those links against the pages it gave the agent. */
+const isOwnSite = (url: string) => /^https?:\/\/(www\.)?sycamore\.to(\/|$)/.test(url) || url.startsWith("/") || url.startsWith("#");
+
+/** Links in Markdown ([text](url)) and the page's sources that no search or read turned up. */
+function unseenLinks(page: Record<string, unknown>, seen: Seen): string[] {
+  const body = typeof page.body === "string" ? page.body.replace(/```[\s\S]*?```/g, " ") : "";
+  const inBody = [...body.matchAll(/\]\(\s*<?([^)\s>]+)>?(?:\s+"[^"]*")?\s*\)/g)].map((m) => m[1]);
+  const sources = Array.isArray(page.sources) ? page.sources.map((s) => (s as { url?: unknown })?.url).filter((u): u is string => typeof u === "string") : [];
+  return [...new Set([...inBody, ...sources])].filter((u) => !isOwnSite(u) && !seen.has(normalUrl(u)));
+}
 
 /** Platforms the studio can't check a post on. */
 const isUncheckable = (url: string) => /^https?:\/\/(www\.|m\.)?(instagram|facebook)\.com\//.test(url);
@@ -51,6 +69,12 @@ export function submitPageTool(opts: {
   cwd: string;
   found: Set<string>;
   state: SubmitState;
+  /** URLs the agent has seen (for checkLinks). */
+  seen: Seen;
+  /** A Markdown file in cwd sent as the page's `body` (blog posts: post.md). */
+  bodyFile?: string;
+  /** Refuse links the agent never saw (see the top of this file). */
+  checkLinks?: boolean;
 }) {
   const { state } = opts;
   const reply = (t: string) => ({ content: [{ type: "text" as const, text: t }], details: {} });
@@ -59,7 +83,9 @@ export function submitPageTool(opts: {
     name: "submit_page",
     label: "Submit page",
     description:
-      "Check and save the page you wrote to page.json (no arguments). Answers 'saved' with the URL, or the problems to fix: fix them by editing page.json, then call submit_page again.",
+      opts.bodyFile
+      ? `Check and save the post you wrote to ${opts.bodyFile} and page.json (no arguments). Answers 'saved' with the URL, or the problems to fix: fix them by editing the files, then call submit_page again.`
+      : "Check and save the page you wrote to page.json (no arguments). Answers 'saved' with the URL, or the problems to fix: fix them by editing page.json, then call submit_page again.",
     parameters: Type.Object({}),
     execute: async () => {
       if (state.savedUrl) return reply(`Already saved: ${state.savedUrl}. You're done.`);
@@ -76,6 +102,25 @@ export function submitPageTool(opts: {
         content = JSON.parse(jsonrepair(text));
       } catch (e) {
         return reply(`page.json isn't valid JSON and couldn't be repaired (${(e as Error).message}). Fix that spot with the edit tool and submit again.`);
+      }
+
+      if (opts.bodyFile) {
+        let body: string;
+        try {
+          body = readFileSync(join(opts.cwd, opts.bodyFile), "utf8");
+        } catch {
+          return reply(`There's no ${opts.bodyFile} yet. Write the article to ${opts.bodyFile} with the write tool, then call submit_page.`);
+        }
+        if (content && typeof content === "object") (content as Record<string, unknown>).body = body;
+      }
+
+      if (opts.checkLinks && content && typeof content === "object") {
+        const unseen = unseenLinks(content as Record<string, unknown>, opts.seen);
+        if (unseen.length) {
+          return reply(
+            `Not sent (this didn't use a submission). These links weren't in any search result or page you read, so they may not exist. Replace each with the exact URL of a page you found, or remove it:\n- ${unseen.join("\n- ")}`,
+          );
+        }
       }
 
       const dropped = dropUnfound(content, opts.found);

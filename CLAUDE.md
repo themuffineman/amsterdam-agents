@@ -1,6 +1,13 @@
 # amsterdam-agents: how the agent pipeline works
 
-This repo runs cloud agents that write programmatic-SEO pages for sycamore.to on a schedule. It is one of **three repos**
+This repo runs cloud agents that write pages for sycamore.to on a schedule. Two campaigns so far:
+
+| Campaign | Writes | Topics come from | Studio code | Site code |
+| --- | --- | --- | --- | --- |
+| `ideas` | programmatic-SEO pages, sycamore.to/ideas/{platform}/{niche} | `idea_topics`, loaded by script | `lib/idea-pages/` | `lib/idea-pages.ts`, `app/ideas/` |
+| `blog-posts` | traditional articles (X vs Y, alternatives, best-of, reviews, how-tos, guides), sycamore.to/blog/{slug} | `blog_post_topics`, typed in by hand on `/agents` or `/agents/add` (phone) | `lib/blog-posts/` | `lib/blog-posts.ts`, `app/blog/[slug]` |
+
+The ideas campaign is the worked example in most of this file; the blog posts campaign is described in its own section. It is one of **three repos**
 that work together. Read this before changing anything here or adding a new campaign.
 
 ## The three repos
@@ -54,7 +61,8 @@ sycamore.to/ideas/{platform}/{niche}: rendered from idea_pages on first visit, c
 - `src/tools/search.ts`: web search through **OpenRouter's web plugin** (same key as the model). Each search is a tiny
   chat request whose `url_citation` annotations are the results. Cost per request comes back in `usage.cost`.
 - `src/tools/web.ts`: `web_search` and `read_page` (Jina Reader `r.jina.ai`, falls back to stripped HTML; **5,000
-  characters max**, because everything read stays in context and is resent every turn).
+  characters max**, because everything read stays in context and is resent every turn). Both record every URL they
+  return or read in `seen`, for `checkLinks`.
 - `src/tools/examples.ts`: `find_examples(platform, query)`: platform-scoped search, keeps only single-post URLs
   (`isPostUrl`, which must stay in step with `parsePostUrl` in sycamore-mono's `lib/idea-pages.ts`).
 - `src/tools/submit.ts`: `submit_page()` takes **no arguments**: it reads `page.json` from the topic's temp folder,
@@ -78,7 +86,7 @@ OpenRouter's live prices and matched the real bill when checked.
   (Delete). A claim older than 3 hours is treated as abandoned and can be claimed again.
 - API for agents (Bearer `AGENT_API_KEY`): `app/api/agent/[campaign]/next`, `.../[id]` (PATCH done/failed),
   `.../runs/[runId]` (report). API for the screen (no auth, like the rest of the studio): `app/api/agents/...`.
-- Tables (studio DB, `SYCAMORE_DATABASE_URL`): `idea_topics` (the queue), `agent_runs` (one row per claim),
+- Tables (studio DB, `SYCAMORE_DATABASE_URL`): `idea_topics` and `blog_post_topics` (the queues), `agent_runs` (one row per claim),
   `agent_campaign_settings` (on/off, pages per day), `content_posts` (/analytics). Migrations in `db/migrations/`,
   applied with `node scripts/apply-migration.mjs <file>` (drizzle-kit's journal isn't used).
 - Ideas campaign code, `lib/idea-pages/`:
@@ -107,6 +115,32 @@ OpenRouter's live prices and matched the real bill when checked.
 - `components/idea-pages/PostEmbed.tsx`: example posts are a light card; the platform's player loads only on click.
 - Table `idea_pages` (PK platform + niche_slug, `data` jsonb, `title_template`, `published_at`, `source`), migrations
   0031, 0032, applied with `npm run db:apply -- <file>` (hand-written; the drizzle journal is stale).
+
+## The blog posts campaign (`blog-posts`)
+
+- **Topics**: `blog_post_topics` (studio DB, migration 0030): `title` (verbatim), `slug` (unique, from the title, years
+  stripped so a rewrite keeps the URL), `post_type` (versus | alternatives | best | review | howto | guide; guessed from
+  the title when not picked, `guessPostType`), optional `notes` (a brief for the agent, put in the prompt). Added through
+  `POST /api/agents/blog-posts/topics` (`lib/blog-posts/topics.ts`): one title per line, bullets/numbers stripped,
+  duplicates and slugs the site already uses (`format/reserved-slugs.json`, synced) skipped with a reason.
+- **Prompt** (`lib/blog-posts/prompt.ts`): a brief per post type, the honesty rules (Sycamore gets a warm, full write-up;
+  other tools are never put down; limits stated as sourced facts; say when another tool is the better pick), research
+  rules (each tool's own pricing page wins), the list of sycamore.to pages it may link to (key pages + published posts),
+  house voice. **What it may say about Sycamore is `lib/blog-posts/sycamore-facts.ts`**: keep it true to the product.
+- **Files**: the agent writes the article to `post.md` and metaDescription/excerpt/faq/sources to `page.json`
+  (`agents/blog-posts.json` sets `bodyFile: "post.md"`; submit_page sends it as `body`). With `checkLinks`, submit_page
+  refuses (without spending a submission) any link or source that wasn't a search result or a page the agent read
+  (`seen` in run.ts, compared with `normalUrl`).
+- **Checks** (`lib/blog-posts/save.ts`): autoFix (em dashes, a leading `# title`, trailing FAQ/Sources sections), the
+  format (`blogPostProblems`: lengths, 4-14 `##` sections, no H1/HTML/images, a table for comparison types), then
+  1,200+ words, banned phrases, put-down words ("clunky", "overpriced"... quoted in context), Sycamore mentioned, own-site
+  links only to listed pages, ≤20% shared 5-word phrases with posts of the same type. Saved to sycamore-mono's
+  `blog_posts` (migration 0033); `content_posts` gets `content_type 'article'` ("Agent blog posts" on /analytics).
+- **Site**: `app/blog/[slug]/page.tsx` serves an MDX file from `content/blog/edu-blogs` if one has the slug, else the
+  database post (ISR 1h) via `components/blog-posts/BlogPostArticle.tsx` (Markdown rendered by `renderMarkdown` in
+  `lib/mdx.tsx`: no JSX, no raw HTML, no math, so prices stay prices; FAQ + BlogPosting JSON-LD). Listed on `/blog`,
+  in the sitemap.
+- Workflow `.github/workflows/blog-posts.yml`, hourly at :47.
 
 ## Tracking: what is recorded where
 
