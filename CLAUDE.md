@@ -108,6 +108,32 @@ OpenRouter's live prices and matched the real bill when checked.
 - Table `idea_pages` (PK platform + niche_slug, `data` jsonb, `title_template`, `published_at`, `source`), migrations
   0031, 0032, applied with `npm run db:apply -- <file>` (hand-written; the drizzle journal is stale).
 
+## Tracking: what is recorded where
+
+Everything lives in the studio's database (`SYCAMORE_DATABASE_URL`), except the pages themselves.
+
+| What | Where | Written by | Seen on |
+| --- | --- | --- | --- |
+| Each published page (one row per topic) | `content_posts` (`kind 'blog'`, `content_type 'ideas'`, `platform 'website'`, title, page URL, `topic_id`, `posted_at`) | `onDone` in the campaign entry, when the studio saves a page | `/analytics` → Blog → "Ideas pages" (posts per day, cumulative) |
+| Each agent run (claim → outcome) | `agent_runs` (outcome running/saved/failed, page URL, error, model, cost total + model + searches, searches, tokens in/out/cache read/cache write, turns, submissions, GitHub run URL, started/finished) | row inserted by `claimTopic`; filled by the runner's report (`POST /api/agent/<campaign>/runs/<runId>`) | `/agents`: per-run list, per-campaign spend, totals, last 7 days |
+| Each topic's state | the topic table (`idea_topics`: status pending/claimed/done/failed/removed, attempts, last_error) | claim, done, failed, Rewrite, Delete | `/agents` queue counts and the note on each run ("back in the queue", "deleted"...) |
+| Campaign controls | `agent_campaign_settings` (enabled, pages_per_day) | the `/agents` screen | `/agents` |
+| The page | sycamore-mono's `idea_pages` (`source` = `agent:<model>`) | studio `save.ts` | sycamore.to |
+
+How they interact:
+- `content_posts` is unique on `(content_type, topic_id)`, so a **Rewrite** that saves a new version doesn't count
+  twice in /analytics; the post keeps its first publish date. **Delete** removes the `content_posts` row (the page is
+  gone) and retires the topic.
+- Cost comes from the runner: Pi's `getSessionStats().cost` (model, at OpenRouter's live prices; matched the real bill
+  when checked) plus the `usage.cost` OpenRouter returns for every search. Failed runs cost money too and are counted in
+  totals and in "per page".
+- Runs record the **attempt**, so pacing counts every claim of the UTC day, including failures.
+- A runner that dies before reporting leaves its `agent_runs` row on `running`. The topic itself is reclaimed after
+  3 hours.
+- The first three pages (2026-10-17) were backfilled into `agent_runs` by hand from their logs.
+- Not tracked here: hourly cron runs that found nothing due (only in the Actions log), and page traffic or rankings
+  (sycamore-mono's own analytics and Search Console).
+
 ## Platform facts (checked 2026-10-17)
 
 | Platform | Found by | Existence check (studio, `examples.ts`) | Embed |
