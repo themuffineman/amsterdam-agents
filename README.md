@@ -12,7 +12,10 @@ repo is public on purpose (free Actions minutes): nothing secret is in it.
 
 `node src/run.ts <agent>` reads `agents/<agent>.json`, then for each topic:
 
-1. `POST {STUDIO_URL}/api/agent/<campaign>/next` claims a topic and returns its prompt.
+1. `POST {STUDIO_URL}/api/agent/<campaign>/next` claims a topic and returns its prompt, if one is due. The studio
+   decides: each campaign's on/off and pages per day are set on its `/agents` screen, and pages are spread over the
+   day. So the cron runs hourly and most runs just ask, hear "not due yet", and stop. `topicsPerRun` is only a safety
+   cap.
 2. A Pi session runs that prompt with only the tools the config lists (`src/tools/`).
 3. The agent writes its page to `page.json` in a temporary folder (Pi's `write` tool) and calls `submit_page`, which
    reads the file, repairs small JSON mistakes and sends it. The studio fixes mechanical problems itself and answers
@@ -20,6 +23,8 @@ repo is public on purpose (free Actions minutes): nothing secret is in it.
    again, up to `maxSubmissions`.
 4. If nothing got saved (limits hit, error, out of submissions), the topic is reported `failed` with the reason. The
    studio puts it back in the queue, or marks it failed after 3 tries.
+5. The run's report (outcome, cost split into model and searches, tokens, turns, submissions, this Actions run's link)
+   goes to `POST /api/agent/<campaign>/runs/<runId>` and shows on the studio's `/agents` screen.
 
 Limits per topic: `maxTurns`, `maxCostUsd` (model tokens plus search fees, as OpenRouter reports them), `timeoutMinutes`.
 
@@ -37,7 +42,7 @@ Limits per topic: `maxTurns`, `maxCostUsd` (model tokens plus search fees, as Op
 
 | Agent | Campaign | Schedule | Writes |
 | --- | --- | --- | --- |
-| `ideas` | `ideas` | every 2 hours (`.github/workflows/ideas.yml`) | sycamore.to/ideas/{platform}/{niche} |
+| `ideas` | `ideas` | hourly check; pages per day set on the studio's `/agents` | sycamore.to/ideas/{platform}/{niche} |
 
 ## Adding an agent
 

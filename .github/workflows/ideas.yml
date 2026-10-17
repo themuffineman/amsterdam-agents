@@ -5,7 +5,9 @@ name: ideas agent
 
 on:
   schedule:
-    - cron: "17 */2 * * *" # every 2 hours, at :17 (GitHub delays runs at :00)
+    # Hourly, at :17 (GitHub delays runs at :00). Most runs just ask the studio and stop:
+    # how many pages a day (and whether at all) is set on the studio's /agents screen.
+    - cron: "17 * * * *"
   workflow_dispatch:
     inputs:
       topics:

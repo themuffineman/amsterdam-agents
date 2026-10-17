@@ -22,7 +22,7 @@ import {
   type ToolDefinition,
 } from "@earendil-works/pi-coding-agent";
 
-import { claimTopic, failTopic, type Claimed } from "./studio.ts";
+import { claimTopic, failTopic, reportRun, type Claimed, type RunReport } from "./studio.ts";
 import { findExamplesTool } from "./tools/examples.ts";
 import { searchCost } from "./tools/search.ts";
 import { submitPageTool, type SubmitState } from "./tools/submit.ts";
@@ -175,20 +175,56 @@ async function runTopic(topic: Claimed, modelRuntime: ModelRuntime): Promise<{ s
   );
   log(`cost $${cost.toFixed(4)} = model $${stats.cost.toFixed(4)} + ${searchCost.count} searches $${searchCost.total.toFixed(4)}`);
   const lastText = session.getLastAssistantText() ?? "";
+  // Why the model's last reply ended, when it wasn't a normal stop (a provider error, a
+  // timeout): otherwise a run that died quietly says only "stopped without submitting".
+  const lastReply = [...session.messages].reverse().find((m) => m.role === "assistant") as
+    | { stopReason?: string; errorMessage?: string }
+    | undefined;
+  const modelError =
+    lastReply && lastReply.stopReason !== "stop" && lastReply.stopReason !== "toolUse"
+      ? `model reply ended with "${lastReply.stopReason}"${lastReply.errorMessage ? `: ${lastReply.errorMessage}` : ""}`
+      : null;
   session.dispose();
+
+  // What the run did and cost, for the studio's /agents screen.
+  const report: RunReport = {
+    outcome: state.savedUrl ? "saved" : "failed",
+    pageUrl: state.savedUrl,
+    error: null,
+    model: config.model,
+    costUsd: cost,
+    modelCostUsd: stats.cost,
+    searchCostUsd: searchCost.total,
+    searches: searchCost.count,
+    tokensIn: t.input,
+    tokensOut: t.output,
+    cacheRead: t.cacheRead,
+    cacheWrite: t.cacheWrite,
+    turns,
+    submissions: state.submissions,
+    runUrl: RUN_URL,
+  };
 
   if (state.savedUrl) {
     log(`saved ${topic.label}: ${state.savedUrl}`);
+    await reportRun(config.campaign, topic.runId, report);
     return { saved: true, cost };
   }
   const why =
     state.lastProblems.length > 0
       ? `not saved after ${state.submissions} submission(s); last problems: ${state.lastProblems.join("; ")}`
-      : `not saved: ${stopReason ?? "the agent stopped without submitting"}. Last message: ${short(lastText, 300)}`;
+      : `not saved: ${stopReason ?? modelError ?? "the agent stopped without submitting"}. Last message: ${short(lastText, 300) || "(none)"}`;
   const status = await failTopic(config.campaign, topic.id, why);
   log(`gave back ${topic.label} (${status}): ${why}`);
+  await reportRun(config.campaign, topic.runId, { ...report, error: why });
   return { saved: false, cost };
 }
+
+/** This GitHub Actions run's page (the log), when running there. */
+const RUN_URL =
+  process.env.GITHUB_SERVER_URL && process.env.GITHUB_REPOSITORY && process.env.GITHUB_RUN_ID
+    ? `${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/actions/runs/${process.env.GITHUB_RUN_ID}`
+    : null;
 
 async function main() {
   const key = process.env.OPENROUTER_API_KEY;
@@ -199,12 +235,15 @@ async function main() {
 
   let saved = 0;
   let cost = 0;
+  // The studio decides how many pages are due (pages per day on /agents); topicsPerRun is
+  // only a safety cap on one run.
   for (let i = 0; i < config.topicsPerRun; i++) {
-    const topic = await claimTopic(config.campaign);
-    if (!topic) {
-      log(`the ${config.campaign} queue is empty`);
+    const claim = await claimTopic(config.campaign);
+    if (!claim.topic) {
+      log(`no ${config.campaign} page now: ${claim.reason}${claim.nextAt ? ` (next around ${claim.nextAt})` : ""}`);
       break;
     }
+    const topic = claim.topic;
     log(`claimed ${topic.label} (${topic.id})`);
     const result = await runTopic(topic, modelRuntime);
     if (result.saved) saved++;

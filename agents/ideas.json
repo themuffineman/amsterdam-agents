@@ -11,7 +11,7 @@
     "read",
     "submit_page"
   ],
-  "topicsPerRun": 1,
+  "topicsPerRun": 5,
   "maxTurns": 70,
   "maxCostUsd": 1.5,
   "timeoutMinutes": 30,
