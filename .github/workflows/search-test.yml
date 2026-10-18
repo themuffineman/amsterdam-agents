@@ -1,0 +1,41 @@
+# Tests our SearXNG search on a GitHub runner: starts the container and runs the kinds of
+# searches the agents make (scripts/search-test.ts). Free: it never uses the paid search and
+# writes no pages. Totals show as notes on the run's page. Runs when the search setup changes,
+# or by hand from the Actions tab.
+name: search test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "searxng/**"
+      - "src/tools/search.ts"
+      - "scripts/search-test.ts"
+      - ".github/workflows/search-test.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Start SearXNG
+        run: |
+          docker run -d --name searxng -p 8080:8080 -v "$PWD/searxng:/etc/searxng" searxng/searxng:latest
+          for i in $(seq 30); do curl -sf http://localhost:8080/healthz >/dev/null && echo "SearXNG up" && exit 0; sleep 2; done
+          docker logs searxng
+          echo "::error::SearXNG didn't start"
+          exit 1
+      - name: Search test
+        env:
+          SEARXNG_URL: http://localhost:8080
+        run: node scripts/search-test.ts
+      - name: SearXNG log
+        if: always()
+        run: docker logs searxng 2>&1 | tail -80

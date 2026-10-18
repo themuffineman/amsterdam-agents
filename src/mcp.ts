@@ -37,7 +37,7 @@ const tools = buildTools(config, env("AGENT_TOPIC_ID"), env("AGENT_CWD"), env("A
 const stateFile = env("AGENT_STATE_FILE");
 
 const saveState = () =>
-  writeFileSync(stateFile, JSON.stringify({ submit: state.submit, searchCost: searchCost.total, searches: searchCost.count }));
+  writeFileSync(stateFile, JSON.stringify({ submit: state.submit, searchCost: searchCost.total, searches: searchCost.count, freeSearches: searchCost.free }));
 saveState();
 
 const server = new Server({ name: "agent", version: "1.0.0" }, { capabilities: { tools: {} } });

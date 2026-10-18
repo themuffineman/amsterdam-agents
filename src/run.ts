@@ -109,6 +109,7 @@ async function runTopicPi(topic: Claimed): Promise<Outcome> {
   let turns = 0;
   searchCost.total = 0;
   searchCost.count = 0;
+  searchCost.free = 0;
   let stopReason: string | null = null;
   const stop = (reason: string) => {
     if (stopReason) return;
@@ -155,7 +156,7 @@ async function runTopicPi(topic: Claimed): Promise<Outcome> {
   log(
     `turns ${turns}, tool calls ${stats.toolCalls}, tokens: in ${t.input}, out ${t.output}, cache read ${t.cacheRead}, cache write ${t.cacheWrite}`,
   );
-  log(`cost $${cost.toFixed(4)} = model $${stats.cost.toFixed(4)} + ${searchCost.count} searches $${searchCost.total.toFixed(4)}`);
+  log(`cost $${cost.toFixed(4)} = model $${stats.cost.toFixed(4)} + ${searchCost.count} searches $${searchCost.total.toFixed(4)} (${searchCost.free} free, SearXNG)`);
   const lastText = session.getLastAssistantText() ?? "";
   // Why the model's last reply ended, when it wasn't a normal stop (a provider error, a
   // timeout): otherwise a run that died quietly says only "stopped without submitting".

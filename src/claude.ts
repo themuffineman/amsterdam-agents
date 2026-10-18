@@ -36,6 +36,8 @@ export type ClaudeOutcome = {
   model: string;
   searchCostUsd: number;
   searches: number;
+  /** Of those, how many SearXNG answered for free. */
+  freeSearches: number;
   tokensIn: number;
   tokensOut: number;
   cacheRead: number;
@@ -47,7 +49,7 @@ export type ClaudeOutcome = {
 const FALLBACK_ERROR = /usage limit|hit your limit|limit reached|rate.?limit|429|overloaded|529|not logged in|invalid api key|oauth|authentication|ENOENT|not found|cannot find|not recognized/i;
 
 /** Variables our tools need; passed to the MCP server explicitly. */
-const TOOL_ENV = ["STUDIO_URL", "AGENT_API_KEY", "OPENROUTER_API_KEY", "SUPADATA_API_KEY", "CHROME_PATH", "PATH", "HOME", "USERPROFILE", "TEMP", "TMP", "SYSTEMROOT"];
+const TOOL_ENV = ["STUDIO_URL", "AGENT_API_KEY", "OPENROUTER_API_KEY", "SEARXNG_URL", "SUPADATA_API_KEY", "CHROME_PATH", "PATH", "HOME", "USERPROFILE", "TEMP", "TMP", "SYSTEMROOT"];
 
 export async function runTopicClaude(name: string, config: AgentConfig, topic: Claimed): Promise<ClaudeOutcome> {
   const claudeModel = config.claudeModel ?? "haiku";
@@ -110,6 +112,7 @@ Your working folder is ${cwd}: keep your draft files there. Read, Write and Edit
     model,
     searchCostUsd: 0,
     searches: 0,
+    freeSearches: 0,
     tokensIn: 0,
     tokensOut: 0,
     cacheRead: 0,
@@ -124,6 +127,7 @@ Your working folder is ${cwd}: keep your draft files there. Read, Write and Edit
       out.savedUrl = s.submit.savedUrl;
       out.searchCostUsd = s.searchCost;
       out.searches = s.searches;
+      out.freeSearches = s.freeSearches ?? 0;
     } catch {
       // Being rewritten right now; the next read gets it.
     }
@@ -218,7 +222,7 @@ Your working folder is ${cwd}: keep your draft files there. Read, Write and Edit
 
   out.saved = Boolean(out.savedUrl);
   log(`claude code: turns ${out.turns}, tokens in ${out.tokensIn}, out ${out.tokensOut}, cache read ${out.cacheRead}, cache write ${out.cacheWrite}`);
-  log(`cost $${out.searchCostUsd.toFixed(4)} = model $0 (subscription) + ${out.searches} searches`);
+  log(`cost $${out.searchCostUsd.toFixed(4)} = model $0 (subscription) + ${out.searches} searches (${out.freeSearches} free, SearXNG)`);
   if (out.saved) return out;
 
   const problem = resultError ?? (code !== 0 && !stopReason ? `exit ${code}: ${short(stderr.trim(), 400)}` : null);

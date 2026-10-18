@@ -1,0 +1,19 @@
+# SearXNG, our own search engine for the agents' web_search and find_examples (src/tools/search.ts).
+# Runs as a throwaway container inside each GitHub Actions job (see the workflows), so searches
+# cost nothing. It asks several public engines at once and merges their results.
+use_default_settings: true
+
+server:
+  # Only reachable from the runner itself (localhost), so the key doesn't need to be secret.
+  secret_key: "amsterdam-agents-local-searxng"
+  limiter: false
+  public_instance: false
+
+search:
+  safe_search: 0
+  # JSON is off by default; the agents need it.
+  formats: [html, json]
+
+outgoing:
+  request_timeout: 4.0
+  max_request_timeout: 8.0

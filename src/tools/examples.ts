@@ -67,7 +67,7 @@ export function findExamplesTool(found: Set<string>) {
     execute: async (_id, { platform, query }) => {
       const cfg = PLATFORMS[platform as keyof typeof PLATFORMS];
       try {
-        const results = (await search(query, { engine: cfg.engine, domains: [...cfg.domains], max: 10 })).filter((r) => isPostUrl(r.url));
+        const results = (await search(query, { engine: cfg.engine, domains: [...cfg.domains], max: 10, accept: (r) => isPostUrl(r.url) })).filter((r) => isPostUrl(r.url));
         for (const r of results) found.add(r.url);
         return { content: [{ type: "text" as const, text: formatResults(results) }], details: {} };
       } catch (e) {

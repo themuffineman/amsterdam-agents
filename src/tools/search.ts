@@ -1,26 +1,85 @@
 /**
- * Web search through OpenRouter's web plugin, so search runs on the same key as the model.
- * Each search is one tiny chat request (max 16 output tokens) whose results come back as
- * url_citation annotations: we keep the results and ignore the model's reply.
+ * Web search. Two backends, tried in this order:
  *
- * Engines (checked 2026-10-17): Parallel in "turbo" mode costs about $0.001 a search and
+ * 1. SearXNG (free): our own meta-search engine, a container the workflow starts on the runner
+ *    (config in searxng/settings.yml). It asks Bing, DuckDuckGo, Brave, Mojeek and others at
+ *    once and merges what they return. Used when SEARXNG_URL is set (the workflows set it).
+ * 2. OpenRouter's web plugin (paid), when SearXNG fails or finds nothing usable. Each search is
+ *    one tiny chat request (max 16 output tokens) whose results come back as url_citation
+ *    annotations: we keep the results and ignore the model's reply.
+ *
+ * OpenRouter engines (checked 2026-10-17): Parallel in "turbo" mode costs about $0.001 a search and
  * finds ordinary pages plus YouTube, TikTok, Instagram and X posts well; it's the default.
  * Exa ($0.007) is only used for LinkedIn posts, which Parallel doesn't find.
  *
- * What searches cost (OpenRouter reports it per request) adds up in searchCost, which the
- * runner reads and resets per topic.
+ * searchCost counts every search (count), the ones SearXNG answered for free (free) and what the
+ * paid ones cost (total). The runner reads and resets it per topic.
  */
 
-export const searchCost = { total: 0, count: 0 };
+export const searchCost = { total: 0, count: 0, free: 0 };
 
 export type SearchResult = { title: string; url: string; snippet: string };
 
+type SearchOpts = {
+  engine?: "exa" | "parallel";
+  domains?: string[];
+  max?: number;
+  /** Results the caller can use (e.g. only single posts). If SearXNG returns none of these, the paid search runs. */
+  accept?: (r: SearchResult) => boolean;
+};
+
 const SEARCH_MODEL = "anthropic/claude-haiku-5.5";
 
-export async function search(
-  query: string,
-  opts: { engine?: "exa" | "parallel"; domains?: string[]; max?: number } = {},
-): Promise<SearchResult[]> {
+export async function search(query: string, opts: SearchOpts = {}): Promise<SearchResult[]> {
+  searchCost.count++;
+  if (process.env.SEARXNG_URL) {
+    try {
+      const results = await searxng(query, opts);
+      if (results.some(opts.accept ?? (() => true))) {
+        searchCost.free++;
+        return results;
+      }
+    } catch (e) {
+      console.log(`SearXNG failed, using the paid search: ${(e as Error).message}`);
+    }
+  }
+  return openRouter(query, opts);
+}
+
+/** Whether a URL is on one of these domains (or a subdomain, e.g. m.youtube.com). */
+const onDomain = (url: string, domains: string[]) => {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, "");
+    return domains.some((d) => host === d || host.endsWith(`.${d}`));
+  } catch {
+    return false;
+  }
+};
+
+/**
+ * SearXNG's JSON API. Domain filters become site: in the query (every engine it asks
+ * understands that); results off those domains are dropped anyway.
+ */
+export async function searxng(query: string, opts: SearchOpts = {}): Promise<SearchResult[]> {
+  const domains = opts.domains ?? [];
+  const site = domains.map((d) => `site:${d}`).join(" OR ");
+  const url = new URL("/search", process.env.SEARXNG_URL);
+  url.searchParams.set("q", site ? `${query} ${site}` : query);
+  url.searchParams.set("format", "json");
+  const res = await fetch(url, { signal: AbortSignal.timeout(20_000) });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const body = await res.json();
+
+  const results: SearchResult[] = [];
+  for (const r of body.results ?? []) {
+    if (!r.url || (domains.length && !onDomain(r.url, domains))) continue;
+    results.push({ title: r.title ?? "", url: r.url, snippet: (r.content ?? "").replace(/\s+/g, " ").slice(0, 500) });
+    if (results.length >= (opts.max ?? 8)) break;
+  }
+  return results;
+}
+
+async function openRouter(query: string, opts: SearchOpts): Promise<SearchResult[]> {
   const key = process.env.OPENROUTER_API_KEY;
   if (!key) throw new Error("OPENROUTER_API_KEY is not set");
   const engine = opts.engine ?? "parallel";
@@ -43,7 +102,6 @@ export async function search(
   const body = await res.json().catch(() => ({}));
   if (!res.ok) throw new Error(`search failed (${res.status}): ${body?.error?.message ?? "no details"}`);
   searchCost.total += Number(body.usage?.cost) || 0;
-  searchCost.count++;
 
   const seen = new Set<string>();
   const results: SearchResult[] = [];
