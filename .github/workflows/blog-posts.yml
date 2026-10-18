@@ -41,11 +41,20 @@ jobs:
       - run: pipx install yt-dlp
       # The claude-code engine (a campaign switched to it on /agents) runs the Claude Code CLI.
       - run: npm install -g @anthropic-ai/claude-code --no-audit --no-fund
+      # Our own search engine (searxng/settings.yml), free: web_search and find_examples try it
+      # before the paid OpenRouter search. If it doesn't start, every search just uses the paid one.
+      - name: Start SearXNG
+        run: |
+          docker run -d --name searxng -p 8080:8080 -v "$PWD/searxng:/etc/searxng" searxng/searxng:latest
+          for i in $(seq 30); do curl -sf http://localhost:8080/healthz >/dev/null && echo "SearXNG up" && exit 0; sleep 2; done
+          docker logs searxng || true
+          echo "::warning::SearXNG didn't start; searches will use the paid fallback"
       - name: Run agent
         env:
           STUDIO_URL: ${{ secrets.STUDIO_URL }}
           AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          SEARXNG_URL: http://localhost:8080
           # watch_video's fallback for Instagram and videos without captions (free plan: 100 credits a month)
           SUPADATA_API_KEY: ${{ secrets.SUPADATA_API_KEY }}
           # The claude-code engine: a token from `claude setup-token` (Claude subscription, no per-token bill)

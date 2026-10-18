@@ -106,14 +106,26 @@ sycamore.to/ideas/{platform}/{niche}: rendered from idea_pages on first visit, c
     only inside that folder, none of the machine's settings), `--tools Read,Write,Edit`, our system prompt, the
     studio's prompt on stdin. Our tools come from `src/mcp.ts`, an MCP stdio server around the same `buildTools`; it
     writes how submitting went and the search cost to a state file the runner reads (it's Claude Code's child
-    process). Searches still cost (OpenRouter), the model costs $0; reports say model `claude-code/haiku`.
+    process). Searches are mostly free (SearXNG, the fallback costs), the model costs $0; reports say model `claude-code/haiku`.
     Usage limits are shared with the subscription owner's own Claude Code use. On a usage limit, overload or a
     Claude Code that can't start, the topic is redone with Pi in the same run (`fallback`; the report's model says
     so). Local test: `CLAUDE_BIN=<path to claude.exe>` (the VS Code extension's `resources/native-binary/claude.exe`
     on Windows; the npm package's binary doesn't run there).
 - `src/studio.ts`: the studio API client (claim, submit, fail, report).
-- `src/tools/search.ts`: web search through **OpenRouter's web plugin** (same key as the model). Each search is a tiny
-  chat request whose `url_citation` annotations are the results. Cost per request comes back in `usage.cost`.
+- `src/tools/search.ts`: web search, **SearXNG first (free), OpenRouter's web plugin as the fallback** (paid, same key
+  as the model). SearXNG is our own meta-search engine: the ideas/blog-posts workflows start the `searxng/searxng`
+  container on the runner ("Start SearXNG", config `searxng/settings.yml`) and set `SEARXNG_URL`; unset (locally), every
+  search is paid as before. The paid search runs when SearXNG fails or returns nothing usable (`accept`: for
+  find_examples, no single posts). The paid one is a tiny chat request whose `url_citation` annotations are the
+  results; its cost comes back in `usage.cost`. Logs say how many searches were free (`searchCost.free`); the studio
+  report's `searchCostUsd` is the paid ones only. `SEARXNG_URL` is in the claude-code engine's `TOOL_ENV` (the MCP
+  server only gets listed variables).
+- **SearXNG on GitHub runners** (tested 2026-10-18 with `.github/workflows/search-test.yml`, which runs on a push to the
+  search files or by hand and posts totals as annotations; free, writes nothing): Google CSE, Bing and Yahoo answer;
+  Brave rate-limits, DuckDuckGo shows a CAPTCHA, Qwant denies (SearXNG pauses those and uses the rest). No proxies:
+  each job is a fresh machine/IP with few searches. Research 8/8 queries got results; single posts found for YouTube,
+  TikTok, Instagram, LinkedIn, Facebook, few for X and Pinterest. If engines start blocking, the paid share in the run
+  logs goes up: rerun the search test and change the engines in `settings.yml`.
 - `src/tools/web.ts`: `web_search` and `read_page` (Jina Reader `r.jina.ai`, falls back to stripped HTML; **5,000
   characters max**, because everything read stays in context and is resent every turn). Both record every URL they
   return or read in `seen`, for `checkLinks`.
