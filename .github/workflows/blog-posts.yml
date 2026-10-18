@@ -20,6 +20,9 @@ on:
         required: false
         type: choice
         options: ["", "pi", "claude-code"]
+      model:
+        description: "OpenRouter model for this run only, Pi engine (e.g. nvidia/nemotron-3-ultra-550b-a55b:free)"
+        required: false
 
 # One run at a time: a slow run makes the next one wait instead of overlapping.
 concurrency:
@@ -61,4 +64,5 @@ jobs:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           TOPICS_PER_RUN: ${{ inputs.topics }}
           ENGINE: ${{ inputs.engine }}
+          MODEL: ${{ inputs.model }}
         run: node src/run.ts blog-posts

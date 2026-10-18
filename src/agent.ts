@@ -42,7 +42,10 @@ export type AgentConfig = {
 };
 
 export function loadConfig(name: string): AgentConfig {
-  return JSON.parse(readFileSync(new URL(`../agents/${name}.json`, import.meta.url), "utf8"));
+  const config: AgentConfig = JSON.parse(readFileSync(new URL(`../agents/${name}.json`, import.meta.url), "utf8"));
+  // One run with a different OpenRouter model, e.g. a free one (the workflow's "model" input).
+  if (process.env.MODEL?.trim()) config.model = process.env.MODEL.trim();
+  return config;
 }
 
 export const SYSTEM_PROMPT = `You are an autonomous research and writing agent running unattended in a scheduled job.
