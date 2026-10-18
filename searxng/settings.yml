@@ -17,3 +17,18 @@ search:
 outgoing:
   request_timeout: 4.0
   max_request_timeout: 8.0
+
+# More engines than the defaults, so results don't hang on one. From GitHub's servers (tested
+# 2026-10-18) Google CSE answered; Brave rate-limits and DuckDuckGo shows a CAPTCHA, which
+# SearXNG handles by pausing that engine and using the rest.
+engines:
+  - name: bing
+    disabled: false
+  - name: mojeek
+    disabled: false
+  - name: startpage
+    disabled: false
+  - name: yahoo
+    disabled: false
+  - name: qwant
+    disabled: false

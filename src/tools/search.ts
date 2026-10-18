@@ -56,20 +56,24 @@ const onDomain = (url: string, domains: string[]) => {
   }
 };
 
-/**
- * SearXNG's JSON API. Domain filters become site: in the query (every engine it asks
- * understands that); results off those domains are dropped anyway.
- */
-export async function searxng(query: string, opts: SearchOpts = {}): Promise<SearchResult[]> {
-  const domains = opts.domains ?? [];
+/** SearXNG's raw JSON answer. Domain filters become site: in the query (every engine it asks understands that). */
+export async function searxngRaw(query: string, domains: string[] = []) {
   const site = domains.map((d) => `site:${d}`).join(" OR ");
   const url = new URL("/search", process.env.SEARXNG_URL);
   url.searchParams.set("q", site ? `${query} ${site}` : query);
   url.searchParams.set("format", "json");
   const res = await fetch(url, { signal: AbortSignal.timeout(20_000) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const body = await res.json();
+  return (await res.json()) as {
+    results?: { url?: string; title?: string; content?: string; engines?: string[] }[];
+    /** Engines that didn't answer, with why (CAPTCHA, too many requests, timeout). */
+    unresponsive_engines?: [string, string][];
+  };
+}
 
+/** SearXNG's answer as results; ones off the asked-for domains are dropped. */
+export function searxngResults(body: Awaited<ReturnType<typeof searxngRaw>>, opts: SearchOpts = {}): SearchResult[] {
+  const domains = opts.domains ?? [];
   const results: SearchResult[] = [];
   for (const r of body.results ?? []) {
     if (!r.url || (domains.length && !onDomain(r.url, domains))) continue;
@@ -78,6 +82,9 @@ export async function searxng(query: string, opts: SearchOpts = {}): Promise<Sea
   }
   return results;
 }
+
+export const searxng = async (query: string, opts: SearchOpts = {}) =>
+  searxngResults(await searxngRaw(query, opts.domains), opts);
 
 async function openRouter(query: string, opts: SearchOpts): Promise<SearchResult[]> {
   const key = process.env.OPENROUTER_API_KEY;

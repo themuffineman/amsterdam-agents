@@ -7,7 +7,7 @@
  * on the run's page.
  */
 import { isPostUrl } from "../src/tools/examples.ts";
-import { searxng } from "../src/tools/search.ts";
+import { searxngRaw, searxngResults } from "../src/tools/search.ts";
 
 // Research searches, like the blog posts and ideas agents make.
 const RESEARCH = [
@@ -35,18 +35,9 @@ const EXAMPLES: [string, string[], string][] = [
 const base = process.env.SEARXNG_URL;
 if (!base) throw new Error("SEARXNG_URL is not set");
 
-/** The raw answer, for which engines replied and which didn't (blocked, CAPTCHA, timeout). */
-async function raw(q: string) {
-  const u = new URL("/search", base);
-  u.searchParams.set("q", q);
-  u.searchParams.set("format", "json");
-  const res = await fetch(u, { signal: AbortSignal.timeout(20_000) });
-  return res.json() as Promise<{ results: { engines?: string[] }[]; unresponsive_engines?: [string, string][] }>;
-}
-
 const answered = new Map<string, number>();
 const failed = new Map<string, string>();
-const note = (body: Awaited<ReturnType<typeof raw>>) => {
+const note = (body: Awaited<ReturnType<typeof searxngRaw>>) => {
   for (const r of body.results ?? []) for (const e of r.engines ?? []) answered.set(e, (answered.get(e) ?? 0) + 1);
   for (const [e, why] of body.unresponsive_engines ?? []) failed.set(e, why);
 };
@@ -54,8 +45,9 @@ const note = (body: Awaited<ReturnType<typeof raw>>) => {
 let researchOk = 0;
 console.log("== Research searches");
 for (const q of RESEARCH) {
-  note(await raw(q));
-  const results = await searxng(q);
+  const body = await searxngRaw(q);
+  note(body);
+  const results = searxngResults(body);
   if (results.length) researchOk++;
   console.log(`\n"${q}": ${results.length} results`);
   for (const r of results) console.log(`  ${r.url}\n    ${r.snippet.slice(0, 120)}`);
@@ -64,8 +56,9 @@ for (const q of RESEARCH) {
 const examples: string[] = [];
 console.log("\n== find_examples searches");
 for (const [platform, domains, q] of EXAMPLES) {
-  note(await raw(`${q} ${domains.map((d) => `site:${d}`).join(" OR ")}`));
-  const results = await searxng(q, { domains, max: 10 });
+  const body = await searxngRaw(q, domains);
+  note(body);
+  const results = searxngResults(body, { domains, max: 10 });
   const posts = results.filter((r) => isPostUrl(r.url));
   examples.push(`${platform} ${posts.length}/${results.length}`);
   console.log(`\n${platform} "${q}": ${results.length} results on the platform, ${posts.length} single posts`);
