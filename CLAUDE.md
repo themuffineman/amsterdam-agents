@@ -274,6 +274,15 @@ $0.007 (LinkedIn only).
 
 ## Costs (measured)
 
+**Engines and models (2026-10-18):** the campaigns run on the claude-code engine (subscription) with free SearXNG
+search, so a post costs about $0. The Pi engine's model (`model` in agents/blog-posts.json and ideas.json) is
+`nvidia/nemotron-3-ultra-550b-a55b:free`: the free fallback, used when Claude Code hits a usage limit (run.ts does
+the topic with Pi) or when a campaign is switched to "pi" on /agents. Tested: it saves posts first try at $0 but
+invents some first-hand and Sycamore details, so it's the last resort, not the default. Free models allow 20
+requests/min and 1,000/day each on our account (~30 posts/day); free endpoints can be congested (Gemma 4 was).
+Other free models tested worse (Nemotron 3 Super: contradictions; Inkling: ignored research rules). For one run
+with another model, use the workflow's "model" input. The Haiku figures below are from before.
+
 About **$0.03–0.05 a page** with `anthropic/claude-haiku-5.5`: model ≈ $0.015–0.027, searches ≈ $0.015–0.02. What
 drove cost down from $0.24: Parallel instead of Exa, 5K-character page reads, and drafting in `page.json` with
 small `edit` fixes instead of resending the whole page per fix (output fell from ~27K to ~12K tokens). Each rejection
