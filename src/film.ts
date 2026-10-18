@@ -240,7 +240,10 @@ async function makeFilm(claim: Required<Claimed>) {
     writeMotionEnv();
     // Only now (a film was claimed) install what making it needs; empty polls stay quick.
     if (process.env.GITHUB_ACTIONS) {
-      log("installing motion's packages, Claude Code and yt-dlp");
+      log("installing ffmpeg, motion's packages, Claude Code and yt-dlp");
+      // GitHub's Ubuntu image has no ffmpeg; music, review and cloud all need the full one.
+      sh("sudo", ["apt-get", "update", "-qq"]);
+      sh("sudo", ["apt-get", "install", "-y", "-qq", "ffmpeg"]);
       sh("npm", ["ci", "--ignore-scripts", "--no-audit", "--no-fund"], MOTION);
       sh("npm", ["install", "-g", "@anthropic-ai/claude-code", "--no-audit", "--no-fund"]);
       sh("pipx", ["install", "yt-dlp"]);
@@ -263,6 +266,11 @@ async function makeFilm(claim: Required<Claimed>) {
         `no out/film-result.json with a compositionId${c.why ? ` (claude: ${c.why})` : ""}. Last message: ${short(c.lastText, 400) || "(none)"}`,
       );
     }
+
+    // Keep the result with the film's files (out/ isn't committed), so a failed render or a
+    // later look at the branch still has the title, description and claims.
+    const slugDir = join(MOTION, "src", "films", result.slug ?? "");
+    if (result.slug && existsSync(slugDir)) writeFileSync(join(slugDir, "film-result.json"), JSON.stringify(result, null, 2));
 
     // 4. render on Modal (this process holds the keys)
     log(`rendering ${result.compositionId} on Modal`);

@@ -211,7 +211,10 @@ const res = await fetch(videoUrl);
 if (!res.ok) throw new Error(`download failed: ${res.status}`);
 fs.writeFileSync(raw, Buffer.from(await res.arrayBuffer()));
 const norm = spawnSync("ffmpeg", ["-v", "error", "-y", "-i", raw, "-c:v", "copy", "-af", "loudnorm=I=-14:TP=-1.5:LRA=11", "-ar", "48000", "-c:a", "aac", "-b:a", "192k", final], { stdio: "inherit" });
-if (norm.status !== 0) process.exit(norm.status ?? 1);
+if (norm.status !== 0) {
+  console.error(`ffmpeg (loudness) failed: ${norm.error?.message ?? `exit ${norm.status}`}. Is ffmpeg installed? The raw render is at ${videoUrl}`);
+  process.exit(norm.status ?? 1);
+}
 fs.unlinkSync(raw);
 console.log(`downloaded + normalised in ${secs(t)}`);
 
