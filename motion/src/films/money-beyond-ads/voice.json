@@ -1,0 +1,83 @@
+{
+  "film": "money-beyond-ads",
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "createdAt": "2026-10-19T06:10:18.061Z",
+  "segments": {
+    "hook1": {
+      "file": "films/money-beyond-ads/audio/hook1.wav",
+      "durationSec": 6.85,
+      "marks": {
+        "h": 0.2887
+      }
+    },
+    "hook2": {
+      "file": "films/money-beyond-ads/audio/hook2.wav",
+      "durationSec": 3.99,
+      "marks": {
+        "d": 0.5867
+      }
+    },
+    "ads1": {
+      "file": "films/money-beyond-ads/audio/ads1.wav",
+      "durationSec": 9.58,
+      "marks": {
+        "a": 0.3245,
+        "s": 0.5894
+      }
+    },
+    "sponsor1": {
+      "file": "films/money-beyond-ads/audio/sponsor1.wav",
+      "durationSec": 6.02,
+      "marks": {
+        "b": 0.3366
+      }
+    },
+    "sponsor2": {
+      "file": "films/money-beyond-ads/audio/sponsor2.wav",
+      "durationSec": 7.56,
+      "marks": {
+        "n": 0.5608
+      }
+    },
+    "aff1": {
+      "file": "films/money-beyond-ads/audio/aff1.wav",
+      "durationSec": 11.36,
+      "marks": {
+        "r": 0.4404,
+        "h": 0.8912
+      }
+    },
+    "prod1": {
+      "file": "films/money-beyond-ads/audio/prod1.wav",
+      "durationSec": 9.2,
+      "marks": {
+        "f": 0.109,
+        "p": 0.7244
+      }
+    },
+    "mem1": {
+      "file": "films/money-beyond-ads/audio/mem1.wav",
+      "durationSec": 8.31,
+      "marks": {
+        "y": 0.223,
+        "pt": 0.5541
+      }
+    },
+    "recap": {
+      "file": "films/money-beyond-ads/audio/recap.wav",
+      "durationSec": 10.93,
+      "marks": {
+        "r1": 0.1893,
+        "r2": 0.3195,
+        "r3": 0.5621,
+        "r4": 0.8757
+      }
+    },
+    "close": {
+      "file": "films/money-beyond-ads/audio/close.wav",
+      "durationSec": 6.93,
+      "marks": {}
+    }
+  }
+}

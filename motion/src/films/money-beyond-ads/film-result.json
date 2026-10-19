@@ -1,0 +1,57 @@
+{
+  "compositionId": "MoneyBeyondAds",
+  "slug": "money-beyond-ads",
+  "title": "How creators actually make money beyond ads",
+  "description": "Ads, sponsorships, affiliate links, your own products and memberships all pay differently, and the biggest difference is who takes a cut of each dollar. This video lays the published fees and revenue shares side by side, one dollar at a time. You'll see which streams let you keep the most, and why it's worth building one next to your ads.\n\nTurn your footage into viral clips with Sycamore: https://sycamore.to",
+  "claims": [
+    {
+      "claim": "In 2024, over half of YouTube Partner Program channels earning five figures also earned from sources other than ads (and YouTube Premium)",
+      "source": "YouTube, How YouTube Works: Creator economy (YouTube internal data, Jan-Dec 2024), https://www.youtube.com/howyoutubeworks/creator-economy/"
+    },
+    {
+      "claim": "On long videos YouTube pays creators 55% of ad revenue (55 cents of every ad dollar); YouTube keeps 45%",
+      "source": "YouTube Help, YouTube Partner Program overview, https://support.google.com/youtube/answer/72902 ; also How YouTube Works creator economy page"
+    },
+    {
+      "claim": "On Shorts creators keep 45% of their allocated share of the Creator Pool (on screen: YouTube keeps 55%)",
+      "source": "YouTube Help, Shorts monetization, https://support.google.com/youtube/answer/12504220 ; YPP overview answer/72902. Note: the pool is split for music first; the 45% applies to the creator's allocated share"
+    },
+    {
+      "claim": "A sponsor pays the creator directly and YouTube takes no share of the sponsorship fee",
+      "source": "No YouTube policy lists a revenue share on direct brand deals (YPP overview answer/72902 lists only ad, Premium and fan-funding shares). Reviewer: this is an inference from the absence of a share, please confirm the wording"
+    },
+    {
+      "claim": "Over 49% of 3,000+ surveyed creators earn most of their revenue from brand deals",
+      "source": "Influencer Marketing Hub x NeoReach, Creator Earnings Report 2025, https://influencermarketinghub.com/creator-earnings-report-2025/ (fieldwork dates not published)"
+    },
+    {
+      "claim": "Amazon pays affiliates 1% to 10% depending on category (luxury beauty 10%, grocery 1%); headphones 3%, so $3 on a $100 pair",
+      "source": "Amazon Associates Standard Commission Income Statement, Table 1 (US), https://affiliate-program.amazon.com/help/node/topic/GRXPHT8U84RAYDXZ (some categories pay 0%, not mentioned in the film)"
+    },
+    {
+      "claim": "Gumroad's fee on direct sales is 10% + 50 cents, so a $10 guide leaves $8.50 before any card fees",
+      "source": "Gumroad pricing, https://gumroad.com/pricing (Discover marketplace sales are 30%, not mentioned). Whether card processing is extra isn't stated there; secondary guides say it is, hence 'before any card fees'"
+    },
+    {
+      "claim": "YouTube channel memberships: YouTube keeps 30% (creator gets 70%)",
+      "source": "YouTube Help, YPP overview, https://support.google.com/youtube/answer/72902"
+    },
+    {
+      "claim": "Patreon charges new creators 10%, plus payment processing (90 cents of a member dollar before processing)",
+      "source": "Patreon support, 'A standard platform fee for new creators, effective after August 4, 2025', https://support.patreon.com/hc/en-us/articles/36426991446797 (blocked to our fetcher, read via search summary); cross-checked: https://alternativeto.net/news/2025/6/patreon-is-increasing-platform-fees-for-new-creators-starting-august-2025/ . Creators who launched before then keep older plans (8% or 12%)"
+    },
+    {
+      "claim": "Recap: platform's cut about half on ads, 10-30% on memberships, 10% + 50 cents on your own product, nothing on a sponsor",
+      "source": "Summary of the rows above"
+    }
+  ],
+  "gates": {
+    "G0": true,
+    "G2": true,
+    "G3": true,
+    "movingShare": 0.135
+  },
+  "weak": "No creator videos in the research: yt-dlp hit YouTube's bot check and Supadata returned 429 (credits used up), so the film rests on primary pages only. Patreon's own support page blocked our fetcher (403), so the 10% figure is taken from the search summary of that page plus a news write-up. 'YouTube takes no share' of a sponsorship is an inference, not a quoted policy. The film is mostly one object (the 100-cell dollar card) re-filled per stream: clear, but the middle stretch (ads, sponsor, affiliate, product, memberships) is visually repetitive and close to a deck, and the camera moves on each card are small. The recap table still opens fairly bare (a header and one row) before the voice reaches memberships. The close is three to four lines of white text on dark, more text than it needs. The '100 cells = ...' line inside each card is about 36 px, under the 0.04 H readable size, so it reads as texture on small screens. Moving share is only 13.5% of frames. Marks are placed from character positions, so a figure can land a few frames off its spoken word.",
+  "changed": "Kept the title and the four streams. The research pointed to one honest angle that ties them together: who takes a cut of each dollar (published platform fees and revenue shares), so the film compares the cuts instead of giving income estimates per stream, because no primary source publishes typical earnings per stream. Sponsorships are backed by survey data (NeoReach, 49%), not a fee. The memberships and products examples use named platforms (YouTube, Patreon, Gumroad, Amazon) because their fees are published.",
+  "summary": "The platform's cut is about half of every ad dollar, 10-30% on memberships, 10% plus 50 cents on your own product and nothing on a sponsor, while an affiliate gets only 1-10% of someone else's sale."
+}

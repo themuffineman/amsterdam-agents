@@ -1,0 +1,47 @@
+{
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "segments": [
+    {
+      "id": "hook1",
+      "text": "YouTube says that in twenty twenty-four, {h}over half of its partner channels earning five figures also made money from something other than ads."
+    },
+    {
+      "id": "hook2",
+      "text": "What changes from one stream to the next is {d}who takes a cut of each dollar."
+    },
+    {
+      "id": "ads1",
+      "text": "Start with ads. On long videos, YouTube pays you {a}fifty-five cents of every ad dollar. On {s}Shorts, you keep forty-five percent of your share of the pool."
+    },
+    {
+      "id": "sponsor1",
+      "text": "A sponsorship skips the platform. {b}The brand pays you directly, and YouTube takes no share of the fee."
+    },
+    {
+      "id": "sponsor2",
+      "text": "That's why it's the big one. In a NeoReach survey of over three thousand creators, {n}forty-nine percent said brand deals bring in most of their money."
+    },
+    {
+      "id": "aff1",
+      "text": "Affiliate links flip the split. You earn a slice of someone else's sale. Amazon pays {r}one to ten percent, depending on the category. On a hundred-dollar pair of headphones, {h}that's three dollars."
+    },
+    {
+      "id": "prod1",
+      "text": "Your own product {f}flips it back. Sell a ten-dollar guide on Gumroad, and the fee is ten percent plus fifty cents. {p}You keep eight fifty, before any card fees."
+    },
+    {
+      "id": "mem1",
+      "text": "Memberships pay you every month. {y}YouTube channel memberships keep thirty percent. {pt}Patreon charges new creators ten percent, plus payment processing."
+    },
+    {
+      "id": "recap",
+      "text": "So the platform's cut runs from {r1}about half on ads, to {r2}ten to thirty percent on memberships, to {r3}ten percent plus fifty cents on your own product, to {r4}nothing on a sponsor."
+    },
+    {
+      "id": "close",
+      "text": "Ads only need views. The rest need people who'll pay you directly. Keep the ads running, and build one of these next to them."
+    }
+  ],
+  "_note": "No prompt: the backend prepends it to each segment and Gemini flash-lite reads it aloud. Same voice and model as best-times."
+}
