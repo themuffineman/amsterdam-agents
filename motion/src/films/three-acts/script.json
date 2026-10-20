@@ -1,0 +1,63 @@
+{
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "segments": [
+    {
+      "id": "hook",
+      "text": "The three-act structure works in a sixty-second video. What has to change is {sq}how long the first act runs."
+    },
+    {
+      "id": "quote",
+      "text": "Aristotle wrote the rule down in the Poetics. {q}A whole is that which has a beginning, a middle, and an end."
+    },
+    {
+      "id": "field1",
+      "text": "Screenwriter Syd Field named the three parts {s}setup, {c}confrontation and {r}resolution."
+    },
+    {
+      "id": "field2",
+      "text": "In a hundred-and-twenty-page script, {p1}act one runs about thirty pages, {p2}act two about sixty, and {p3}act three the rest."
+    },
+    {
+      "id": "zak1",
+      "text": "The middle is the longest part, because tension does the work. Paul Zak showed people {v}a short film about a father and his young son, who is dying of cancer."
+    },
+    {
+      "id": "zak2",
+      "text": "The version with a dramatic arc {up}raised cortisol and oxytocin. {flat}A flat version, the same two at the zoo, raised neither."
+    },
+    {
+      "id": "zak3",
+      "text": "From the viewers' physiology, his team {p}predicted who would donate to charity with eighty-two percent accuracy."
+    },
+    {
+      "id": "zak4",
+      "text": "And attention didn't climb in a straight line. {rf}It rose and fell, and {pk}peaked at the climax."
+    },
+    {
+      "id": "scale",
+      "text": "Now scale Field's split to sixty seconds. {q}Act one would take fifteen of them."
+    },
+    {
+      "id": "platform",
+      "text": "TikTok's ad guide says {t3}make your point in the first three seconds, and {t6}hook by six. YouTube's intro metric counts {y30}who is still watching at thirty."
+    },
+    {
+      "id": "squeeze",
+      "text": "So act one {sq}shrinks to the first few seconds: who this is for, and what's at stake. {t}Act two gets the time it frees up."
+    },
+    {
+      "id": "turns",
+      "text": "Use it to {a}raise one problem, {b}make it harder, and {c}add one more turn before you answer it."
+    },
+    {
+      "id": "resolve",
+      "text": "Act three is {r}the answer to the question you opened with. Give it, then stop."
+    },
+    {
+      "id": "close",
+      "text": "Then open your retention graph. If YouTube marks dips in your first act, it's still too long."
+    }
+  ],
+  "_note": "No prompt: the backend prepends it to each segment and Gemini flash-lite reads it aloud."
+}

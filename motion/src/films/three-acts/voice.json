@@ -1,0 +1,115 @@
+{
+  "film": "three-acts",
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "createdAt": "2026-10-20T22:44:08.547Z",
+  "segments": {
+    "hook": {
+      "file": "films/three-acts/audio/hook.wav",
+      "durationSec": 6,
+      "marks": {
+        "sq": 0.7333
+      }
+    },
+    "quote": {
+      "file": "films/three-acts/audio/quote.wav",
+      "durationSec": 7.39,
+      "marks": {
+        "q": 0.434
+      }
+    },
+    "field1": {
+      "file": "films/three-acts/audio/field1.wav",
+      "durationSec": 4.97,
+      "marks": {
+        "s": 0.5556,
+        "c": 0.642,
+        "r": 0.8642
+      }
+    },
+    "field2": {
+      "file": "films/three-acts/audio/field2.wav",
+      "durationSec": 7.1,
+      "marks": {
+        "p1": 0.3246,
+        "p2": 0.614,
+        "p3": 0.8333
+      }
+    },
+    "zak1": {
+      "file": "films/three-acts/audio/zak1.wav",
+      "durationSec": 8.75,
+      "marks": {
+        "v": 0.5513
+      }
+    },
+    "zak2": {
+      "file": "films/three-acts/audio/zak2.wav",
+      "durationSec": 7.59,
+      "marks": {
+        "up": 0.2712,
+        "flat": 0.5254
+      }
+    },
+    "zak3": {
+      "file": "films/three-acts/audio/zak3.wav",
+      "durationSec": 5.89,
+      "marks": {
+        "p": 0.3545
+      }
+    },
+    "zak4": {
+      "file": "films/three-acts/audio/zak4.wav",
+      "durationSec": 5.42,
+      "marks": {
+        "rf": 0.5222,
+        "pk": 0.7667
+      }
+    },
+    "scale": {
+      "file": "films/three-acts/audio/scale.wav",
+      "durationSec": 5.69,
+      "marks": {
+        "q": 0.5455
+      }
+    },
+    "platform": {
+      "file": "films/three-acts/audio/platform.wav",
+      "durationSec": 7.64,
+      "marks": {
+        "t3": 0.1575,
+        "t6": 0.4863,
+        "y30": 0.7808
+      }
+    },
+    "squeeze": {
+      "file": "films/three-acts/audio/squeeze.wav",
+      "durationSec": 7.59,
+      "marks": {
+        "sq": 0.094,
+        "t": 0.7094
+      }
+    },
+    "turns": {
+      "file": "films/three-acts/audio/turns.wav",
+      "durationSec": 6.48,
+      "marks": {
+        "a": 0.1136,
+        "b": 0.3295,
+        "c": 0.5568
+      }
+    },
+    "resolve": {
+      "file": "films/three-acts/audio/resolve.wav",
+      "durationSec": 5.37,
+      "marks": {
+        "r": 0.1711
+      }
+    },
+    "close": {
+      "file": "films/three-acts/audio/close.wav",
+      "durationSec": 6.01,
+      "marks": {}
+    }
+  }
+}

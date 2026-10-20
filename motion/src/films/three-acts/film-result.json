@@ -1,0 +1,65 @@
+{
+  "compositionId": "ThreeActs",
+  "slug": "three-acts",
+  "title": "Storytelling for creators: the 3-act structure in a 60-second video",
+  "description": "The three-act structure still works in a short video, but the proportions from film don't. This video follows the rule from Aristotle to Syd Field's setup, confrontation and resolution, shows Paul Zak's research on why tension is the part that moves viewers, and scales Field's split to a sixty-second clip. You'll see why act one has to shrink to the first few seconds, what to put in the longer middle, and how to check your own retention graph for a setup that runs too long.\n\nTurn your footage into viral clips with Sycamore: https://sycamore.to",
+  "claims": [
+    {
+      "claim": "Aristotle: \"A whole is that which has a beginning, a middle, and an end.\" (on screen, Poetics ch. VII)",
+      "source": "Aristotle, Poetics, tr. S. H. Butcher, Project Gutenberg #1974, http://www.gutenberg.org/cache/epub/1974/pg1974.txt"
+    },
+    {
+      "claim": "Syd Field named the three parts setup, confrontation and resolution",
+      "source": "Natalia Lazarus, guest post on sydfield.com, 2019-06-05, https://sydfield.com/?p=1769"
+    },
+    {
+      "claim": "In a 120-page script act one runs about 30 pages, act two about 60, act three the rest (Plot Point Two around page 90)",
+      "source": "sydfield.com, https://sydfield.com/?p=1769 (the same 1-30 / 30-90 / 90-120 split appears in a CUNY course gloss of Field, seen only as a search summary)"
+    },
+    {
+      "claim": "Paul Zak showed people a short film (~100 s) about a father and his young son who is dying of cancer",
+      "source": "Paul J. Zak, \"Why Inspiring Stories Make Us React\", Cerebrum, 2015-02-02, https://pmc.ncbi.nlm.nih.gov/articles/PMC4445577"
+    },
+    {
+      "claim": "The dramatic-arc version raised cortisol and oxytocin; the flat version (same two at the zoo) raised neither",
+      "source": "Zak, Cerebrum 2015, https://pmc.ncbi.nlm.nih.gov/articles/PMC4445577"
+    },
+    {
+      "claim": "From viewers' physiology his team predicted who would donate to charity with 82% accuracy",
+      "source": "Zak, Cerebrum 2015, https://pmc.ncbi.nlm.nih.gov/articles/PMC4445577 (82% is from a later study in the same article, measured by ECG, skin sweat and vagal activity; checked only against this one article)"
+    },
+    {
+      "claim": "Attention rose and fell and peaked at the climax",
+      "source": "Zak, Cerebrum 2015, https://pmc.ncbi.nlm.nih.gov/articles/PMC4445577"
+    },
+    {
+      "claim": "Scaled to 60 seconds, act one would take 15 seconds",
+      "source": "Arithmetic: a quarter (Field's ~30 of 120 pages) of 60 s"
+    },
+    {
+      "claim": "TikTok's ad guide: make your point in the first 3 seconds, hook by 6",
+      "source": "TikTok Ads Manager help, \"Creative best practices for performance ads\", last updated June 2025, https://ads.tiktok.com/help/article/creative-best-practices (it is guidance for ads, and the voice says so)"
+    },
+    {
+      "claim": "YouTube's intro metric counts who is still watching at 30 seconds",
+      "source": "YouTube Help, \"Measure key moments for audience retention\", https://support.google.com/youtube/answer/9314415"
+    },
+    {
+      "claim": "YouTube marks dips in the retention graph (where viewers skipped or stopped watching)",
+      "source": "YouTube Help, https://support.google.com/youtube/answer/9314415"
+    },
+    {
+      "claim": "Advice: act one shrinks to 3 s (act two becomes 42 s); raise one problem, make it harder, add one more turn; answer the opening question, then stop",
+      "source": "The film's own advice, drawn from the TikTok/YouTube guidance and Zak's rise-and-fall finding; no source states these exact numbers"
+    }
+  ],
+  "gates": {
+    "G0": true,
+    "G2": true,
+    "G3": true,
+    "movingShare": 0.147
+  },
+  "weak": "In the wide track shots (hook, the end of the scale beat, the hero frame) the pin chips are about 34 px, under the 0.04 H readable size; the camera pushes in where each one is spoken, but at the wide shot they read as texture. Only 14.7% of frames move by the gate's measure: long voiced holds on the track and the card rely on a small drift and camera creep. The Zak card and the 82% frame are close to type on a lit ground; they have little world beyond grain and the key light. During the resolve push the 'Make it harder' chip is cropped by the frame edge. The Zak card resizes as rows arrive, so its header shifts slightly. I couldn't watch any creator videos: yt-dlp search was blocked in this job, so the film rests only on the written sources. The 82% figure is checked only against Zak's own article (no second source). Word timing comes from character position estimates, not word timestamps, so some words land a few frames off the voice. I looked at the sheets and stills, not the full-speed draft with sound.",
+  "changed": "The title now says 'in a 60-second video' instead of 'in 60 seconds': the film runs about 1:39 (the brief asked for 60-100 s, driven by the voice), and the research gives an angle about proportions in a 60-second video. The brief's setup, tension, resolution angle stays, with one change the sources support: Field's quarter-length setup (15 s of a 60 s clip) runs past TikTok's 3-second and 6-second guidance and YouTube's 30-second intro mark, so the film says act one shrinks and act two (tension, the part Zak found moves viewers) takes the time.",
+  "summary": "The three acts still work in a sixty-second video, but act one can't keep the quarter a screenplay gives it; it shrinks to the first few seconds, and the middle, where tension does the work, takes the time."
+}
