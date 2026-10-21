@@ -1,0 +1,19 @@
+{
+  "campaign": "tutorials",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "thinking": "low",
+  "noResearchTools": true,
+  "tools": [
+    "write",
+    "edit",
+    "read",
+    "submit_page"
+  ],
+  "topicsPerRun": 3,
+  "maxTurns": 30,
+  "maxCostUsd": 0.5,
+  "timeoutMinutes": 20,
+  "maxSubmissions": 4,
+  "bodyFile": "post.md",
+  "checkLinks": true
+}

@@ -39,6 +39,11 @@ export type AgentConfig = {
   bodyFile?: string;
   /** Refuse submissions whose links no search or read turned up (made-up URLs). */
   checkLinks?: boolean;
+  /**
+   * Leave out the standard research tools (search, read, video, screenshot, logo): for agents
+   * that write only from what the prompt gives them (tutorials, from one help thread).
+   */
+  noResearchTools?: boolean;
 };
 
 export function loadConfig(name: string): AgentConfig {
@@ -66,8 +71,8 @@ export const STANDARD_TOOLS = ["web_search", "read_page", "watch_video", "screen
  */
 export const FILE_TOOLS = new Set(["read", "write", "edit"]);
 
-/** Every tool name this agent may use: the standard ones plus its config's list. */
-export const toolNamesFor = (config: AgentConfig) => [...new Set([...STANDARD_TOOLS, ...config.tools])];
+/** Every tool name this agent may use: the standard ones (unless noResearchTools) plus its config's list. */
+export const toolNamesFor = (config: AgentConfig) => [...new Set([...(config.noResearchTools ? [] : STANDARD_TOOLS), ...config.tools])];
 
 /** What one topic's tools remember: links seen and found, and how submitting went. */
 export type TopicState = { found: Set<string>; seen: Seen; submit: SubmitState };
