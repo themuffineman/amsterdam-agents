@@ -1,11 +1,12 @@
 # amsterdam-agents: how the agent pipeline works
 
-This repo runs cloud agents that write pages for sycamore.to on a schedule. Two campaigns so far:
+This repo runs cloud agents that write pages for sycamore.to on a schedule. Three campaigns so far:
 
 | Campaign | Writes | Topics come from | Studio code | Site code |
 | --- | --- | --- | --- | --- |
 | `ideas` | programmatic-SEO pages, sycamore.to/ideas/{platform}/{niche} | `idea_topics`, loaded by script | `lib/idea-pages/` | `lib/idea-pages.ts`, `app/ideas/` |
 | `blog-posts` | traditional articles (X vs Y, alternatives, best-of, reviews, how-tos, guides), sycamore.to/blog/{slug} | `blog_post_topics`, typed in by hand on `/agents` or `/agents/add` (phone) | `lib/blog-posts/` | `lib/blog-posts.ts`, `app/blog/[slug]` |
+| `tutorials` | how to do or fix one thing in an editor, sycamore.to/blog/tutorial/{slug}, from one Reddit help thread each | `tutorial_topics`, filled by the studio's `/tutorial-gen` harvest | `lib/tutorial-posts/` | `lib/tutorial-posts.ts`, `app/blog/tutorial/[slug]` |
 
 The ideas campaign is the worked example in most of this file; the blog posts campaign is described in its own section. It is one of **three repos**
 that work together. Read this before changing anything here or adding a new campaign.
@@ -97,6 +98,7 @@ sycamore.to/ideas/{platform}/{niche}: rendered from idea_pages on first visit, c
   search fees; Pi only) and `timeoutMinutes`, then reports. Pi: no discovery, a hand-built `ResourceLoader`, so no
   AGENTS.md, skills or extensions from the machine leak into the agent. In-memory sessions.
 - `src/agent.ts`: what both engines share: config (`loadConfig`), `SYSTEM_PROMPT`, `STANDARD_TOOLS`, `buildTools`.
+  A config with `noResearchTools: true` leaves the standard research tools out (tutorials).
 - **Engines.** Each campaign has an engine, switched on the studio's `/agents` screen (`agent_campaign_settings.engine`,
   sent as `engine` with every claim); a manual run can force one (workflow input `engine`, env `ENGINE`).
   - `pi`: Pi + the OpenRouter model in `model`. Paid per token.
@@ -228,6 +230,31 @@ OpenRouter's live prices and matched the real bill when checked.
   `lib/mdx.tsx`: no JSX, no raw HTML, no math, so prices stay prices; FAQ + BlogPosting JSON-LD). Listed on `/blog`,
   in the sitemap.
 - Workflow `.github/workflows/blog-posts.yml`, hourly at :47.
+
+## The tutorials campaign (`tutorials`)
+
+- **Topics**: `tutorial_topics` (studio DB), the queue `/tutorial-gen` fills: its Modal harvest keeps Reddit help
+  threads with a working answer (`seo_title`, `keyword`, `question`, `solutions`, the scraped `thread`). Migration 0033
+  added `claimed_at`, `attempts`, `last_error`, `post_slug`. The manual "Copy prompt" flow on /tutorial-gen draws from the
+  same `pending` rows.
+- **No research**: everything the post may say is in the thread pasted into the prompt (`lib/tutorial-posts/prompt.ts`).
+  `agents/tutorials.json` sets `noResearchTools: true`, so the agent gets only write/edit/read + submit_page (no search,
+  no SearXNG in the workflow), and `checkLinks` refuses every external link (it never saw one). Own-site links only to
+  the listed posts (MDX list synced into `format/mdx-posts.json` + published agent tutorials).
+- **Outcomes**: saved; `{ "duplicateOf": "<path>" }` (an existing post covers it, topic `duplicate`; a slug clash with an
+  MDX tutorial or another topic's post is handled the same way); `{ "tooThin": "why" }` (the thread can't carry the
+  title, topic `rejected`). Neither writes a page or an /analytics row; after a Rewrite they also take the old post down.
+- **Checks** (`lib/tutorial-posts/save.ts`): autoFix (dashes, H1, trailing FAQ, JSX copied from MDX posts), format
+  (`tutorialPostProblems`), 200-2,000 words, banned phrases, no Reddit traces (reddit, u/, r/, "the OP", lower-case
+  "thread", "linked in"), `steps` = the first numbered list, **at most answers + 1 `##` sections** (+1 Sycamore section on
+  caption posts) and **no more FAQ items than answers** (free models pad thin threads with invented fixes), Sycamore only
+  in caption/subtitle posts (and then required, with `captionPreview`), no error-free promises, max 25% shared 5-word
+  phrases with other agent tutorials. Saved to sycamore-mono's `tutorial_posts` (migration 0034); `content_posts`
+  `content_type 'tutorial'` ("Tutorials" on /analytics, same as the manual ones).
+- **Engine**: claude-code (set 2026-10-21). Tested 2026-10-21 on Pi + `nemotron-3-ultra:free`: 6 posts, $0, 1-2 min
+  each, but it embellishes: a one-tip thread came back with 5 sections of invented tips (hence the section cap), and it
+  adds menu paths and FAQ answers the thread doesn't have. Fine as the fallback, not as the default.
+- Workflow `.github/workflows/tutorials.yml`, hourly at :32, no SearXNG/yt-dlp.
 
 ## Tracking: what is recorded where
 
