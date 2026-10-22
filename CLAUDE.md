@@ -142,8 +142,15 @@ sycamore.to/ideas/{platform}/{niche}: rendered from idea_pages on first visit, c
   them inline next to a tool's link, ideas pages next to `tips.tools[].name` (`logo` field).
 - `src/tools/watch.ts`: `watch_video(url)`: a YouTube/TikTok/Instagram/X/Facebook video as text (creator, date, views,
   caption, transcript with [m:ss]; 7,000 characters max). Ported from sycamore-motion `scripts/watch.mjs` without the
-  frames: yt-dlp captions first (free; the workflows `pipx install yt-dlp`), then Supadata (`SUPADATA_API_KEY`, free plan
-  100 credits/month) for Instagram and videos without captions. Adds the URL to `seen` (and `found` if it's a post).
+  frames: yt-dlp metadata and captions first (free; the workflows `pipx install yt-dlp`); no captions → download the
+  video and transcribe it with Whisper (`scripts/transcribe.py`, faster-whisper `base` on the CPU, free; the workflows
+  install it and cache the model in `~/.cache/huggingface`). Instagram videos come from **snapsave.app**
+  (`snapsave-media-downloader`, pinned): it fetches from Instagram on its own servers, because Instagram's bot checks
+  are expected to block logged-out yt-dlp on GitHub's IPs (no login is used anywhere). Other platforms download with
+  yt-dlp. Supadata (`SUPADATA_API_KEY`, free plan 100 credits/month, ran out 2026-10) is the last fallback; a failed
+  Supadata metadata call is a note, not an error. Adds the URL to `seen` (and `found` if it's a post).
+  Tested 2026-10-22 from a home IP: snapsave got all 3 real reels tried, with audio; `btch-downloader` (9k/wk on npm)
+  returned empty links for every reel; `ruhend-scraper` is a 15 MB obfuscated file, not used. Not yet run on GitHub.
 - `src/tools/screenshot.ts`: `screenshot(url, find?)`: the hero at 1440x900, or the block around some text (at least 60%
   of the screen wide, fixed/sticky headers hidden), JPEG. Ported from sycamore-motion `scripts/brand-capture.mjs`.
   puppeteer-core with the runner's own Chrome (`/usr/bin/google-chrome` on GitHub; `CHROME_PATH` elsewhere). The image

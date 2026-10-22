@@ -15,6 +15,7 @@
     "@modelcontextprotocol/sdk": "^1.32.1",
     "jsonrepair": "3.15.0",
     "puppeteer-core": "25.14.0",
+    "snapsave-media-downloader": "2.5.1",
     "typebox": "1.3.27"
   },
   "devDependencies": {

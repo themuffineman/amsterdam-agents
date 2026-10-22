@@ -1,6 +1,11 @@
 import { spawnSync } from "node:child_process";
+import { mkdtempSync, readdirSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 
 import { defineTool } from "@earendil-works/pi-coding-agent";
+import { snapsave } from "snapsave-media-downloader";
 import { Type } from "typebox";
 
 import { isPostUrl } from "./examples.ts";
@@ -14,10 +19,14 @@ import { normalUrl, type Seen } from "./web.ts";
  *
  * Ported from sycamore-motion/scripts/watch.mjs (text only, no frames). Free first:
  *   1. yt-dlp: metadata and the platform's own captions (YouTube, usually TikTok).
- *   2. Supadata (SUPADATA_API_KEY, free plan 100 credits/month): metadata when yt-dlp can't
- *      read the post (Instagram usually), and the transcript when there are no captions.
- *      An existing transcript is 1 credit; an AI-generated one 2 credits per minute.
- * yt-dlp must be on the PATH (the workflows install it); without it, Supadata only.
+ *   2. No captions: download the video and transcribe it with Whisper (scripts/transcribe.py,
+ *      faster-whisper on the CPU, free). Instagram videos come from snapsave.app (the
+ *      snapsave-media-downloader package; snapsave fetches from Instagram on its own servers,
+ *      so Instagram's bot checks on GitHub's IPs don't matter), other platforms from yt-dlp.
+ *   3. Supadata (SUPADATA_API_KEY, free plan 100 credits/month): metadata when yt-dlp can't
+ *      read the post (Instagram usually), and the transcript when the above fail.
+ * yt-dlp and faster-whisper must be installed (the workflows do it); without them, each
+ * step that needs one is skipped with a note.
  */
 
 /** Most of a transcript the agent gets back (everything it reads is resent every turn). */
@@ -125,6 +134,44 @@ async function ytCaptions(info: YtInfo, notes: string[]): Promise<{ chunks: Chun
   return null;
 }
 
+// ------------------------------------------------------------------ download + Whisper
+
+const TRANSCRIBE = fileURLToPath(new URL("../../scripts/transcribe.py", import.meta.url));
+const PYTHON = process.platform === "win32" ? "python" : "python3";
+
+/** Instagram: the video file's URL from snapsave.app. */
+async function snapsaveFile(url: string, dir: string): Promise<string> {
+  const r = await snapsave(url);
+  const media = r.data?.media?.find((m) => m.type === "video" && m.url);
+  if (!r.success || !media) throw new Error(`snapsave: ${r.message ?? "no video in the post"}`);
+  const res = await fetch(media.url!, { signal: AbortSignal.timeout(120_000) });
+  if (!res.ok) throw new Error(`snapsave download HTTP ${res.status}`);
+  const file = join(dir, "video.mp4");
+  writeFileSync(file, Buffer.from(await res.arrayBuffer()));
+  return file;
+}
+
+/** Other platforms: the audio track (or the whole video) through yt-dlp. */
+function ytdlpFile(url: string, dir: string): string {
+  const r = spawnSync("yt-dlp", ["--no-warnings", "-q", "-f", "ba/b", "-o", join(dir, "media.%(ext)s"), url], { encoding: "utf8", timeout: 180_000 });
+  const file = readdirSync(dir).find((f) => f.startsWith("media."));
+  if (r.status !== 0 || !file) throw new Error(`yt-dlp download failed: ${(r.stderr || r.error?.message || "").trim().split("\n").pop()}`);
+  return join(dir, file);
+}
+
+/** Downloads the video and transcribes it with Whisper. */
+async function whisperTranscript(url: string, platform: string): Promise<{ chunks: Chunk[]; source: string }> {
+  const dir = mkdtempSync(join(tmpdir(), "watch-"));
+  try {
+    const file = platform === "instagram" ? await snapsaveFile(url, dir) : ytdlpFile(url, dir);
+    const r = spawnSync(PYTHON, [TRANSCRIBE, file], { encoding: "utf8", maxBuffer: 16 * 1024 * 1024, timeout: 600_000 });
+    if (r.status !== 0) throw new Error(`Whisper failed: ${(r.stderr || r.error?.message || "").trim().split("\n").pop()}`);
+    return { chunks: JSON.parse(r.stdout), source: `Whisper transcript (video from ${platform === "instagram" ? "snapsave" : "yt-dlp"})` };
+  } finally {
+    rmSync(dir, { recursive: true, force: true });
+  }
+}
+
 // ------------------------------------------------------------------ Supadata
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -181,7 +228,11 @@ async function watch(url: string): Promise<string> {
       likes: (info.like_count as number) ?? null,
     };
   } else {
-    const { body: m } = await supa(`/metadata?url=${encodeURIComponent(url)}`);
+    // Without metadata the transcript is still worth returning, so a Supadata failure isn't fatal.
+    const m = await supa(`/metadata?url=${encodeURIComponent(url)}`).then(
+      (r) => r.body,
+      (e) => (notes.push(`no metadata: ${(e as Error).message}`), {} as Record<string, any>),
+    );
     meta = {
       platform,
       url: m.url || url,
@@ -196,6 +247,13 @@ async function watch(url: string): Promise<string> {
   }
 
   let tr = info ? await ytCaptions(info, notes) : null;
+  if (!tr) {
+    try {
+      tr = await whisperTranscript(url, platform);
+    } catch (e) {
+      notes.push((e as Error).message);
+    }
+  }
   if (!tr) {
     try {
       tr = await supaTranscript(url);

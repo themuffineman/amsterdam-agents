@@ -42,6 +42,16 @@ jobs:
       - run: npm ci --ignore-scripts --no-audit --no-fund
       # watch_video reads videos with yt-dlp (screenshot uses the runner's own Chrome).
       - run: pipx install yt-dlp
+      # ...and transcribes videos without captions (Instagram: snapsave's file) with Whisper,
+      # free on the CPU (scripts/transcribe.py). The model downloads once, then comes from the cache.
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install faster-whisper==1.2.1
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-base-v1
       # The claude-code engine (a campaign switched to it on /agents) runs the Claude Code CLI.
       - run: npm install -g @anthropic-ai/claude-code --no-audit --no-fund
       # Our own search engine (searxng/settings.yml), free: web_search and find_examples try it
@@ -58,7 +68,7 @@ jobs:
           AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           SEARXNG_URL: http://localhost:8080
-          # watch_video's fallback for Instagram and videos without captions (free plan: 100 credits a month)
+          # watch_video's last fallback, when captions, snapsave and Whisper all fail (free plan: 100 credits a month)
           SUPADATA_API_KEY: ${{ secrets.SUPADATA_API_KEY }}
           # The claude-code engine: a token from `claude setup-token` (Claude subscription, no per-token bill)
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
