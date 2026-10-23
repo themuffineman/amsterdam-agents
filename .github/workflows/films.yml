@@ -52,3 +52,14 @@ jobs:
           GOOGLE_APPLICATION_CREDENTIALS_JSON_B64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON_B64 }}
           MODAL_RENDER_TOKEN: ${{ secrets.MODAL_RENDER_TOKEN }}
         run: node src/film.ts
+      # Something above failed (a setup step, or the runner crashed): tell the studio, so it
+      # shows in the /agents Problems panel. A runner crash also reports its own error.
+      - name: Report the failure to the studio
+        if: failure()
+        env:
+          STUDIO_URL: ${{ secrets.STUDIO_URL }}
+          AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+        run: |
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          body="{\"runId\":null,\"runUrl\":\"$run_url\",\"problems\":[{\"source\":\"workflow\",\"message\":\"the GitHub workflow failed (a setup step, or the runner crashed): see the run log\",\"at\":\"$(date -u +%FT%TZ)\"}]}"
+          curl -sSf -X POST "${STUDIO_URL%/}/api/agent/films/problems" -H "Authorization: Bearer $AGENT_API_KEY" -H "Content-Type: application/json" -d "$body" || echo "::warning::couldn't tell the studio"

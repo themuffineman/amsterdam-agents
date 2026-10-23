@@ -72,7 +72,8 @@ const usable = (t: string | null | undefined): t is string => !!t && t.trim().le
  *   1. Jina Reader (r.jina.ai): renders JavaScript-heavy pages, returns clean markdown.
  *   2. A plain fetch, tags stripped.
  *   3. Chrome on this machine (readWithChrome): gets past some bot checks (Quora's Cloudflare).
- * A block page from all three is an error, so the agent knows it didn't read the page.
+ * If none gives the page it's an error (a bot check, or why it didn't load), so the agent
+ * knows it didn't read the page.
  */
 async function readText(url: string): Promise<string> {
   const jina = await fetch(`https://r.jina.ai/${url}`, {
@@ -83,25 +84,36 @@ async function readText(url: string): Promise<string> {
     .catch(() => null);
   if (usable(jina)) return jina;
 
+  // Why the plain fetch failed (HTTP status or network error), for the final error message.
+  let plainError = "no content";
   const plain = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36" },
     signal: AbortSignal.timeout(30_000),
   })
-    .then(async (r) =>
-      r.ok
-        ? (await r.text())
-            .replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, " ")
-            .replace(/<[^>]+>/g, " ")
-            .replace(/&nbsp;/g, " ")
-            .replace(/\s+/g, " ")
-        : null,
-    )
-    .catch(() => null);
+    .then(async (r) => {
+      if (!r.ok) {
+        plainError = `HTTP ${r.status}`;
+        return null;
+      }
+      return (await r.text())
+        .replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, " ")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/&nbsp;/g, " ")
+        .replace(/\s+/g, " ");
+    })
+    .catch((e: Error) => {
+      // fetch's own message is just "fetch failed"; the cause says why (DNS, refused, timeout).
+      plainError = (e.cause as Error | undefined)?.message ?? e.message;
+      return null;
+    });
   if (usable(plain)) return plain;
 
   const chrome = await readWithChrome(url).catch(() => null);
   if (usable(chrome)) return chrome.replace(/[ \t]+/g, " ").replace(/\n\s*\n+/g, "\n\n");
-  throw new Error("the site showed a bot check or an error page instead of the page (not read; don't rely on it)");
+  if ([jina, plain, chrome].some((t) => t && isBlockPage(t))) {
+    throw new Error("the site showed a bot check instead of the page (not read; don't rely on it)");
+  }
+  throw new Error(`couldn't load it (${plainError})`);
 }
 
 export const readPageTool = (seen: Seen) => {

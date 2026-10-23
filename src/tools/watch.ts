@@ -8,6 +8,7 @@ import { defineTool } from "@earendil-works/pi-coding-agent";
 import { snapsave } from "snapsave-media-downloader";
 import { Type } from "typebox";
 
+import { noteProblem } from "../problems.ts";
 import { isPostUrl } from "./examples.ts";
 import { normalUrl, type Seen } from "./web.ts";
 
@@ -247,11 +248,14 @@ async function watch(url: string): Promise<string> {
   }
 
   let tr = info ? await ytCaptions(info, notes) : null;
+  // The download + Whisper and Supadata steps failing is worth knowing about (/agents
+  // Problems); a post that simply has no captions isn't.
   if (!tr) {
     try {
       tr = await whisperTranscript(url, platform);
     } catch (e) {
       notes.push((e as Error).message);
+      noteProblem("watch_video", (e as Error).message, url);
     }
   }
   if (!tr) {
@@ -259,6 +263,7 @@ async function watch(url: string): Promise<string> {
       tr = await supaTranscript(url);
     } catch (e) {
       notes.push(`no transcript: ${(e as Error).message}`);
+      noteProblem("watch_video", `Supadata transcript: ${(e as Error).message}`, url);
     }
   }
 

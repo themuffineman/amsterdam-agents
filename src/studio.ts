@@ -6,6 +6,7 @@
  *                                               or { topic: null, reason, nextAt }
  *   PATCH /api/agent/<campaign>/<id>          -> { status: "done", content, model } or { status: "failed", error }
  *   POST  /api/agent/<campaign>/runs/<runId>  -> what the run did and cost (shown on the studio's /agents)
+ *   POST  /api/agent/<campaign>/problems      -> what went wrong along the way (the /agents "Problems" panel)
  *
  * The studio decides when a page is due (on/off and pages per day are set on /agents), so
  * the cron can run often and most runs just ask and stop.
@@ -78,6 +79,22 @@ export async function reportRun(campaign: string, runId: string, report: RunRepo
     if (!res.ok) console.error(`Reporting run ${runId} failed (${res.status})`);
   } catch (e) {
     console.error(`Reporting run ${runId} failed: ${(e as Error).message}`);
+  }
+}
+
+/**
+ * Problems a run ran into (tool failures, crashes), for the studio's /agents "Problems" panel.
+ * Only logged if it fails: problems are a report, never a reason to stop.
+ */
+export async function postProblems(
+  campaign: string,
+  body: { runId: string | null; runUrl: string | null; problems: { source: string; message: string; url?: string | null; at: string }[] },
+): Promise<void> {
+  try {
+    const res = await fetch(`${base()}/api/agent/${campaign}/problems`, { method: "POST", headers: headers(), body: JSON.stringify(body) });
+    if (!res.ok) console.error(`Reporting problems failed (${res.status})`);
+  } catch (e) {
+    console.error(`Reporting problems failed: ${(e as Error).message}`);
   }
 }
 

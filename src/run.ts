@@ -30,6 +30,7 @@ import {
 
 import { RUN_URL, SYSTEM_PROMPT, buildTools, loadConfig, log, newTopicState, short, toolNamesFor, type Engine } from "./agent.ts";
 import { runTopicClaude } from "./claude.ts";
+import { problems, resetProblems, sendProblems, type Problem } from "./problems.ts";
 import { claimTopic, failTopic, reportRun, type Claimed, type RunReport } from "./studio.ts";
 import { searchCost } from "./tools/search.ts";
 import type { SubmitState } from "./tools/submit.ts";
@@ -198,9 +199,14 @@ async function runTopicPi(topic: Claimed): Promise<Outcome> {
 async function runTopic(topic: Claimed): Promise<{ saved: boolean; cost: number }> {
   const engine: Engine = ENGINE_OVERRIDE ?? topic.engine;
   let outcome: Outcome;
+  // Problems the tools run into (problems.ts): Pi's tools add to `problems` here; Claude
+  // Code's run in the MCP server's process and come back in its outcome.
+  resetProblems();
+  let claudeProblems: Problem[] = [];
   if (engine === "claude-code") {
     log(`engine: claude-code (${config.claudeModel ?? "haiku"}, subscription)`);
     const c = await runTopicClaude(name, config, topic);
+    claudeProblems = c.problems;
     if (c.fallback) {
       log(`claude code couldn't do it (${c.why}); doing this topic with Pi instead`);
       outcome = await runTopicPi(topic);
@@ -236,15 +242,18 @@ async function runTopic(topic: Claimed): Promise<{ saved: boolean; cost: number 
   // What the run did and cost, for the studio's /agents screen.
   const savedUrl = outcome.submit.savedUrl;
   const report: RunReport = { ...outcome.report, outcome: savedUrl ? "saved" : "failed", pageUrl: savedUrl, error: null, runUrl: RUN_URL };
+  const found = [...claudeProblems, ...problems];
   if (savedUrl) {
     log(`saved ${topic.label}: ${savedUrl}`);
     await reportRun(config.campaign, topic.runId, report);
+    await sendProblems(config.campaign, topic.runId, found, RUN_URL);
     return { saved: true, cost: report.costUsd };
   }
   const why = outcome.why ?? "not saved";
   const status = await failTopic(config.campaign, topic.id, why);
   log(`gave back ${topic.label} (${status}): ${why}`);
   await reportRun(config.campaign, topic.runId, { ...report, error: why });
+  await sendProblems(config.campaign, topic.runId, found, RUN_URL);
   return { saved: false, cost: report.costUsd };
 }
 
@@ -268,7 +277,9 @@ async function main() {
   log(`done: ${saved} saved, total cost $${cost.toFixed(4)}`);
 }
 
-main().catch((e) => {
+main().catch(async (e) => {
   console.error(e);
+  // A crash (the studio unreachable, a bad config...) goes to /agents too.
+  await sendProblems(config.campaign, null, [{ source: "runner", message: `crashed: ${(e as Error).message}`, at: new Date().toISOString() }], RUN_URL);
   process.exit(1);
 });

@@ -22,6 +22,7 @@ import { join } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { FILE_TOOLS, SYSTEM_PROMPT, log, short, toolNamesFor, type AgentConfig } from "./agent.ts";
+import type { Problem } from "./problems.ts";
 import type { Claimed } from "./studio.ts";
 import type { SubmitState } from "./tools/submit.ts";
 
@@ -43,6 +44,8 @@ export type ClaudeOutcome = {
   cacheRead: number;
   cacheWrite: number;
   turns: number;
+  /** What the tools ran into (from the MCP server's state file). */
+  problems: Problem[];
 };
 
 /** Errors that mean "try Pi": the subscription's limits, overload, or no usable login. */
@@ -118,6 +121,7 @@ Your working folder is ${cwd}: keep your draft files there. Read, Write and Edit
     cacheRead: 0,
     cacheWrite: 0,
     turns: 0,
+    problems: [],
   };
   const readState = () => {
     if (!existsSync(stateFile)) return;
@@ -128,6 +132,7 @@ Your working folder is ${cwd}: keep your draft files there. Read, Write and Edit
       out.searchCostUsd = s.searchCost;
       out.searches = s.searches;
       out.freeSearches = s.freeSearches ?? 0;
+      out.problems = s.problems ?? [];
     } catch {
       // Being rewritten right now; the next read gets it.
     }

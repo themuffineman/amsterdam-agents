@@ -273,6 +273,27 @@ OpenRouter's live prices and matched the real bill when checked.
   adds menu paths and FAQ answers the thread doesn't have. Fine as the fallback, not as the default.
 - Workflow `.github/workflows/tutorials.yml`, hourly at :32, no SearXNG/yt-dlp.
 
+## Problems: what went wrong (the /agents "Problems" panel)
+
+A tool that fails doesn't fail the run (the agent works around it), so without this a broken tool (snapsave, Apify,
+SearXNG) would go unnoticed. Added 2026-10-23.
+
+- **Runner** (`src/problems.ts`): `noteProblem(source, message, url?)` into a per-topic list (module state like
+  `searchCost`; `runTopic` resets it), sent after the run report with `POST /api/agent/<campaign>/problems`
+  (`{ runId, runUrl, problems: [{ source, message, url, at }] }`). What's noted: every failed tool call
+  (`recordingFailures` in agent.ts wraps all tools but submit_page and matches "Couldn't ...", "Search failed",
+  "Screenshots aren't", or a throw), watch_video's Whisper and Supadata steps, SearXNG falling back to paid search, and
+  a runner crash (`main().catch`, runId null). On claude-code the MCP server writes its list to the state file and
+  claude.ts reads it back (`ClaudeOutcome.problems`).
+- **Workflows**: each agent workflow ends with "Report the failure to the studio" (`if: failure()`), a curl with
+  source `workflow`, so a setup step that breaks (npm ci, Whisper install) shows up too.
+- **Studio**: table `agent_problems` (migration 0034), `lib/agent-problems.ts` (`recordProblems`, `problemsOverview`),
+  route `app/api/agent/[campaign]/problems` (any campaign name, films too). `/api/agents` returns `problems`; the panel
+  groups the last 7 days by campaign + source + cause (`causeOf`: URLs and long ids stripped), and also lists failed
+  runs (`run failed`) and runs still "running" after 3 hours (`run died`). Each group opens to its 8 newest cases with
+  the URL and the run log.
+- read_page's errors say which: "the site showed a bot check" vs "couldn't load it (HTTP 404 / DNS ...)".
+
 ## Tracking: what is recorded where
 
 Everything lives in the studio's database (`SYCAMORE_DATABASE_URL`), except the pages themselves.

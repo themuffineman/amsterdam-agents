@@ -16,6 +16,8 @@
  * paid ones cost (total). The runner reads and resets it per topic.
  */
 
+import { noteProblem } from "../problems.ts";
+
 export const searchCost = { total: 0, count: 0, free: 0 };
 
 export type SearchResult = { title: string; url: string; snippet: string };
@@ -41,6 +43,7 @@ export async function search(query: string, opts: SearchOpts = {}): Promise<Sear
       }
     } catch (e) {
       console.log(`SearXNG failed, using the paid search: ${(e as Error).message}`);
+      noteProblem("search", `SearXNG failed, paid search used instead: ${(e as Error).message}`);
     }
   }
   return openRouter(query, opts);

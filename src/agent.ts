@@ -7,6 +7,7 @@ import { readFileSync } from "node:fs";
 
 import type { ToolDefinition } from "@earendil-works/pi-coding-agent";
 
+import { noteProblem } from "./problems.ts";
 import { findExamplesTool } from "./tools/examples.ts";
 import { findLogoTool } from "./tools/logo.ts";
 import { screenshotTool } from "./tools/screenshot.ts";
@@ -118,8 +119,34 @@ export function buildTools(
     .filter((t) => !FILE_TOOLS.has(t))
     .map((t) => {
       if (!all[t]) throw new Error(`agents/${config.campaign}.json asks for an unknown tool "${t}"`);
-      return all[t];
+      return t === "submit_page" ? all[t] : recordingFailures(all[t]);
     });
+}
+
+/**
+ * How our tools say they failed (they reply instead of throwing, so the agent can carry on):
+ * "Couldn't read <url>: why", "Search failed: why", "Screenshots aren't available here".
+ */
+const FAILED = /^(?:Couldn't \w+(?: a logo for)? (\S+?):? |Search failed: )([\s\S]*)$|^(Screenshots aren't available[\s\S]*)$/;
+
+/** The same tool, but every failure (a reply like the above, or a throw) is noted for /agents. */
+function recordingFailures(tool: ToolDefinition): ToolDefinition {
+  return {
+    ...tool,
+    execute: async (...args: Parameters<ToolDefinition["execute"]>) => {
+      const url = (args[1] as { url?: string })?.url ?? null;
+      try {
+        const result = await tool.execute(...args);
+        const reply = result.content.map((c) => (c.type === "text" ? c.text : "")).join("");
+        const m = reply.match(FAILED);
+        if (m) noteProblem(tool.name, (m[2] ?? m[3] ?? reply).trim(), url ?? (m[1]?.startsWith("http") ? m[1] : null));
+        return result;
+      } catch (e) {
+        noteProblem(tool.name, `threw: ${(e as Error).message}`, url);
+        throw e;
+      }
+    },
+  } as ToolDefinition;
 }
 
 export const log = (msg: string) => console.log(`[${new Date().toISOString().slice(11, 19)}] ${msg}`);

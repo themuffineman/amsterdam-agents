@@ -9,9 +9,9 @@
  *   AGENT_TOPIC_ID    the claimed topic
  *   AGENT_CWD         the topic's folder (submit_page reads page.json / post.md there)
  *   AGENT_MODEL       what the saved page records as its author
- *   AGENT_STATE_FILE  where to write how submitting went and what searches cost, after every
- *                     call: this process belongs to Claude Code, so the runner reads it back
- *                     from the file
+ *   AGENT_STATE_FILE  where to write how submitting went, what searches cost and the problems
+ *                     the tools ran into (problems.ts), after every call: this process belongs
+ *                     to Claude Code, so the runner reads it back from the file
  * Logs go to stderr only: stdout is the MCP channel.
  */
 import { randomUUID } from "node:crypto";
@@ -23,6 +23,7 @@ import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js"
 import { CallToolRequestSchema, ListToolsRequestSchema } from "@modelcontextprotocol/sdk/types.js";
 
 import { buildTools, loadConfig, newTopicState } from "./agent.ts";
+import { problems } from "./problems.ts";
 import { searchCost } from "./tools/search.ts";
 
 const env = (k: string) => {
@@ -37,7 +38,7 @@ const tools = buildTools(config, env("AGENT_TOPIC_ID"), env("AGENT_CWD"), env("A
 const stateFile = env("AGENT_STATE_FILE");
 
 const saveState = () =>
-  writeFileSync(stateFile, JSON.stringify({ submit: state.submit, searchCost: searchCost.total, searches: searchCost.count, freeSearches: searchCost.free }));
+  writeFileSync(stateFile, JSON.stringify({ submit: state.submit, searchCost: searchCost.total, searches: searchCost.count, freeSearches: searchCost.free, problems }));
 saveState();
 
 const server = new Server({ name: "agent", version: "1.0.0" }, { capabilities: { tools: {} } });
