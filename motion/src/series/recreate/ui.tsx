@@ -184,6 +184,47 @@ const FileIcon: React.FC<{ kind: ClaudeAttachment["kind"] }> = ({ kind }) => {
   );
 };
 
+/** Claude Code's window title bar: sidebar toggle, back/forward, title, window controls. */
+const ClaudeTitleBar: React.FC = () => (
+  <div style={{ height: 64, background: CL.bar, display: "flex", alignItems: "center", padding: "0 26px", gap: 26, color: CL.muted }}>
+    <svg width={22} height={18} viewBox="0 0 22 18">
+      <rect x={1} y={1} width={20} height={16} rx={3} stroke="currentColor" strokeWidth={1.6} fill="none" />
+      <path d="M8 1v16" stroke="currentColor" strokeWidth={1.6} />
+    </svg>
+    <span style={{ fontSize: 24 }}>‹</span>
+    <span style={{ fontSize: 24, color: CL.faint }}>›</span>
+    <span style={{ flex: 1, textAlign: "center", fontSize: 21, color: CL.text }}>Claude Code</span>
+    <span style={{ fontSize: 22 }}>—</span>
+    <span style={{ width: 17, height: 17, border: "1.6px solid currentColor", borderRadius: 2 }} />
+    <span style={{ fontSize: 26 }}>×</span>
+  </div>
+);
+
+/** The input card's bottom row: +, Chat / Cowork / Code, model, the orange send button (press 0..1). */
+const ClaudeControls: React.FC<{ model: string; press: number }> = ({ model, press }) => (
+  <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 24 }}>
+    <span style={{ width: 52, height: 52, borderRadius: 12, border: `1.5px solid ${CL.cardLine}`, display: "grid", placeItems: "center", fontSize: 28, color: CL.muted }}>+</span>
+    <div style={{ display: "flex", background: "#232221", border: `1.5px solid ${CL.cardLine}`, borderRadius: 14, padding: 4 }}>
+      {["Chat", "Cowork", "Code"].map((m) => (
+        <span key={m} style={{ fontSize: 21, padding: "9px 20px", borderRadius: 10, background: m === "Code" ? "#3A3836" : "transparent", color: m === "Code" ? CL.text : CL.muted }}>
+          {m}
+        </span>
+      ))}
+    </div>
+    <span style={{ flex: 1 }} />
+    <span style={{ fontSize: 21, color: CL.text }}>{model}</span>
+    <span style={{ fontSize: 21, color: CL.muted }}>High ⌄</span>
+    <span style={{ width: 56, height: 56, borderRadius: 14, background: CL.orange, display: "grid", placeItems: "center", transform: `scale(${1 - press * 0.1})`, boxShadow: press > 0 ? `0 0 0 ${6 * press}px rgba(217,119,87,0.35)` : undefined }}>
+      <svg width={22} height={24} viewBox="0 0 22 24">
+        <path d="M11 21V4M4 10l7-7 7 7" stroke="#fff" strokeWidth={2.8} fill="none" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  </div>
+);
+
+/** A click on a button: 0 -> 1 -> 0 over ~11 frames from `at`. */
+const pressAt = (frame: number, at?: number) => (at === undefined ? 0 : tween(frame, at, 3, 0, 1, "glide") - tween(frame, at + 3, 8, 0, 1, "softLand"));
+
 /**
  * Claude Code (desktop) in its new-session state, then working. Attachments pop into the input
  * card on their cues; instruction lines arrive whole on theirs (numbered lines get a circle, the
@@ -207,7 +248,7 @@ export const ClaudeWindow: React.FC<{
   const frame = useCurrentFrame();
   const working = workingAt !== undefined && frame >= workingAt;
   const w = workingAt === undefined ? 0 : ramp(frame, workingAt, 24, 0).p;
-  const press = sendAt === undefined ? 0 : tween(frame, sendAt, 3, 0, 1, "glide") - tween(frame, sendAt + 3, 8, 0, 1, "softLand");
+  const press = pressAt(frame, sendAt);
   const lastLineAt = Math.max(...lines.filter((l) => l.numbered && frame >= l.at).map((l) => l.at), -1);
   const ui: React.CSSProperties = { ...F.body, letterSpacing: "-0.01em" };
   const cardW = width * 0.78;
@@ -217,19 +258,7 @@ export const ClaudeWindow: React.FC<{
   let n = 0;
   return (
     <div style={{ width, height, borderRadius: 20, overflow: "hidden", background: CL.window, color: CL.text, ...ui, boxShadow: "0 50px 100px rgba(10,30,70,0.38), 0 10px 24px rgba(10,30,70,0.2)", position: "relative" }}>
-      {/* title bar */}
-      <div style={{ height: 64, background: CL.bar, display: "flex", alignItems: "center", padding: "0 26px", gap: 26, color: CL.muted }}>
-        <svg width={22} height={18} viewBox="0 0 22 18">
-          <rect x={1} y={1} width={20} height={16} rx={3} stroke="currentColor" strokeWidth={1.6} fill="none" />
-          <path d="M8 1v16" stroke="currentColor" strokeWidth={1.6} />
-        </svg>
-        <span style={{ fontSize: 24 }}>‹</span>
-        <span style={{ fontSize: 24, color: CL.faint }}>›</span>
-        <span style={{ flex: 1, textAlign: "center", fontSize: 21, color: CL.text }}>Claude Code</span>
-        <span style={{ fontSize: 22 }}>—</span>
-        <span style={{ width: 17, height: 17, border: "1.6px solid currentColor", borderRadius: 2 }} />
-        <span style={{ fontSize: 26 }}>×</span>
-      </div>
+      <ClaudeTitleBar />
 
       {/* greeting (fades and lifts away once working) */}
       <div style={{ position: "absolute", top: 150 - w * 60, width: "100%", display: "flex", justifyContent: "center", alignItems: "center", gap: 22, opacity: 1 - w }}>
@@ -324,25 +353,116 @@ export const ClaudeWindow: React.FC<{
           </div>
         )}
         {working && <div style={{ fontSize: 24, color: CL.faint, minHeight: 34 }}>Reply to Claude…</div>}
-        <div style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 24 }}>
-          <span style={{ width: 52, height: 52, borderRadius: 12, border: `1.5px solid ${CL.cardLine}`, display: "grid", placeItems: "center", fontSize: 28, color: CL.muted }}>+</span>
-          <div style={{ display: "flex", background: "#232221", border: `1.5px solid ${CL.cardLine}`, borderRadius: 14, padding: 4 }}>
-            {["Chat", "Cowork", "Code"].map((m) => (
-              <span key={m} style={{ fontSize: 21, padding: "9px 20px", borderRadius: 10, background: m === "Code" ? "#3A3836" : "transparent", color: m === "Code" ? CL.text : CL.muted }}>
-                {m}
-              </span>
-            ))}
-          </div>
-          <span style={{ flex: 1 }} />
-          <span style={{ fontSize: 21, color: CL.text }}>{model}</span>
-          <span style={{ fontSize: 21, color: CL.muted }}>High ⌄</span>
-          <span style={{ width: 56, height: 56, borderRadius: 14, background: CL.orange, display: "grid", placeItems: "center", transform: `scale(${1 - press * 0.1})`, boxShadow: press > 0 ? `0 0 0 ${6 * press}px rgba(217,119,87,0.35)` : undefined }}>
-            <svg width={22} height={24} viewBox="0 0 22 24">
-              <path d="M11 21V4M4 10l7-7 7 7" stroke="#fff" strokeWidth={2.8} fill="none" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
-        </div>
+        <ClaudeControls model={model} press={press} />
       </div>
     </div>
   );
+};
+
+// ---------------------------------------------------------------- Claude Code: a conversation
+
+export type ClaudeTurn = {
+  /** The ask: appears in the composer on `at`, is sent on `sendAt`. */
+  text: string;
+  at: number;
+  sendAt: number;
+  /** Claude's reply lands on `replyAt` (a working line with a timer runs until then). */
+  replyAt: number;
+  reply: string;
+  /** Minutes the working timer shows by the time the reply lands (a time skip). */
+  minutes?: number;
+  /** The reply's preview: the template, with an optional CSS filter standing in for the change. */
+  preview?: { id: TemplateId; trim?: number; filter?: string };
+};
+
+const BUBBLE_H = 92;
+const REPLY_TEXT_H = 64;
+const PREVIEW_W = 440;
+const PREVIEW_H = PREVIEW_W * 0.5625;
+const TURN_GAP = 34;
+
+/**
+ * Claude Code mid-conversation: each turn's ask arrives in the composer, gets sent (the button
+ * presses, the bubble joins the thread), Claude works with a running timer, then replies with a
+ * line and a playing preview. The thread glides up to keep the newest turn in view.
+ */
+export const ClaudeThread: React.FC<{ width: number; height: number; model?: string; turns: ClaudeTurn[] }> = ({ width, height, model = "Opus 5.5", turns }) => {
+  const frame = useCurrentFrame();
+  const colW = width * 0.74;
+  const left = (width - colW) / 2;
+  const composerH = 190;
+  const viewTop = 64;
+  const viewH = height - viewTop - composerH - 30;
+  const turnH = (t: ClaudeTurn) => BUBBLE_H + 22 + REPLY_TEXT_H + (t.preview ? PREVIEW_H + 16 : 0) + TURN_GAP;
+  const tops = turns.reduce<number[]>((acc, t, i) => [...acc, i === 0 ? 24 : acc[i - 1] + turnH(turns[i - 1])], []);
+  // scroll: after each send, glide so that turn's bottom sits at the bottom of the view
+  let scroll = 0;
+  turns.forEach((t, i) => {
+    const target = Math.max(0, tops[i] + turnH(t) - TURN_GAP - viewH + 10);
+    scroll += (target - scroll) * tween(frame, t.sendAt + 2, 20, 0, 1, "softInOut");
+  });
+  const current = turns.find((t) => frame >= t.at && frame < t.sendAt + 3);
+  const lastSend = turns.reduce((m, t) => (frame >= t.sendAt ? Math.max(m, t.sendAt) : m), -999);
+  return (
+    <div style={{ width, height, borderRadius: 20, overflow: "hidden", background: CL.window, color: CL.text, ...F.body, letterSpacing: "-0.01em", boxShadow: "0 50px 100px rgba(10,30,70,0.38), 0 10px 24px rgba(10,30,70,0.2)", position: "relative" }}>
+      <ClaudeTitleBar />
+      <div style={{ position: "absolute", top: viewTop, left, width: colW, height: viewH, overflow: "hidden" }}>
+        <div style={{ transform: `translateY(${-scroll}px)` }}>
+          {turns.map((t, i) => {
+            if (frame < t.sendAt) return null;
+            const b = enter(frame, t.sendAt, { from: { y: 40, blur: 4 }, frames: 12 });
+            const working = frame >= t.sendAt + 6 && frame < t.replyAt;
+            const elapsed = tween(frame, t.sendAt + 6, Math.max(1, t.replyAt - t.sendAt - 6), 0, (t.minutes ?? 3) * 60 - 7, "glide");
+            const r = enter(frame, t.replyAt, { from: { y: 24, blur: 6 }, frames: 14 });
+            return (
+              <div key={i} style={{ position: "absolute", top: tops[i], left: 0, right: 0 }}>
+                <div style={{ display: "flex", justifyContent: "flex-end", height: BUBBLE_H, alignItems: "flex-start", transform: `translateY(${b.y}px)`, opacity: b.opacity }}>
+                  <div style={{ background: CL.card, borderRadius: 18, padding: "18px 26px", fontSize: 25, color: CL.text, maxWidth: colW * 0.8 }}>{t.text}</div>
+                </div>
+                <div style={{ marginTop: 22, display: "flex", gap: 18 }}>
+                  <Img src={staticFile("recreate/claude-icon.svg")} style={{ width: 36, height: 36, flexShrink: 0, transform: working ? `rotate(${(frame - t.sendAt) * 6}deg)` : undefined, opacity: frame >= t.sendAt + 6 ? 1 : 0 }} />
+                  <div style={{ flex: 1 }}>
+                    {working && (
+                      <div style={{ display: "flex", gap: 14, alignItems: "center", height: 36 }}>
+                        <span style={{ fontSize: 23 }}>Working</span>
+                        <span style={{ ...F.mono, fontSize: 20, color: CL.muted, textTransform: "none", letterSpacing: 0 }}>
+                          {Math.floor(elapsed / 60)}m {String(Math.floor(elapsed % 60)).padStart(2, "0")}s
+                        </span>
+                      </div>
+                    )}
+                    {frame >= t.replyAt && (
+                      <div style={{ transform: `translateY(${r.y}px)`, opacity: r.opacity, filter: r.blur > 0.3 ? `blur(${r.blur}px)` : undefined }}>
+                        <div style={{ fontSize: 24, lineHeight: 1.4, color: CL.text, minHeight: REPLY_TEXT_H - 16 }}>{t.reply}</div>
+                        {t.preview && (
+                          <div style={{ marginTop: 16, width: PREVIEW_W, height: PREVIEW_H, borderRadius: 14, overflow: "hidden", position: "relative", border: `1.5px solid ${CL.cardLine}` }}>
+                            <div style={{ position: "absolute", inset: 0, filter: t.preview.filter }}>
+                              <TemplateClip id={t.preview.id} trim={t.preview.trim} />
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+      {/* composer */}
+      <div style={{ position: "absolute", left, width: colW, bottom: 30, background: CL.card, border: `1.5px solid ${CL.cardLine}`, borderRadius: 26, padding: "22px 24px", boxShadow: "0 20px 50px rgba(0,0,0,0.3)" }}>
+        <div style={{ fontSize: 26, minHeight: 36, color: current ? CL.text : CL.faint }}>
+          {current ? (() => { const e = enter(frame, current.at, { from: { y: 10, blur: 4 }, frames: 10 }); return <span style={{ display: "inline-block", transform: `translateY(${e.y}px)`, opacity: e.opacity }}>{current.text}</span>; })() : "Reply to Claude…"}
+        </div>
+        <ClaudeControls model={model} press={pressAt(frame, lastSend > -999 ? lastSend : undefined)} />
+      </div>
+    </div>
+  );
+};
+
+/** Where ClaudeThread's send button sits, relative to the window (for the cursor). */
+export const threadSendButton = (width: number, height: number): [number, number] => {
+  const colW = width * 0.74;
+  const left = (width - colW) / 2;
+  return [left + colW - 24 - 28, height - 30 - 22 - 28];
 };

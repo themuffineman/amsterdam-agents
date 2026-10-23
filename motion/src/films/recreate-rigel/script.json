@@ -2,61 +2,24 @@
   "voice": "Achird",
   "model": "google/gemini-3.8-flash-lite-tts",
   "segments": [
-    {
-      "id": "intro1",
-      "text": "This is Type Staircase, one of the free templates on Sycamore."
-    },
-    {
-      "id": "intro2",
-      "text": "It builds one sentence a word at a time, and every new word steps down and to the right, like it's walking down a flight of stairs."
-    },
-    {
-      "id": "look1",
-      "text": "Look at the sizing. The words that carry the point, like content and system, come in big. The little connecting words stay small, so your eye jumps straight to what matters."
-    },
-    {
-      "id": "look2",
-      "text": "Every word slides in out of a soft blur, and the camera keeps following the newest one, so the older words drift off the left edge."
-    },
-    {
-      "id": "turn1",
-      "text": "Here's the thing. I didn't animate any of this by hand. It came from one prompt."
-    },
-    {
-      "id": "turn2",
-      "text": "And you can make your own version of it with Claude Code. Here's how."
-    },
-    {
-      "id": "site1",
-      "text": "Go to sycamore dot to slash motion, and open Type Staircase."
-    },
-    {
-      "id": "site2",
-      "text": "Under the preview there's a copy prompt button. That copies the whole prompt, the one that built this exact animation."
-    },
-    {
-      "id": "prompt1",
-      "text": "It spells out everything. The sizes, the timing of every word, the easing, and the camera move. It's almost two thousand words."
-    },
-    {
-      "id": "claude1",
-      "text": "Now open Claude Code and paste it in."
-    },
-    {
-      "id": "claude2",
-      "text": "Then tell it what to change. I asked for a dark background, an orange accent, and my own sentence."
-    },
-    {
-      "id": "claude3",
-      "text": "Hit send, and let it work. This one took about ten minutes."
-    },
-    {
-      "id": "result1",
-      "text": "And here's what came back. Same staircase, same timing, but it's mine now."
-    },
-    {
-      "id": "outro1",
-      "text": "That's the whole trick. The prompt does the heavy lifting, and Claude Code does the rest. Every template on the site comes with one."
-    }
+    { "id": "hook1", "text": "So I was going through the templates on Sycamore Motion the other day, and I came across this one called Type Staircase." },
+    { "id": "hook2", "text": "And I really liked it. It takes one sentence and builds it a word at a time, and every new word drops down a step and over to the right, so the whole thing kind of walks down the screen like a staircase." },
+    { "id": "hook3", "text": "What I like most is the sizing. The words that actually matter, like content and system, come in big, and the little words in between stay small. So even if you're only half watching, you still get the point." },
+    { "id": "hook4", "text": "Every word slides in out of a soft blur, and the camera keeps following the newest one, so the older words just drift off to the left. It's simple, but it feels really smooth." },
+    { "id": "segue1", "text": "So in this video I'm going to show you how to make this same kind of animation for any text you want. All you need is Claude Code and Sycamore, and I'll explain the Sycamore part in a minute." },
+    { "id": "tools1", "text": "Quick thing before we start. Claude Code can't make a video by itself, it needs something to render with. You can use Remotion, or HyperFrames, or honestly you could just have it build a web page and take screenshots a few times a second." },
+    { "id": "tools2", "text": "I'm using Remotion here because I already have it set up, so I just paste the prompt in and let it run." },
+    { "id": "step1a", "text": "Okay, step one. Go to sycamore dot to slash motion and find Type Staircase." },
+    { "id": "step1b", "text": "Under the preview there's a button that says copy prompt. Click that, and you get the whole prompt that was used to make this exact animation." },
+    { "id": "step1c", "text": "And it's pretty detailed. It covers the sizes, the timing of each word, the easing, and how the camera moves. It's close to two thousand words, so you don't have to figure any of that out yourself." },
+    { "id": "step2a", "text": "Step two. Open Claude Code, paste the prompt in, and send it as it is." },
+    { "id": "step2b", "text": "I'd run the original first, just so you know it works before you start changing things. This took about ten minutes, and it came back looking pretty much the same as the one on the site." },
+    { "id": "step3a", "text": "Step three is where you make it yours. I'd do this one thing at a time instead of cramming everything into one message." },
+    { "id": "step3b", "text": "First I asked it to switch to a dark background." },
+    { "id": "step3c", "text": "Then I asked it to make the big words orange." },
+    { "id": "step3d", "text": "And then I gave it my own sentence to animate." },
+    { "id": "step3e", "text": "Doing it this way makes it a lot easier to see what each change did, and if something looks off, you know exactly which message caused it." },
+    { "id": "result1", "text": "So here's the original next to what I ended up with. The motion is basically the same, I just changed the colors and the text." },
+    { "id": "outro1", "text": "And that's pretty much it. Every template on the site comes with its prompt, so you can do this with any of them. Let me know which one you want me to try next." }
   ]
 }
