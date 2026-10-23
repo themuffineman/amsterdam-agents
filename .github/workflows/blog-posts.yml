@@ -70,6 +70,8 @@ jobs:
           SEARXNG_URL: http://localhost:8080
           # watch_video's last fallback, when captions, snapsave and Whisper all fail (free plan: 100 credits a month)
           SUPADATA_API_KEY: ${{ secrets.SUPADATA_API_KEY }}
+          # read_page's Reddit threads, through the Apify Reddit scraper (about 1 cent a thread, max 3 a post)
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
           # The claude-code engine: a token from `claude setup-token` (Claude subscription, no per-token bill)
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           TOPICS_PER_RUN: ${{ inputs.topics }}

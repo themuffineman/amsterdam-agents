@@ -49,7 +49,7 @@ export type ClaudeOutcome = {
 const FALLBACK_ERROR = /usage limit|hit your limit|limit reached|rate.?limit|429|overloaded|529|not logged in|invalid api key|oauth|authentication|ENOENT|not found|cannot find|not recognized/i;
 
 /** Variables our tools need; passed to the MCP server explicitly. */
-const TOOL_ENV = ["STUDIO_URL", "AGENT_API_KEY", "OPENROUTER_API_KEY", "SEARXNG_URL", "SUPADATA_API_KEY", "CHROME_PATH", "PATH", "HOME", "USERPROFILE", "TEMP", "TMP", "SYSTEMROOT"];
+const TOOL_ENV = ["STUDIO_URL", "AGENT_API_KEY", "OPENROUTER_API_KEY", "SEARXNG_URL", "SUPADATA_API_KEY", "APIFY_TOKEN", "CHROME_PATH", "PATH", "HOME", "USERPROFILE", "TEMP", "TMP", "SYSTEMROOT"];
 
 export async function runTopicClaude(name: string, config: AgentConfig, topic: Claimed): Promise<ClaudeOutcome> {
   const claudeModel = config.claudeModel ?? "haiku";

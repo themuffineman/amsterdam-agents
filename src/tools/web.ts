@@ -2,6 +2,8 @@ import { defineTool } from "@earendil-works/pi-coding-agent";
 import { Type } from "typebox";
 
 import { isPostUrl } from "./examples.ts";
+import { isRedditThread, readRedditThread } from "./reddit.ts";
+import { readWithChrome } from "./screenshot.ts";
 import { formatResults, search } from "./search.ts";
 
 /**
@@ -51,44 +53,79 @@ export const webSearchTool = (found: Set<string>, seen: Seen) =>
   },
 });
 
+/** Reddit threads per topic through Apify (about 1 cent each). */
+const MAX_REDDIT = 3;
+
 /**
- * Reads a page as text. Jina Reader (r.jina.ai) first: it renders JavaScript-heavy pages
- * and returns clean markdown. If it fails, the raw HTML with the tags stripped.
+ * A bot check or error page instead of the page (Reddit's block page, Cloudflare's "Just a
+ * moment", Quora's JavaScript-only shell). Only short texts: a long article quoting one of
+ * these phrases is still the article.
+ */
+const isBlockPage = (t: string) =>
+  t.length < 3000 &&
+  /blocked by network security|you've been blocked|blocked by mistake|just a moment\.\.\.|enable javascript and cookies to continue|verify you are human|attention required|something went wrong\. wait a moment/i.test(t);
+
+const usable = (t: string | null | undefined): t is string => !!t && t.trim().length > 200 && !isBlockPage(t);
+
+/**
+ * Reads a page as text, trying in turn until one gives the real page:
+ *   1. Jina Reader (r.jina.ai): renders JavaScript-heavy pages, returns clean markdown.
+ *   2. A plain fetch, tags stripped.
+ *   3. Chrome on this machine (readWithChrome): gets past some bot checks (Quora's Cloudflare).
+ * A block page from all three is an error, so the agent knows it didn't read the page.
  */
 async function readText(url: string): Promise<string> {
   const jina = await fetch(`https://r.jina.ai/${url}`, {
     headers: { Accept: "text/plain", "X-Return-Format": "markdown" },
     signal: AbortSignal.timeout(45_000),
-  }).catch(() => null);
-  if (jina?.ok) {
-    const t = await jina.text();
-    if (t.trim().length > 200) return t;
-  }
-  const res = await fetch(url, {
+  })
+    .then((r) => (r.ok ? r.text() : null))
+    .catch(() => null);
+  if (usable(jina)) return jina;
+
+  const plain = await fetch(url, {
     headers: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36" },
     signal: AbortSignal.timeout(30_000),
-  });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return (await res.text())
-    .replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, " ")
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/g, " ")
-    .replace(/\s+/g, " ");
+  })
+    .then(async (r) =>
+      r.ok
+        ? (await r.text())
+            .replace(/<(script|style|noscript)[\s\S]*?<\/\1>/gi, " ")
+            .replace(/<[^>]+>/g, " ")
+            .replace(/&nbsp;/g, " ")
+            .replace(/\s+/g, " ")
+        : null,
+    )
+    .catch(() => null);
+  if (usable(plain)) return plain;
+
+  const chrome = await readWithChrome(url).catch(() => null);
+  if (usable(chrome)) return chrome.replace(/[ \t]+/g, " ").replace(/\n\s*\n+/g, "\n\n");
+  throw new Error("the site showed a bot check or an error page instead of the page (not read; don't rely on it)");
 }
 
-export const readPageTool = (seen: Seen) =>
-  defineTool({
+export const readPageTool = (seen: Seen) => {
+  let redditReads = 0;
+  return defineTool({
   name: "read_page",
   label: "Read page",
-  description: "Read a web page as text (the first 5,000 characters). Use it on search results before relying on them.",
+  description: `Read a web page as text (the first 5,000 characters). Use it on search results before relying on them. Reddit threads (reddit.com/r/.../comments/...) come back with their comments; at most ${MAX_REDDIT} per post, so pick the most relevant.`,
   parameters: Type.Object({ url: Type.String({ description: "The page's full URL" }) }),
   execute: async (_id, { url }) => {
     try {
-      const t = await readText(url);
+      let t: string;
+      if (isRedditThread(url) && process.env.APIFY_TOKEN) {
+        if (redditReads >= MAX_REDDIT) return text(`You've read ${MAX_REDDIT} Reddit threads, the most for one post. Use the ones you have.`);
+        redditReads++;
+        t = await readRedditThread(url);
+      } else {
+        t = await readText(url);
+      }
       seen.add(normalUrl(url));
       return text(t.length > PAGE_LIMIT ? `${t.slice(0, PAGE_LIMIT)}\n\n[cut at ${PAGE_LIMIT} characters]` : t);
     } catch (e) {
       return text(`Couldn't read ${url}: ${(e as Error).message}`);
     }
   },
-});
+  });
+};

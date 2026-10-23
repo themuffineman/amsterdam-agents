@@ -128,9 +128,19 @@ sycamore.to/ideas/{platform}/{niche}: rendered from idea_pages on first visit, c
   each job is a fresh machine/IP with few searches. Research 8/8 queries got results; single posts found for YouTube,
   TikTok, Instagram, LinkedIn, Facebook, few for X and Pinterest. If engines start blocking, the paid share in the run
   logs goes up: rerun the search test and change the engines in `settings.yml`.
-- `src/tools/web.ts`: `web_search` and `read_page` (Jina Reader `r.jina.ai`, falls back to stripped HTML; **5,000
-  characters max**, because everything read stays in context and is resent every turn). Both record every URL they
-  return or read in `seen`, for `checkLinks`.
+- `src/tools/web.ts`: `web_search` and `read_page` (**5,000 characters max**, because everything read stays in context
+  and is resent every turn). Both record every URL they return or read in `seen`, for `checkLinks`. `read_page` tries
+  Jina Reader (`r.jina.ai`), then a plain fetch (tags stripped), then **Chrome** (`readWithChrome` in screenshot.ts,
+  sharing its one-browser queue), and skips any answer that is a block page (`isBlockPage`: Reddit's "You've been
+  blocked", Cloudflare's "Just a moment", Quora's "Something went wrong"; texts under 3,000 characters only). If all
+  three are blocked it returns an error, so the agent doesn't cite a page it never read (before 2026-10-23 block pages
+  were returned as the page). Checked 2026-10-23 from a home IP: Jina is blocked on Reddit and Quora; Chrome gets
+  Quora answers and Reddit listings. **Not yet checked from GitHub's IPs** (Reddit blocks data centres harder).
+- `src/tools/reddit.ts`: Reddit **threads** (`/r/<sub>/comments/<id>`) in `read_page` go to the Apify
+  `automation-lab~reddit-scraper` actor instead (same actor and settings as the studio's tutorial harvest), when
+  `APIFY_TOKEN` is set: post + up to 30 comments, flat, [OP] marked, no votes (always 0). About 1 cent a thread, at most
+  3 per topic (`MAX_REDDIT`); not counted in the run's reported cost. Without the token, threads go through the normal
+  chain.
 - **Standard tools** (`STANDARD_TOOLS` in run.ts): every agent gets `web_search`, `read_page`, `watch_video`,
   `screenshot` and `find_logo` whatever its config lists, so a new campaign can use them; its config adds the rest
   (`find_examples`, Pi's file tools, `submit_page`). The studio's prompt says which ones to use and how. Add a new

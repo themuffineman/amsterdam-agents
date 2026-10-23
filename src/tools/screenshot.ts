@@ -172,6 +172,31 @@ export async function capture(page: Page, url: string, find?: string): Promise<{
   return { image, title, text: await page.evaluate(pageVisibleText, { top: 0, bottom: VIEWPORT.height }) };
 }
 
+/**
+ * A page's visible text, loaded in Chrome: for read_page when Jina and a plain fetch hit a bot
+ * check (Quora's Cloudflare page, JavaScript-only pages). A real browser solves those checks
+ * more often. Shares the one-Chrome-at-a-time queue with screenshots.
+ */
+export function readWithChrome(url: string): Promise<string> {
+  return oneAtATime(async () => {
+    const executablePath = chromePath();
+    if (!executablePath) throw new Error("no Chrome found");
+    const browser = await puppeteer.launch({ headless: true, executablePath, defaultViewport: VIEWPORT, args: ["--no-sandbox"] });
+    try {
+      const page = await browser.newPage();
+      await page.setUserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0.0.0 Safari/537.36");
+      await page.goto(url, { waitUntil: "networkidle2", timeout: 45_000 }).catch((e) => {
+        if (!/timeout/i.test((e as Error).message)) throw e;
+      });
+      // Bot checks reload the page once they pass; give that time.
+      await sleep(4000);
+      return await page.evaluate(() => document.body.innerText);
+    } finally {
+      await browser.close().catch(() => {});
+    }
+  });
+}
+
 export function screenshotTool(opts: { campaign: string; topicId: string; seen: Seen }) {
   let taken = 0;
   const reply = (t: string) => ({ content: [{ type: "text" as const, text: t }], details: {} });
