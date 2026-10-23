@@ -32,6 +32,13 @@ AI-made. Work from this folder (`cd motion`): it has its own `package.json`, `no
 9. **Report honestly.** Give the gate numbers and what is still weak. Never write
    "verified" or "perfect".
 
+## The "recreate" series
+
+Videos for the prompt -> motion graphic tutorial series (sycamore.to/motion templates rebuilt with
+Claude Code) have their own look and motion: read `src/series/recreate/SERIES.md` before building
+one. Its rules override the general motion-craft defaults where they differ (3D tilts, speed-ramp
+transitions, mixed caps + serif type).
+
 ## Layout
 
 - `src/Root.tsx`: composition list. Use presets from `src/lib/presets.ts`

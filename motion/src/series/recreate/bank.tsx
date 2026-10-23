@@ -18,7 +18,7 @@ import React from "react";
 import { Img, Loop, OffthreadVideo, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { enter, tween } from "../../lib/eases";
 import { Arrow, Diamond, TicketShell } from "./kit";
-import { Float3D, OpeningChip, Words, floatUp, rackStyle, type WordSpec } from "./moves";
+import { Float3D, OpeningChip, Words, floatUp, rackStyle, ramp, type WordSpec } from "./moves";
 import { TEMPLATES, type TemplateId } from "./templates";
 import { C, F } from "./tokens";
 
@@ -81,15 +81,16 @@ export type DealtItem = { id: TemplateId; at: number };
 
 /**
  * Tickets deal in one by one on their cues, each floating up and unwinding its tilt (outer ones
- * angled toward the centre). With `focus`, the chosen ticket glides to the centre and lifts
- * (focus) while the others part and go soft (dim): depth of field, not a cut.
+ * angled toward the centre). With `focus`, the chosen ticket moves to the centre on a speed ramp
+ * (slow, very fast with motion blur, hard stop) and lifts, while the others part and go soft.
  */
 export const DealtTickets: React.FC<{ items: DealtItem[]; focus?: { index: number; at: number }; width?: number }> = ({ items, focus, width = 420 }) => {
   const frame = useCurrentFrame();
   const mid = (items.length - 1) / 2;
   const step = width + 54;
   const tilts = [-4, 1.5, 4.5, -2];
-  const k = focus ? tween(frame, focus.at, 34, 0, 1, "softInOut") : 0;
+  const r = focus ? ramp(frame, focus.at, 22) : { p: 0, blur: 0 };
+  const k = r.p;
   const order = items.map((_, i) => i).sort((a, b) => (a === focus?.index ? 1 : b === focus?.index ? -1 : 0));
   return (
     <>
@@ -102,7 +103,7 @@ export const DealtTickets: React.FC<{ items: DealtItem[]; focus?: { index: numbe
         const fx = chosen ? x * (1 - k) : x + side * 150 * k;
         const posed = chosen ? { ...pose, rotY: pose.rotY * (1 - k), rotZ: pose.rotZ * (1 - k * 0.6), y: pose.y - 20 * k } : pose;
         return (
-          <div key={i} style={{ position: "absolute", left: 960 - width / 2, top: 170 }}>
+          <div key={i} style={{ position: "absolute", left: 960 - width / 2, top: 170, filter: chosen && r.blur > 0.3 ? `blur(${r.blur}px)` : undefined }}>
             <Float3D pose={posed} x={fx} scale={chosen ? 1 + 0.08 * k : 1}>
               <MediaTicket id={it.id} width={width} focus={chosen ? k : 0} dim={chosen ? 0 : k} />
             </Float3D>

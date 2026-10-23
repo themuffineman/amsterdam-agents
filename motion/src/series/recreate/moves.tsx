@@ -72,6 +72,18 @@ export const glide = (frame: number, keys: Key[]) =>
 export const rackStyle = (k: number, blur = 14, fade = 0.25): React.CSSProperties =>
   k <= 0.001 ? {} : { filter: `blur(${k * blur}px)`, transform: `scale(${1 - k * 0.05})`, opacity: 1 - k * fade };
 
+/**
+ * Speed ramp for emphasis moves (the transitions' grammar inside a scene): starts slow, ramps up
+ * very fast (crashOut) to the midpoint, then decelerates hard (whip) into place. `p` 0..1 is the
+ * move's progress; `blur` peaks at the fastest moment, for motion blur on the moving element.
+ */
+export const ramp = (frame: number, at: number, frames = 22, maxBlur = 12) => {
+  const half = frames / 2;
+  const p = tween(frame, at, half, 0, 0.5, "crashOut") + tween(frame, at + half, half, 0, 0.5, "whip");
+  const blur = tween(frame, at, half, 0, maxBlur, "crashOut") - tween(frame, at + half, half, 0, maxBlur, "whip");
+  return { p, blur };
+};
+
 // ---------------------------------------------------------------- the float-up
 
 export type Pose = { rotX: number; rotY: number; rotZ: number };

@@ -17,8 +17,8 @@
  */
 import React, { createContext, useContext } from "react";
 import { AbsoluteFill, Sequence, useCurrentFrame, useVideoConfig } from "remotion";
-import { tween } from "../../lib/eases";
 import { NightGround, PaperGround, SkyGround } from "./kit";
+import { inStyle, outStyle, pickTransition, type TransitionKind } from "./transitions";
 
 export type Word = { text: string; start: number; end: number };
 export type Transcript = { words: Word[] };
@@ -79,49 +79,50 @@ export type Ground = "paper" | "night" | "sky";
 
 const GROUNDS: Record<Ground, React.FC> = { paper: PaperGround, night: NightGround, sky: SkyGround };
 
-/** The ground layer: holds until the next scene with a different ground, which wipes up over it. */
-const GroundLayer: React.FC<{ ground: Ground; wipe: boolean }> = ({ ground, wipe }) => {
-  const frame = useCurrentFrame();
+/** The ground layer: holds until the next scene with a different ground; switches hard on the cut (peak blur). */
+const GroundLayer: React.FC<{ ground: Ground }> = ({ ground }) => {
   const G = GROUNDS[ground];
-  const top = wipe ? tween(frame, 0, 9, 100, 0, "whip") : 0;
-  return (
-    <AbsoluteFill style={{ clipPath: `inset(${top}% 0 0 0)` }}>
-      <G />
-    </AbsoluteFill>
-  );
+  return <G />;
 };
 
 export type SceneProps = {
   from: string;
   fromN?: number;
   name?: string;
-  /** Background under this scene. A change of ground wipes up from the bottom on the scene start. */
+  /** Background under this scene. */
   ground?: Ground;
-  /** "blur" (default): the outgoing scene blurs out over the incoming one. "cut": hard cut. */
-  out?: "blur" | "cut";
+  /** How this scene LEAVES. Default: picked by code (pickTransition). "cut": plain hard cut. */
+  transition?: TransitionKind | "cut";
+  /** The focused element's centre (px, 1920x1080) when the scene ends: the exit zooms into it. */
+  focus?: [number, number];
   children: React.ReactNode;
   _start?: number;
   _dur?: number;
   _after?: number;
-  _last?: boolean;
+  _out?: TransitionKind;
+  _in?: TransitionKind;
 };
 
-const LEAD = 6; // a scene starts this many frames before its first word
-const OVERLAP = 8; // a blurring-out scene overlaps the next by this much
+const LEAD = 3; // a scene starts this many frames before its first word, so the first word rides in on the transition
 
-export const Scene: React.FC<SceneProps> = ({ from, name, out = "blur", children, _start = 0, _dur = 1, _after = 0, _last }) => {
+/**
+ * One spoken beat. Local frame 0 = the cut into it. It enters on the previous scene's
+ * transition (speed ramp in) and leaves on its own (speed ramp out) on its last frame.
+ */
+export const Scene: React.FC<SceneProps> = ({ from, name, focus, children, _start = 0, _dur = 1, _after = 0, _out, _in }) => {
   const ctx = useCtx();
-  const exitAt = _last || out === "cut" ? undefined : _dur - OVERLAP;
   return (
     <Sequence from={_start} durationInFrames={_dur} name={name ?? from}>
       <TranscriptCtx.Provider value={{ transcript: ctx.transcript, offset: _start, sceneStart: _after }}>
-        <BlurOut at={exitAt}>{children}</BlurOut>
+        <Ramps out={_out} in={_in} dur={_dur} focus={focus}>
+          {children}
+        </Ramps>
       </TranscriptCtx.Provider>
     </Sequence>
   );
 };
 
-/** Lays scenes end to end: each holds until the next one's first word. Later scenes draw on top. */
+/** Lays scenes end to end: each holds until the next one's first word, then the transition cuts. */
 export const Track: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const ctx = useCtx();
   const { fps, durationInFrames } = useVideoConfig();
@@ -132,7 +133,12 @@ export const Track: React.FC<{ children: React.ReactNode }> = ({ children }) => 
     after = hit.start;
     return { frame: Math.max(0, Math.round(hit.start * fps) - LEAD), after: hit.start };
   });
-  const grounds = scenes.map((el) => el.props.ground ?? "paper");
+  // the transition that ends each scene (none after the last)
+  const outs = scenes.map((el, i) => {
+    if (i === scenes.length - 1 || el.props.transition === "cut") return undefined;
+    return el.props.transition ?? pickTransition(i, el.props.focus);
+  });
+  const grounds = scenes.map((el) => el.props.ground ?? "sky");
   return (
     <>
       {scenes.map((el, i) => {
@@ -140,27 +146,31 @@ export const Track: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         let j = i + 1;
         while (j < scenes.length && grounds[j] === grounds[i]) j++;
         const start = starts[i].frame;
-        const end = j < scenes.length ? starts[j].frame + 9 : durationInFrames;
+        const end = j < scenes.length ? starts[j].frame : durationInFrames;
         return (
           <Sequence key={`g${i}`} from={start} durationInFrames={end - start} name={`ground ${grounds[i]}`}>
-            <GroundLayer ground={grounds[i]} wipe={i > 0} />
+            <GroundLayer ground={grounds[i]} />
           </Sequence>
         );
       })}
       {scenes.map((el, i) => {
         const last = i === scenes.length - 1;
         const start = starts[i].frame;
-        const end = last ? durationInFrames : starts[i + 1].frame + (el.props.out === "cut" ? 0 : OVERLAP);
-        return React.cloneElement(el, { key: i, _start: start, _dur: Math.max(1, end - start), _after: starts[i].after, _last: last });
+        const end = last ? durationInFrames : starts[i + 1].frame;
+        return React.cloneElement(el, { key: i, _start: start, _dur: Math.max(1, end - start), _after: starts[i].after, _out: outs[i], _in: i > 0 ? outs[i - 1] : undefined });
       })}
     </>
   );
 };
 
-/** Scene exit: accelerates into a blur and a slight push, then gone. */
-const BlurOut: React.FC<{ at?: number; children: React.ReactNode }> = ({ at, children }) => {
+/** Applies the incoming ramp (first frames) and the outgoing ramp (last frames) to a scene. */
+const Ramps: React.FC<{ out?: TransitionKind; in?: TransitionKind; dur: number; focus?: [number, number]; children: React.ReactNode }> = ({ out, in: inKind, dur, focus, children }) => {
   const frame = useCurrentFrame();
-  if (at === undefined || frame < at) return <AbsoluteFill>{children}</AbsoluteFill>;
-  const t = tween(frame, at, OVERLAP, 0, 1, "accelExit");
-  return <AbsoluteFill style={{ opacity: 1 - t, filter: `blur(${t * 16}px)`, transform: `scale(${1 + t * 0.05})` }}>{children}</AbsoluteFill>;
+  const enter = inKind ? inStyle(inKind, frame) : undefined;
+  const leave = out ? outStyle(out, frame, dur, focus) : undefined;
+  return (
+    <AbsoluteFill style={leave ?? enter}>
+      {children}
+    </AbsoluteFill>
+  );
 };

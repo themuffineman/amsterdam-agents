@@ -1,6 +1,8 @@
 /**
  * RecreateBank: a demo of the component bank on one voice-cued track (FAKE timings from
  * script.txt via codemotion's fake-transcript.mjs). All on the sky ground; every card a ticket.
+ * Cuts are speed-ramp transitions picked by code: beat 1 names Deneb as its focus, so it leaves
+ * by zooming into Deneb; the rest rotate (slide left, zoom out, diagonal).
  *
  * 1 "here are three"   DealtTickets: Antares, Sirius, Deneb float up on "three templates ... site";
  *                      "pick" -> Deneb takes focus, the others part and go soft.
@@ -108,7 +110,7 @@ const Anatomy: React.FC = () => {
 export const RecreateBank: React.FC = () => (
   <TranscriptProvider transcript={transcript}>
     <Track>
-      <Scene from="here are three" ground="sky">
+      <Scene from="here are three" ground="sky" focus={[960, 480]}>
         <Three />
       </Scene>
       <Scene from="there are twelve" ground="sky">
