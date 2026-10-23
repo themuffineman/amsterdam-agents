@@ -9,3 +9,8 @@ research/*/*/frames
 
 # Research notes (creator transcripts, frames) stay local: other people's content.
 research/
+
+# Font experiments: trial/demo/proprietary fonts stay local (this repo is public).
+# Only Alte Haas Grotesk (freeware, ships with its licence) is committed.
+public/fonts/experiment/*
+!public/fonts/experiment/AlteHaasGrotesk*

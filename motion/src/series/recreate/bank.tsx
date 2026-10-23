@@ -14,7 +14,7 @@ import React from "react";
 import { Img, Loop, OffthreadVideo, staticFile, useCurrentFrame } from "remotion";
 import { enter, tween } from "../../lib/eases";
 import { Arrow, Sticker } from "./kit";
-import { Float3D, OpeningChip, Words, floatUp, rackStyle } from "./moves";
+import { Float3D, OpeningChip, Words, floatUp, rackStyle, type WordSpec } from "./moves";
 import { TEMPLATES, type TemplateId } from "./templates";
 import { C, F } from "./tokens";
 
@@ -242,16 +242,25 @@ export type FlowItem = { text: string; at: number } | { chip: TemplateId; at: nu
  * One sentence, wrapped and centred, words on their spoken frames; each media chip OPENS a gap
  * in the line on its cue (the words around it part) with a real template playing inside.
  */
-export const MediaSentence: React.FC<{ items: FlowItem[]; size?: number; ink?: string; maxWidth?: number; kicker?: Spoken }> = ({ items, size = 104, ink = C.ink, maxWidth = 1640, kicker }) => {
+export const MediaSentence: React.FC<{
+  items: FlowItem[];
+  size?: number;
+  ink?: string;
+  maxWidth?: number;
+  kicker?: WordSpec[];
+  /** Font overrides (font experiments); default grotesk sentence + serif kicker. */
+  wordFont?: React.CSSProperties;
+  kickerFont?: React.CSSProperties;
+}> = ({ items, size = 104, ink = C.ink, maxWidth = 1640, kicker, wordFont = F.grotesk, kickerFont = F.serif }) => {
   const frame = useCurrentFrame();
   return (
     <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: ink }}>
       {kicker && (
         <div style={{ marginBottom: size * 0.5 }}>
-          <Words size={size * 0.55} base={F.serif} words={kicker} />
+          <Words size={size * 0.55} base={kickerFont} words={kicker} />
         </div>
       )}
-      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", maxWidth, columnGap: size * 0.24, rowGap: size * 0.12, ...F.grotesk, fontSize: size }}>
+      <div style={{ display: "flex", flexWrap: "wrap", justifyContent: "center", alignItems: "center", maxWidth, columnGap: size * 0.24, rowGap: size * 0.12, ...wordFont, fontSize: size }}>
         {items.map((it, i) => {
           if ("chip" in it) {
             const h = size * 1.0;
