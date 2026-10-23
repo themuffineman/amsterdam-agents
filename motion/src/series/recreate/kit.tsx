@@ -219,14 +219,15 @@ export const PromptTicket: React.FC<{
   footer: string;
   ink?: string;
   /** 3D lean, degrees. */
+  rotX?: number;
   rotY?: number;
   rotZ?: number;
   style?: React.CSSProperties;
-}> = ({ width, title, body, bullets, stubLeft, stubRight, footer, ink = C.red, rotY = 0, rotZ = 0, style }) => {
+}> = ({ width, title, body, bullets, stubLeft, stubRight, footer, ink = C.red, rotX = 0, rotY = 0, rotZ = 0, style }) => {
   const pad = width * 0.06;
   const card: React.CSSProperties = { background: C.white, borderRadius: width * 0.055, padding: pad, color: ink };
   return (
-    <div style={{ position: "absolute", width, transform: `perspective(1800px) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`, filter: "drop-shadow(0 30px 50px rgba(20,60,120,0.25))", ...style }}>
+    <div style={{ position: "absolute", width, transform: `perspective(1800px) rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`, filter: "drop-shadow(0 30px 50px rgba(20,60,120,0.25))", ...style }}>
       <div style={{ ...card, borderBottomLeftRadius: width * 0.03, borderBottomRightRadius: width * 0.03, paddingBottom: pad * 0.9 }}>
         <div style={{ ...F.italic, fontSize: width * 0.11, lineHeight: 1 }}>{title}</div>
         <div style={{ ...F.body, fontSize: width * 0.042, lineHeight: 1.3, marginTop: pad * 0.7 }}>
