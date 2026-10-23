@@ -1,8 +1,15 @@
 # The "recreate" series: how these videos look and move
 
 Read this before building any video for this series, and before inventing a new component for it.
-The bank (`bank.tsx`) is a starting set, not a limit: when a beat needs something the bank doesn't
-have, build it in this design language, the same way.
+
+**Don't constrain yourself to the components that exist.** The bank (`bank.tsx`) is a starting set,
+not a menu. For every beat, first ask what would SHOW the idea best, then build that, even if
+nothing like it exists yet. The design here is a direction (type, colour, ground, motion
+grammar), not a kit: come up with the structure that conveys the point, then paint it in this
+look. Reusing a component that only half fits (e.g. a receipt to list a prompt's contents) reads
+as lazy; the user called that out. Example of the right instinct: the prompt's contents became
+`PromptDoc`, the actual document with each section lighting up as it's spoken, instead of a
+generic list card.
 
 ## The format
 
@@ -76,14 +83,25 @@ the word.
 
 ## Building a new component
 
-1. Check the bank first: `MediaTicket`, `DealtTickets`, `TicketBoard`, `TicketStatement`,
-   `ReceiptTicket`, `MediaSentence`, `ActionChip`, `PromptTicket`.
-2. If none fits, build it from the same parts: `TicketShell` for anything card-like, `F` / `C`
+1. Decide what the beat should look like first; then check whether the bank has it
+   (`MediaTicket`, `DealtTickets`, `TicketBoard`, `TicketStatement`, `ReceiptTicket`, `PromptDoc`,
+   `MediaSentence`, `ActionChip`, `PromptTicket`, devices.tsx `MacBook` / `SafariWindow`, ui.tsx
+   `ClaudeWindow` / `TemplatePage` / `Cursor`). Only reuse it if it really fits.
+2. Otherwise build it from the same parts: `TicketShell` for anything card-like, `F` / `C`
    tokens only, `floatUp` / `rackStyle` / `ramp` / `glide` for motion, cue frames as props (it never
    reads the transcript itself), a pure function of `useCurrentFrame()`.
 3. Look at codemotion (`Desktop/Software/codemotion/src/components`) for how a kind of visual was
    solved before (lists, timelines, boards, counters, windows), then re-skin it here.
 4. Add it to `bank.tsx` with a one-line description at the top, so the next video can reuse it.
+
+## Sizes that worked (first full video)
+
+- Mixed lines: caps ~150 px with the italic line ~155 px (200+ filled the screen: too big).
+- Sizing demos: big words ~120 px, serif lines around them 56-72 px (not 190 vs 40).
+- Showing a template: inside a device (`MacBook` opening, template looping on its screen), not
+  a bare card. A browser page goes in `SafariWindow`.
+- Before/after: plain media cards with a small italic label above each ("Reference" / "Output"),
+  no titles or captions under them.
 
 ## Never (the user rejected these)
 

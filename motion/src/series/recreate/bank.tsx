@@ -10,6 +10,7 @@
  *   TicketBoard      all templates on a tilted, scrolling board under a mixed title
  *   TicketStatement  two tickets left, statement + action chip right
  *   ReceiptTicket    a receipt: rows on cue, a gliding highlight, struck rows, a counted total
+ *   PromptDoc        the prompt as a real document: sections light up as spoken, big label beside, count at the end
  *   MediaSentence    a sentence with media chips rising into reserved slots as it's spoken (Butter)
  *
  * Media is always a real Sycamore template (TemplateClip), never drawn art. Ground: sky.
@@ -37,13 +38,16 @@ export const count = (frame: number, value: number, at: number, dur = 24) => Mat
 
 // ---------------------------------------------------------------- media
 
-/** A real template, playing on loop (or its still). Fills its box. */
-export const TemplateClip: React.FC<{ id: TemplateId; still?: boolean; fit?: "cover" | "contain" }> = ({ id, still, fit = "cover" }) => {
+/**
+ * A real template, playing on loop (or its still). Fills its box. `trim` skips that many frames
+ * at the start of every loop (templates that open on an empty frame).
+ */
+export const TemplateClip: React.FC<{ id: TemplateId; still?: boolean; fit?: "cover" | "contain"; trim?: number }> = ({ id, still, fit = "cover", trim = 0 }) => {
   const style: React.CSSProperties = { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: fit };
   if (still) return <Img src={staticFile(`recreate/templates/${id}.jpg`)} style={style} />;
   return (
-    <Loop durationInFrames={Math.round(TEMPLATES[id].sec * 30)}>
-      <OffthreadVideo src={staticFile(`recreate/templates/${id}.mp4`)} muted style={style} />
+    <Loop durationInFrames={Math.round(TEMPLATES[id].sec * 30) - trim}>
+      <OffthreadVideo src={staticFile(`recreate/templates/${id}.mp4`)} muted style={style} startFrom={trim} />
     </Loop>
   );
 };
@@ -377,5 +381,97 @@ export const MediaSentence: React.FC<{
         })}
       </div>
     </div>
+  );
+};
+
+// ---------------------------------------------------------------- PromptDoc
+
+export type DocSection = { title: string; lines: string[]; at?: number; label?: string; sub?: string };
+
+const SECTION_GAP = 30;
+const sectionH = (s: DocSection, lineH: number, headH: number) => headH + s.lines.length * lineH + SECTION_GAP;
+
+/**
+ * The prompt as a real document: a markdown page (file name, sections, readable lines) in a
+ * card. Sections with a cue (`at`) light up as they're spoken while the page glides to keep the
+ * active one near the top; beside it, that section's label swaps in big (caps + italic), the old
+ * one racking out. On `total.at` the page whips down to the end (it's long) and the word count
+ * lands as the big line.
+ */
+export const PromptDoc: React.FC<{
+  file: string;
+  sections: DocSection[];
+  total: { value: number; at: number; dur?: number };
+  width?: number;
+  height?: number;
+  left?: number;
+  top?: number;
+}> = ({ file, sections, total, width = 760, height = 840, left = 170, top = 110 }) => {
+  const frame = useCurrentFrame();
+  const lineH = 40;
+  const headH = 58;
+  const cued = sections.map((s, i) => ({ s, i })).filter((x) => x.s.at !== undefined);
+  const offsets = sections.reduce<number[]>((acc, s, i) => [...acc, i === 0 ? 0 : acc[i - 1] + sectionH(sections[i - 1], lineH, headH)], []);
+  const docH = offsets[offsets.length - 1] + sectionH(sections[sections.length - 1], lineH, headH);
+  const viewH = height - 150;
+  // scroll: each cued section glides to the top; the total whips to the end
+  let scroll = 0;
+  for (const { s, i } of cued) scroll += (Math.max(0, offsets[i] - 20) - scroll) * tween(frame, s.at!, 22, 0, 1, "softInOut");
+  const whip = ramp(frame, total.at, 30, 0).p;
+  scroll += (docH - viewH - scroll) * whip;
+  const activeIdx = cued.reduce((a, x) => (frame >= x.s.at! ? x.i : a), -1);
+  const pose = floatUp(frame, 2, { to: { rotX: 3, rotY: 12, rotZ: -1.5 } });
+  return (
+    <>
+      <div style={{ position: "absolute", left, top }}>
+        <Float3D pose={pose}>
+          <TicketShell width={width}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 18 }}>
+              <span style={{ ...F.italic, fontSize: 46, lineHeight: 1 }}>Prompt</span>
+              <span style={{ ...F.mono, fontSize: 19, textTransform: "none", letterSpacing: 0 }}>{file}</span>
+            </div>
+            <div style={{ height: viewH, overflow: "hidden", position: "relative", maskImage: "linear-gradient(180deg, #000 85%, transparent)", WebkitMaskImage: "linear-gradient(180deg, #000 85%, transparent)" }}>
+              <div style={{ transform: `translateY(${-scroll}px)` }}>
+                {sections.map((s, i) => {
+                  const on = i === activeIdx ? tween(frame, s.at!, 10, 0, 1, "softInOut") : 0;
+                  return (
+                    <div key={i} style={{ height: sectionH(s, lineH, headH) - SECTION_GAP, marginBottom: SECTION_GAP, padding: "6px 18px", marginLeft: -18, marginRight: -18, borderRadius: 14, background: `rgba(210,31,60,${0.08 * on})` }}>
+                      <div style={{ ...F.mono, fontSize: 22, height: headH - 8, display: "flex", alignItems: "center", color: C.red, textTransform: "none", letterSpacing: 0 }}>## {s.title}</div>
+                      {s.lines.map((l, j) => (
+                        <div key={j} style={{ ...F.body, fontSize: 23, height: lineH, color: "#2B2B2B", opacity: 0.55 + 0.45 * Math.max(on, activeIdx < 0 ? 1 : 0), whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          – {l}
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          </TicketShell>
+        </Float3D>
+      </div>
+      {/* the big label for the section being spoken, then the count */}
+      <div style={{ position: "absolute", left: left + width + 80, right: 80, top: 0, bottom: 0 }}>
+        {cued.map(({ s }, k) => {
+          const next = k + 1 < cued.length ? cued[k + 1].s.at! : total.at;
+          if (frame < s.at!) return null;
+          const out = tween(frame, next - 2, 14, 0, 1, "softInOut");
+          if (out >= 1) return null;
+          const e = enter(frame, s.at!, { from: { y: 60, blur: 12 }, frames: 14 });
+          return (
+            <div key={k} style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", color: C.white, transform: `translateY(${e.y}px)`, ...rackStyle(out, 16, 1), filter: e.blur > 0.3 ? `blur(${e.blur}px)` : rackStyle(out, 16, 1).filter }}>
+              <div style={{ ...F.caps, fontSize: 150 }}>{s.label ?? s.title}</div>
+              {s.sub && <div style={{ ...F.italic, fontSize: 84, lineHeight: 1.05, marginTop: 8 }}>{s.sub}</div>}
+            </div>
+          );
+        })}
+        {frame >= total.at && (
+          <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "flex-start", color: C.white, ...(() => { const e = enter(frame, total.at + 4, { from: { y: 60, blur: 12 }, frames: 14 }); return { transform: `translateY(${e.y}px)`, filter: e.blur > 0.3 ? `blur(${e.blur}px)` : undefined, opacity: e.opacity }; })() }}>
+            <div style={{ ...F.caps, fontSize: 170, fontVariantNumeric: "tabular-nums" }}>{count(frame, total.value, total.at + 4, total.dur ?? 30)}</div>
+            <div style={{ ...F.italic, fontSize: 96, lineHeight: 1 }}>words</div>
+          </div>
+        )}
+      </div>
+    </>
   );
 };
