@@ -1,0 +1,78 @@
+{
+  "film": "recreate-rigel",
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "createdAt": "2026-10-23T11:36:34.895Z",
+  "segments": {
+    "intro1": {
+      "file": "films/recreate-rigel/audio/intro1.wav",
+      "durationSec": 2.92,
+      "marks": {}
+    },
+    "intro2": {
+      "file": "films/recreate-rigel/audio/intro2.wav",
+      "durationSec": 7.21,
+      "marks": {}
+    },
+    "look1": {
+      "file": "films/recreate-rigel/audio/look1.wav",
+      "durationSec": 9.86,
+      "marks": {}
+    },
+    "look2": {
+      "file": "films/recreate-rigel/audio/look2.wav",
+      "durationSec": 8.22,
+      "marks": {}
+    },
+    "turn1": {
+      "file": "films/recreate-rigel/audio/turn1.wav",
+      "durationSec": 4.55,
+      "marks": {}
+    },
+    "turn2": {
+      "file": "films/recreate-rigel/audio/turn2.wav",
+      "durationSec": 3.06,
+      "marks": {}
+    },
+    "site1": {
+      "file": "films/recreate-rigel/audio/site1.wav",
+      "durationSec": 4.32,
+      "marks": {}
+    },
+    "site2": {
+      "file": "films/recreate-rigel/audio/site2.wav",
+      "durationSec": 6.95,
+      "marks": {}
+    },
+    "prompt1": {
+      "file": "films/recreate-rigel/audio/prompt1.wav",
+      "durationSec": 7.61,
+      "marks": {}
+    },
+    "claude1": {
+      "file": "films/recreate-rigel/audio/claude1.wav",
+      "durationSec": 2.41,
+      "marks": {}
+    },
+    "claude2": {
+      "file": "films/recreate-rigel/audio/claude2.wav",
+      "durationSec": 5.48,
+      "marks": {}
+    },
+    "claude3": {
+      "file": "films/recreate-rigel/audio/claude3.wav",
+      "durationSec": 3.53,
+      "marks": {}
+    },
+    "result1": {
+      "file": "films/recreate-rigel/audio/result1.wav",
+      "durationSec": 5.23,
+      "marks": {}
+    },
+    "outro1": {
+      "file": "films/recreate-rigel/audio/outro1.wav",
+      "durationSec": 6.41,
+      "marks": {}
+    }
+  }
+}

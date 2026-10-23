@@ -13,6 +13,7 @@ import { RECREATE_LOOK, RecreateLook } from "./series/recreate/LookBook";
 import { REEL, RecreateReel } from "./series/recreate/reel/Reel";
 import { BANK_DEMO, RecreateBank } from "./series/recreate/bank/Demo";
 import { FONT_TEST, RecreateFontTest } from "./series/recreate/bank/FontTest";
+import { RECREATE_RIGEL, RecreateRigel } from "./compositions/RecreateRigel";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -57,6 +58,12 @@ export const RemotionRoot: React.FC = () => {
         id="RecreateBank"
         component={RecreateBank}
         durationInFrames={BANK_DEMO.durationInFrames}
+        {...LANDSCAPE}
+      />
+      <Composition
+        id="RecreateRigel"
+        component={RecreateRigel}
+        durationInFrames={RECREATE_RIGEL.durationInFrames}
         {...LANDSCAPE}
       />
       <Composition

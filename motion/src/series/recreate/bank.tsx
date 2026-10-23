@@ -10,7 +10,7 @@
  *   TicketBoard      all templates on a tilted, scrolling board under a mixed title
  *   TicketStatement  two tickets left, statement + action chip right
  *   ReceiptTicket    a receipt: rows on cue, a gliding highlight, struck rows, a counted total
- *   MediaSentence    a sentence whose media chips open gaps as it's spoken (Butter)
+ *   MediaSentence    a sentence with media chips rising into reserved slots as it's spoken (Butter)
  *
  * Media is always a real Sycamore template (TemplateClip), never drawn art. Ground: sky.
  */
@@ -18,7 +18,7 @@ import React from "react";
 import { Img, Loop, OffthreadVideo, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { enter, tween } from "../../lib/eases";
 import { Arrow, Diamond, TicketShell } from "./kit";
-import { Float3D, OpeningChip, Words, floatUp, rackStyle, ramp, type WordSpec } from "./moves";
+import { Float3D, InlineChip, Words, floatUp, rackStyle, ramp, type WordSpec } from "./moves";
 import { TEMPLATES, type TemplateId } from "./templates";
 import { C, F } from "./tokens";
 
@@ -337,8 +337,8 @@ export const ReceiptTicket: React.FC<{
 export type FlowItem = { text: string; at: number } | { chip: TemplateId; at: number };
 
 /**
- * One sentence, wrapped and centred, words on their spoken frames; each media chip OPENS a gap
- * in the line on its cue (the words around it part) with a real template playing inside.
+ * One sentence, wrapped and centred, words on their spoken frames; each media chip rises into
+ * its reserved slot on its cue (nothing else in the line moves), a real template playing inside.
  */
 export const MediaSentence: React.FC<{
   items: FlowItem[];
@@ -363,9 +363,9 @@ export const MediaSentence: React.FC<{
           if ("chip" in it) {
             const h = size * 1.0;
             return (
-              <OpeningChip key={i} at={it.at} w={h * 1.45} h={h} tilt={i % 2 ? 4 : -4} radius={0.24}>
+              <InlineChip key={i} at={it.at} w={h * 1.45} h={h} tilt={i % 2 ? 4 : -4} radius={0.24}>
                 <TemplateClip id={it.chip} />
-              </OpeningChip>
+              </InlineChip>
             );
           }
           const e = enter(frame, it.at, { from: { y: size * 0.45, blur: 10 }, frames: 13 });

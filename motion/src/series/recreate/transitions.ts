@@ -2,8 +2,9 @@
  * Scene transitions for the "recreate" series: speed ramps with motion blur.
  *
  * Every cut is a camera move in two halves around a hard cut at peak speed:
- *   OUT  the outgoing scene starts slow and ramps up very fast (crashOut) into the move,
- *        blurring as it speeds up; it ends at full speed and full blur on the cut frame.
+ *   OUT  ~1 s. The outgoing scene visibly drifts into the move first (a slow linear start),
+ *        then ramps up very fast (crashOut) just before it leaves; the blur builds mostly in
+ *        that last burst. It ends at full speed and full blur on the cut frame.
  *   IN   the incoming scene starts blurred, already moving fast in the same direction, then
  *        decelerates hard (whip) and sharpens into place.
  * The ground (sky) stays still; only the scene's content travels.
@@ -18,8 +19,10 @@ import { tween } from "../../lib/eases";
 export type TransitionKind = "zoomIn" | "zoomOut" | "slideLeft" | "slideRight" | "slideUp" | "diagonal" | "zoomInto";
 
 /** Frames of the outgoing ramp (before the cut) and the incoming settle (after it). */
-export const OUT_FRAMES = 12;
-export const IN_FRAMES = 14;
+export const OUT_FRAMES = 30;
+export const IN_FRAMES = 16;
+/** Share of the outgoing move covered by the slow visible drift; the rest is the burst. */
+const DRIFT = 0.18;
 const MAX_BLUR = 26;
 
 type Far = { x?: number; y?: number; s?: number };
@@ -53,8 +56,8 @@ const style = (p: { x: number; y: number; s: number }, blur: number, origin: str
 export const outStyle = (kind: TransitionKind, lf: number, cut: number, focus?: [number, number]): React.CSSProperties | undefined => {
   const from = cut - OUT_FRAMES;
   if (lf < from) return undefined;
-  const k = tween(lf, from, OUT_FRAMES, 0, 1, "crashOut");
-  const blur = tween(lf, from, OUT_FRAMES, 0, MAX_BLUR, "crashOut");
+  const k = tween(lf, from, OUT_FRAMES, 0, DRIFT, "cruise") + tween(lf, from, OUT_FRAMES, 0, 1 - DRIFT, "crashOut");
+  const blur = tween(lf, from, OUT_FRAMES, 0, 2, "cruise") + tween(lf, from, OUT_FRAMES, 0, MAX_BLUR - 2, "crashOut");
   return style(pose(FAR[kind].out, k), blur, focus ? `${focus[0]}px ${focus[1]}px` : "50% 50%");
 };
 

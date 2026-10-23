@@ -31,31 +31,33 @@ export const Words: React.FC<{ words: WordSpec[]; size: number; base: React.CSSP
 };
 
 /**
- * Inline media chip that OPENS a gap in a line: its width grows from 0 (the words around it
- * part), then the picture inside settles from a slight zoom. The move from the references
- * (a picture sitting in the type like a word) turned into an event.
+ * Inline media chip that sits in a line of type like a word. Its slot is reserved from frame 0
+ * (the words never move); on its cue the chip rises into the slot out of a blur and settles from
+ * a slight zoom.
  */
-export const OpeningChip: React.FC<{ at: number; w: number; h: number; tilt?: number; radius?: number; children: React.ReactNode }> = ({ at, w, h, tilt = -4, radius = 0.11, children }) => {
+export const InlineChip: React.FC<{ at: number; w: number; h: number; tilt?: number; radius?: number; children: React.ReactNode }> = ({ at, w, h, tilt = -4, radius = 0.11, children }) => {
   const frame = useCurrentFrame();
-  const width = tween(frame, at, 10, 0, w, "whip");
-  const inner = tween(frame, at + 2, 16, 1.35, 1, "softLand");
-  const rot = tween(frame, at, 18, tilt * 2.5, tilt, "softLand");
+  const e = enter(frame, at, { from: { y: h * 0.5, blur: 12, scale: 0.82 }, frames: 16 });
+  const rot = tween(frame, at, 20, tilt * 2, tilt, "softLand");
   return (
-    <span style={{ display: "inline-block", width, height: h, verticalAlign: "middle", position: "relative", margin: `0 ${(width / w) * h * 0.08}px` }}>
-      <span
-        style={{
-          position: "absolute",
-          inset: 0,
-          borderRadius: h * radius,
-          overflow: "hidden",
-          transform: `rotate(${rot}deg)`,
-          boxShadow: "0 12px 28px rgba(0,0,0,0.2)",
-          textTransform: "none",
-          visibility: frame >= at ? "visible" : "hidden",
-        }}
-      >
-        <span style={{ position: "absolute", left: "50%", top: 0, width: w, height: h, marginLeft: -w / 2, transform: `scale(${inner})` }}>{children}</span>
-      </span>
+    <span style={{ display: "inline-block", width: w, height: h, verticalAlign: "middle", position: "relative" }}>
+      {e.visible && (
+        <span
+          style={{
+            position: "absolute",
+            inset: 0,
+            borderRadius: h * radius,
+            overflow: "hidden",
+            transform: `translateY(${e.y}px) scale(${e.scale}) rotate(${rot}deg)`,
+            filter: e.blur > 0.3 ? `blur(${e.blur}px)` : undefined,
+            opacity: e.opacity,
+            boxShadow: "0 12px 28px rgba(0,0,0,0.2)",
+            textTransform: "none",
+          }}
+        >
+          {children}
+        </span>
+      )}
     </span>
   );
 };
