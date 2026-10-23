@@ -1,17 +1,22 @@
 /**
  * RecreateBank: a demo of the component bank on one voice-cued track (FAKE timings from
- * script.txt via codemotion's fake-transcript.mjs). One beat per component:
+ * script.txt via codemotion's fake-transcript.mjs). All on the sky ground; every card a ticket.
  *
- * 1 "here are three"   paper  DealtPrints: Antares, Sirius, Deneb deal in on "three templates ... site";
- *                             "pick" -> Deneb takes focus, the others rack out.
- * 2 "there are twelve" night  PrintStack: "TWELVE OF THEM / so far", prints pile over it.
- * 3 "this is the one"  paper  PolaroidStatement: Deneb returns as the big polaroid (carried
- *                             object), sticker on "today", action chip pressed on "motion".
- * 4 "each template"    sky    MediaSentence: the parts, each with its template opening the line.
+ * 1 "here are three"   DealtTickets: Antares, Sirius, Deneb float up on "three templates ... site";
+ *                      "pick" -> Deneb takes focus, the others part and go soft.
+ * 2 "there are twelve" TicketBoard: all twelve on a tilted board that scrolls under the title.
+ * 3 "this is the one"  TicketStatement: Deneb returns as the tall ticket (carried object),
+ *                      sticker on "today", action chip pressed on "motion".
+ * 4 "each template"    MediaSentence: the parts, each with its template opening the line.
+ * 5 "the prompt"       ReceiptTicket: palette / type / easing / timing on cue, highlight glides,
+ *                      "vague vibe" row struck, total counts up on "two thousand words".
+ *                      Row VALUES are placeholders until the real Deneb prompt exists.
  */
 import React from "react";
-import { DealtPrints, MediaSentence, PolaroidStatement, PrintStack, type FlowItem } from "../bank";
-import type { TemplateId } from "../templates";
+import { useCurrentFrame } from "remotion";
+import { DealtTickets, MediaSentence, ReceiptTicket, TicketBoard, TicketStatement, type FlowItem } from "../bank";
+import { Float3D, floatUp } from "../moves";
+import { TEMPLATES, type TemplateId } from "../templates";
 import { Scene, TranscriptProvider, Track, lengthOf, useCue, useWords } from "../timing";
 import { C } from "../tokens";
 import transcript from "./transcript.json";
@@ -21,12 +26,12 @@ export const BANK_DEMO = { durationInFrames: lengthOf(transcript) } as const;
 const Three: React.FC = () => {
   const cue = useCue();
   return (
-    <DealtPrints
+    <DealtTickets
       focus={{ index: 2, at: cue("pick") }}
       items={[
-        { id: "conveyor-captions", color: C.blue, at: cue("three"), label: "Antares", sub: "Conveyor Captions" },
-        { id: "swipe-to-quote", color: C.pink, at: cue("templates"), label: "Sirius", sub: "Swipe to Quote" },
-        { id: "serif-emphasis-captions", color: C.orange, at: cue("site"), label: "Deneb", sub: "Serif Emphasis Captions" },
+        { id: "conveyor-captions", at: cue("three") },
+        { id: "swipe-to-quote", at: cue("templates") },
+        { id: "serif-emphasis-captions", at: cue("site") },
       ]}
     />
   );
@@ -35,17 +40,12 @@ const Three: React.FC = () => {
 const Twelve: React.FC = () => {
   const cue = useCue();
   return (
-    <PrintStack
+    <TicketBoard
+      at={cue("every")}
+      ids={Object.keys(TEMPLATES) as TemplateId[]}
       kicker={useWords("there", "are")}
       caps={useWords("twelve", "them")}
       serif={useWords("so", "far")}
-      items={[
-        { id: "split-letter-headline", color: C.orange, at: cue("every") },
-        { id: "glow-headline-reveal", color: C.blue, at: cue("single") },
-        { id: "type-staircase", color: C.butter, at: cue("one") },
-        { id: "two-part-statement", color: C.pink, at: cue("free") },
-        { id: "marker-highlight-title", color: C.blue, at: cue("use") },
-      ]}
     />
   );
 };
@@ -53,7 +53,7 @@ const Twelve: React.FC = () => {
 const TheOne: React.FC = () => {
   const cue = useCue();
   return (
-    <PolaroidStatement
+    <TicketStatement
       big={{ id: "serif-emphasis-captions", at: 2 }}
       small={{ id: "swipe-to-quote", at: cue("rebuilding"), still: true }}
       sticker={{ text: "Today's build", at: cue("today") }}
@@ -65,36 +65,64 @@ const TheOne: React.FC = () => {
   );
 };
 
+const CHIP_AFTER: Record<string, TemplateId> = {
+  "headline,": "glow-headline-reveal",
+  "highlight,": "marker-highlight-title",
+  "caption,": "serif-emphasis-captions",
+  "move.": "camera-bullet-list",
+};
+
 const Parts: React.FC = () => {
   const words = useWords("a", "move");
-  // put a template chip after each part's noun
-  const chipAfter: Record<string, TemplateId> = {
-    "headline,": "glow-headline-reveal",
-    "highlight,": "marker-highlight-title",
-    "caption,": "serif-emphasis-captions",
-    "move.": "camera-bullet-list",
-  };
   const items: FlowItem[] = words.flatMap((w) => {
-    const chip = chipAfter[w.text.toLowerCase()];
+    const chip = CHIP_AFTER[w.text.toLowerCase()];
     return chip ? [{ text: w.text, at: w.at }, { chip, at: w.at + 6 }] : [{ text: w.text, at: w.at }];
   });
   return <MediaSentence ink={C.white} kicker={useWords("each", "parts")} items={items} size={100} maxWidth={1780} />;
 };
 
+const Anatomy: React.FC = () => {
+  const frame = useCurrentFrame();
+  const cue = useCue();
+  const pose = floatUp(frame, 2, { to: { rotX: 4, rotY: 12, rotZ: -2 } });
+  return (
+    <div style={{ position: "absolute", left: 960 - 320, top: 150 }}>
+      <Float3D pose={pose}>
+        <ReceiptTicket
+          title="Deneb"
+          kicker="Prompt Nº 12"
+          rows={[
+            { label: "Palette", value: "near-black + white", at: cue("palette") },
+            { label: "Type", value: "sans + italic serif", at: cue("type") },
+            { label: "Easing", value: "soft ease-out", at: cue("easing") },
+            { label: "Timing", value: "word by word", at: cue("timing") },
+            { label: "A vague vibe", at: cue("vague"), struck: cue("vibe") + 4 },
+          ]}
+          total={{ label: "Prompt length:", value: 1842, unit: "words", at: cue("almost"), dur: 40 }}
+          footer="Paste into Claude Code"
+        />
+      </Float3D>
+    </div>
+  );
+};
+
 export const RecreateBank: React.FC = () => (
   <TranscriptProvider transcript={transcript}>
     <Track>
-      <Scene from="here are three" ground="paper">
+      <Scene from="here are three" ground="sky">
         <Three />
       </Scene>
-      <Scene from="there are twelve" ground="night">
+      <Scene from="there are twelve" ground="sky">
         <Twelve />
       </Scene>
-      <Scene from="this is the one" ground="paper">
+      <Scene from="this is the one" ground="sky">
         <TheOne />
       </Scene>
       <Scene from="each template is" ground="sky">
         <Parts />
+      </Scene>
+      <Scene from="the prompt spells" ground="sky">
+        <Anatomy />
       </Scene>
     </Track>
   </TranscriptProvider>

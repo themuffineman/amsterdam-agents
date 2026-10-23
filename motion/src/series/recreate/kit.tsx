@@ -205,6 +205,56 @@ const Runs: React.FC<{ runs: Run[]; size: number }> = ({ runs, size }) => (
 );
 
 /**
+ * The ticket shell every card in the series is built on (the prompt ticket's look): a white
+ * rounded top card, a perforation, and a stub with two mono labels, a barcode and a footer.
+ * focus / dim are 0..1 (codemotion's Card semantics): focus deepens the shadow and lifts the
+ * card a touch; dim is depth of field (blur + fade + slightly smaller).
+ */
+export const TicketShell: React.FC<{
+  width: number;
+  ink?: string;
+  stub: { left: React.ReactNode; right: React.ReactNode; footer?: React.ReactNode; seed?: string; barcode?: number };
+  focus?: number;
+  dim?: number;
+  style?: React.CSSProperties;
+  children: React.ReactNode;
+}> = ({ width, ink = C.red, stub, focus = 0, dim = 0, style, children }) => {
+  const pad = width * 0.06;
+  const card: React.CSSProperties = { background: C.white, borderRadius: width * 0.055, padding: pad, color: ink };
+  const shadow = `drop-shadow(0 ${30 + 20 * focus}px ${50 + 30 * focus}px rgba(20,60,120,${0.25 + 0.1 * focus}))`;
+  return (
+    <div
+      style={{
+        width,
+        filter: dim > 0.02 ? `${shadow} blur(${dim * 7}px)` : shadow,
+        opacity: 1 - dim * 0.5,
+        transform: `scale(${1 + focus * 0.04 - dim * 0.05})`,
+        ...style,
+      }}
+    >
+      <div style={{ ...card, borderBottomLeftRadius: width * 0.03, borderBottomRightRadius: width * 0.03, paddingBottom: pad * 0.9 }}>{children}</div>
+      {/* perforation */}
+      <div style={{ height: 0, margin: `0 ${width * 0.04}px`, borderTop: `4px dashed ${C.sky}` }} />
+      <div style={{ ...card, borderTopLeftRadius: width * 0.03, borderTopRightRadius: width * 0.03, paddingTop: pad * 0.9 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", ...F.mono, fontSize: width * 0.036 }}>
+          <span>{stub.left}</span>
+          <span>{stub.right}</span>
+        </div>
+        <div style={{ marginTop: pad * 0.6 }}>
+          <Barcode width={width - pad * 2} height={width * (stub.barcode ?? 0.13)} color={ink} seed={stub.seed ?? "ticket"} />
+        </div>
+        {stub.footer && <div style={{ ...F.mono, fontSize: width * 0.032, marginTop: pad * 0.5 }}>{stub.footer}</div>}
+      </div>
+    </div>
+  );
+};
+
+/** Diamond bullet, ticket ink. */
+export const Diamond: React.FC<{ size: number; color: string }> = ({ size, color }) => (
+  <span style={{ display: "inline-block", width: size, height: size, background: color, transform: "rotate(45deg) translateY(-3px)", flexShrink: 0 }} />
+);
+
+/**
  * The prompt as a ticket: italic serif title, body with serif emphases, diamond bullets,
  * perforation, stub with mono labels + barcode. The series' signature object: every video
  * shows the prompt this way before it is pasted into Claude Code.
@@ -225,10 +275,9 @@ export const PromptTicket: React.FC<{
   style?: React.CSSProperties;
 }> = ({ width, title, body, bullets, stubLeft, stubRight, footer, ink = C.red, rotX = 0, rotY = 0, rotZ = 0, style }) => {
   const pad = width * 0.06;
-  const card: React.CSSProperties = { background: C.white, borderRadius: width * 0.055, padding: pad, color: ink };
   return (
-    <div style={{ position: "absolute", width, transform: `perspective(1800px) rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`, filter: "drop-shadow(0 30px 50px rgba(20,60,120,0.25))", ...style }}>
-      <div style={{ ...card, borderBottomLeftRadius: width * 0.03, borderBottomRightRadius: width * 0.03, paddingBottom: pad * 0.9 }}>
+    <div style={{ position: "absolute", width, transform: `perspective(1800px) rotateX(${rotX}deg) rotateY(${rotY}deg) rotateZ(${rotZ}deg)`, ...style }}>
+      <TicketShell width={width} ink={ink} stub={{ left: stubLeft, right: stubRight, footer, seed: title }}>
         <div style={{ ...F.italic, fontSize: width * 0.11, lineHeight: 1 }}>{title}</div>
         <div style={{ ...F.body, fontSize: width * 0.042, lineHeight: 1.3, marginTop: pad * 0.7 }}>
           <Runs runs={body} size={width * 0.042} />
@@ -236,26 +285,14 @@ export const PromptTicket: React.FC<{
         <div style={{ marginTop: pad * 1.6, display: "flex", flexDirection: "column", gap: width * 0.012 }}>
           {bullets.map((b, i) => (
             <div key={i} style={{ ...F.body, fontSize: width * 0.04, display: "flex", alignItems: "baseline", gap: width * 0.022 }}>
-              <span style={{ display: "inline-block", width: width * 0.016, height: width * 0.016, background: ink, transform: "rotate(45deg) translateY(-3px)" }} />
+              <Diamond size={width * 0.016} color={ink} />
               <span>
                 <Runs runs={b} size={width * 0.04} />
               </span>
             </div>
           ))}
         </div>
-      </div>
-      {/* perforation */}
-      <div style={{ height: 0, margin: `0 ${width * 0.04}px`, borderTop: `4px dashed ${C.sky}` }} />
-      <div style={{ ...card, borderTopLeftRadius: width * 0.03, borderTopRightRadius: width * 0.03, paddingTop: pad * 0.9 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", ...F.mono, fontSize: width * 0.036 }}>
-          <span>{stubLeft}</span>
-          <span>{stubRight}</span>
-        </div>
-        <div style={{ marginTop: pad * 0.6 }}>
-          <Barcode width={width - pad * 2} height={width * 0.13} color={ink} seed={title} />
-        </div>
-        <div style={{ ...F.mono, fontSize: width * 0.032, marginTop: pad * 0.5 }}>{footer}</div>
-      </div>
+      </TicketShell>
     </div>
   );
 };
