@@ -20,19 +20,21 @@
  *  3 "quick thing before"  three ways to render: Remotion, HyperFrames, web page + screenshots;
  *                          "I'm using Remotion" -> Remotion takes focus.
  *  4 "okay step one"       STEP 01 / Copy the prompt -> the template page in Safari; cursor clicks it.
- *  5 "and it's pretty"     PromptDoc: sizes / timing / easing / camera light up; count on "close".
- *  6 "step two open"       STEP 02 -> Claude Code: prompt file in, send, working ~10 min, the first
- *                          run floats up on "came back".
- *  7 "step three is"       STEP 03 / Make it yours -> a Claude thread, one ask at a time, each reply
- *                          with its preview.
- *  8 "doing it this way"   the three versions in a row; a highlight walks across them.
- *  9 "so here's the"       Reference next to Output.
- * 10 "and that's pretty"   Every template / comes with its prompt; the site link.
+ *  5 "and it's pretty"     PromptDoc: the sections that make this template itself light up as the
+ *                          voice names them (sizes, the blur entrance, the steps, the camera).
+ *  6 "step 2 open"         STEP 02 -> one Claude Code conversation: the prompt file is pasted and
+ *                          sent, the first run comes back as the reply; then the remix asks, one at
+ *                          a time, each reply with its preview.
+ *  7 "doing it this way"   the three versions in a row; a highlight walks across them.
+ *  8 "so here's the"       Reference next to Output.
+ *  9 "and that's pretty"   like and subscribe (no plug).
+ *
+ * Type: only Alte Haas (sans) and Feature Display (serif, upright). No caps, no mono, no italic.
  */
 import React from "react";
 import { AbsoluteFill, Audio, Img, staticFile, useCurrentFrame } from "remotion";
 import { tween } from "../lib/eases";
-import { ActionChip, PromptDoc, TemplateClip } from "../series/recreate/bank";
+import { PromptDoc, TemplateClip } from "../series/recreate/bank";
 import { SafariWindow } from "../series/recreate/devices";
 import { TicketShell } from "../series/recreate/kit";
 import { MacBook } from "../series/recreate/macbook";
@@ -40,7 +42,7 @@ import { Float3D, InlineChip, Words, floatUp, glide, rackStyle, ramp } from "../
 import { ChoiceCards, FramesIcon, LowerThird, StepTitle, VersionRow } from "../series/recreate/parts";
 import { Scene, TranscriptProvider, Track, lengthOf, useCue, useWords } from "../series/recreate/timing";
 import { C, F } from "../series/recreate/tokens";
-import { ClaudeThread, ClaudeWindow, Cursor, TemplatePage, threadSendButton } from "../series/recreate/ui";
+import { ClaudeThread, Cursor, TemplatePage, threadSendButton } from "../series/recreate/ui";
 import transcript from "../films/recreate-rigel/transcript.json";
 
 export const RECREATE_RIGEL = { durationInFrames: lengthOf(transcript) } as const;
@@ -110,7 +112,8 @@ const Discovery: React.FC = () => {
   const x = -430 * side.p + 430 * back.p;
   const s = 1 - 0.36 * side.p + 0.36 * back.p;
   const demoRack = tween(frame, cue("slides"), 18, 0, 1, "softInOut");
-  const name = useWords("type", "staircase");
+  // the template's name as it's written, on the frames it's spoken
+  const name = useWords("type", "staircase").map((w, i) => ({ ...w, text: ["Type", "Staircase"][i] ?? w.text }));
   const kicker = useWords("what", "sizing");
   const content = useWords("content", "content").map((w) => ({ ...w, text: "content" }));
   const system = useWords("system", "system").map((w) => ({ ...w, text: "system" }));
@@ -124,7 +127,7 @@ const Discovery: React.FC = () => {
           </MacBook>
         </Float3D>
       </div>
-      <LowerThird name={name} detail="Sycamore Motion · Nº 10 · kinetic type" outAt={cue("takes")} />
+      <LowerThird name={name} outAt={cue("takes")} />
       <Column left={1060} width={800} style={rackStyle(demoRack, 16, 1)}>
         <Words size={66} base={F.serif} words={kicker} />
         <div style={{ height: 26 }} />
@@ -176,7 +179,7 @@ const Renderers: React.FC = () => {
         items={[
           { at: cue("remotion"), name: "Remotion", line: "Videos written in React. What I use.", logo: "recreate/remotion.svg" },
           { at: cue("hyperframes"), name: "HyperFrames", line: "HTML compositions rendered to video.", logo: "recreate/hyperframes.png" },
-          { at: cue("web"), name: "A web page", line: "Build it in the browser, screenshot a few times a second.", icon: <FramesIcon size={120} /> },
+          { at: cue("webpage"), name: "A web page", line: "Build it in the browser, screenshot a few times a second.", icon: <FramesIcon size={120} /> },
         ]}
       />
     </>
@@ -224,7 +227,7 @@ const StepOne: React.FC = () => {
 
 // ---------------------------------------------------------------- 5. what's in the prompt
 
-/** DUMMY prompt text (the real prompt doesn't exist yet); sections follow what the template does. */
+/** DUMMY prompt text (the real prompt doesn't exist yet); sections follow what the voice names. */
 const ThePrompt: React.FC = () => {
   const cue = useCue();
   return (
@@ -233,10 +236,10 @@ const ThePrompt: React.FC = () => {
       total={{ value: PROMPT_WORDS, at: cue("close"), dur: 34 }}
       sections={[
         { title: "Goal", lines: ["One sentence, built a word at a time,", "stepping down and to the right like stairs."] },
-        { title: "Sizes", at: cue("sizes"), label: "Sizes", sub: "big for the point", lines: ["Key words (you need, make, content, system): 120 px.", "Connecting words: 36 px. Nothing in between.", "Inter, weight 600 / 500, tracking -2%."] },
-        { title: "Timing", at: cue("timing"), label: "Timing", sub: "each word on its beat", lines: ["One word every 6 to 8 frames, on the voice.", "Hold the finished sentence for one second."] },
-        { title: "Easing", at: cue("easing"), label: "Easing", sub: "out of a soft blur", lines: ["Each word slides 40 px and clears a 12 px blur", "over 14 frames, ease-out. No bounce."] },
-        { title: "Camera", at: cue("camera"), label: "Camera", sub: "follows the newest word", lines: ["Pan so the newest word lands at 60% width;", "older words drift off the left edge."] },
+        { title: "Sizes", at: cue("bigger"), label: "Big and small", sub: "the point words, way bigger", lines: ["Key words (you need, make, content, system): 120 px.", "Connecting words: 36 px. Nothing in between."] },
+        { title: "Entrance", at: cue("blur"), label: "Out of a blur", sub: "never a plain fade", lines: ["Each word slides 40 px and clears a 12 px blur", "over 14 frames, ease-out. No bounce."] },
+        { title: "Layout", at: cue("stepping"), label: "Stepping down", sub: "and to the right", lines: ["Each new line starts lower and further right,", "so the sentence walks down the frame."] },
+        { title: "Camera", at: cue("camera"), label: "The camera", sub: "follows the newest word", lines: ["Pan so the newest word lands at 60% width;", "older words drift off the left edge."] },
         { title: "Background", lines: ["Pale lavender to white, soft glow behind the words."] },
         { title: "Output", lines: ["Remotion, 1920x1080, 30 fps, 8 s, loop-safe."] },
       ]}
@@ -244,70 +247,18 @@ const ThePrompt: React.FC = () => {
   );
 };
 
-// ---------------------------------------------------------------- 6. step two: run it as is
+// ---------------------------------------------------------------- 6. step two: one Claude conversation
 
 const CW = 1460;
 const CH = 900;
 const CLeft = 960 - CW / 2;
 const CTop = 100;
-/** The welcome window's send button centre on screen (measured on a still). */
-const SEND_BTN: [number, number] = [CLeft + 1230, CTop + 488];
-
-const StepTwo: React.FC = () => {
+const InClaude: React.FC = () => {
   const frame = useCurrentFrame();
   const cue = useCue();
   const open = cue("open");
   const pose = floatUp(frame, open, { to: { rotX: 3, rotY: 4, rotZ: 0 }, from: { rotY: 30 } });
-  const sendAt = cue("send");
-  const came = cue("came");
-  const result = floatUp(frame, came, { to: { rotX: 3, rotY: -8, rotZ: 1.5 }, from: { rotY: -30 } });
-  const back = tween(frame, came, 20, 0, 1, "softInOut");
-  return (
-    <>
-      <StepTitle n={2} label="Paste it into Claude Code" at={2} outAt={open - 6} />
-      <div style={{ position: "absolute", left: CLeft, top: CTop, ...rackStyle(back, 10, 0.35) }}>
-        <Float3D pose={pose}>
-          <ClaudeWindow
-            width={CW}
-            height={CH}
-            attachments={[{ name: "type-staircase-prompt.md", meta: `${PROMPT_WORDS.toLocaleString("en-US")} words · Markdown`, kind: "md", at: cue("paste") }]}
-            lines={[]}
-            sendAt={sendAt}
-            workingAt={sendAt + 10}
-            workMinutes={10}
-            workFrames={cue("minutes", { edge: "end" }) - sendAt - 10}
-            steps={[
-              { text: "Read type-staircase-prompt.md", at: cue("original") },
-              { text: "Wrote TypeStaircase.tsx", at: cue("changing") },
-              { text: "Rendered a preview", at: cue("minutes") },
-            ]}
-          />
-        </Float3D>
-      </div>
-      <Cursor
-        appear={cue("send") - 30}
-        keys={[
-          { at: cue("send") - 30, x: SEND_BTN[0] - 260, y: SEND_BTN[1] + 140 },
-          { at: cue("send") - 24, x: SEND_BTN[0] - 8, y: SEND_BTN[1] - 6 },
-        ]}
-        clicks={[sendAt]}
-      />
-      <div style={{ position: "absolute", left: 960 - 450, top: 200 }}>
-        <Float3D pose={result}>
-          <Labeled label="First run" width={900} focus={1} />
-        </Float3D>
-      </div>
-    </>
-  );
-};
-
-// ---------------------------------------------------------------- 7. step three: one ask at a time
-
-const StepThree: React.FC = () => {
-  const frame = useCurrentFrame();
-  const cue = useCue();
-  const first = cue("first");
-  const pose = floatUp(frame, first - 4, { to: { rotX: 3, rotY: -4, rotZ: 0 }, from: { rotY: -30 } });
+  const t0 = { at: cue("paste"), sendAt: cue("send") + 4, replyAt: cue("came") };
   const t1 = { at: cue("switch") - 4, sendAt: cue("background", { edge: "end" }) + 2 };
   const t2 = { at: cue("orange") - 16, sendAt: cue("orange", { edge: "end" }) + 2 };
   const t3 = { at: cue("gave") - 2, sendAt: cue("animate", { edge: "end" }) + 2 };
@@ -315,33 +266,34 @@ const StepThree: React.FC = () => {
   const btn: [number, number] = [CLeft + sx, CTop + sy];
   return (
     <>
-      <StepTitle n={3} label="Make it yours" at={2} outAt={first - 10} />
+      <StepTitle n={2} label="Paste it into Claude Code" at={2} outAt={open - 6} />
       <div style={{ position: "absolute", left: CLeft, top: CTop }}>
         <Float3D pose={pose}>
           <ClaudeThread
             width={CW}
             height={CH}
             turns={[
-              { ...t1, text: "Switch to a dark background.", replyAt: t1.sendAt + 22, minutes: 2, reply: "Done. Dark background, the type flipped to light so it still reads.", preview: { id: ID, trim: TRIM, filter: DARK } },
-              { ...t2, text: "Make the big words orange.", replyAt: t2.sendAt + 22, minutes: 1, reply: "The key words are orange now; the small ones stay light.", preview: { id: ID, trim: TRIM, filter: ORANGE } },
+              { ...t0, text: "", file: { name: "type-staircase-prompt.md", meta: `${PROMPT_WORDS.toLocaleString("en-US")} words · Markdown` }, minutes: 10, reply: "Here's the first run, built from the prompt.", preview: { id: ID, trim: TRIM } },
+              { ...t1, text: "Switch to a dark background.", replyAt: t1.sendAt + 22, minutes: 2, reply: "Done. The background's dark now and the type is light so it still reads.", preview: { id: ID, trim: TRIM, filter: DARK } },
+              { ...t2, text: "Make the big words orange.", replyAt: t2.sendAt + 22, minutes: 1, reply: "The big words are orange, the small ones stay light.", preview: { id: ID, trim: TRIM, filter: ORANGE } },
               { ...t3, text: "Use my sentence: Good captions keep people watching.", replyAt: t3.sendAt + 18, minutes: 2, reply: "Swapped in your sentence and re-timed the steps to it.", preview: { id: ID, trim: TRIM, filter: ORANGE } },
             ]}
           />
         </Float3D>
       </div>
       <Cursor
-        appear={t1.sendAt - 30}
+        appear={t0.sendAt - 30}
         keys={[
-          { at: t1.sendAt - 30, x: btn[0] - 220, y: btn[1] + 110 },
-          { at: t1.sendAt - 24, x: btn[0] - 8, y: btn[1] - 6 },
+          { at: t0.sendAt - 30, x: btn[0] - 240, y: btn[1] + 110 },
+          { at: t0.sendAt - 24, x: btn[0] - 8, y: btn[1] - 6 },
         ]}
-        clicks={[t1.sendAt, t2.sendAt, t3.sendAt]}
+        clicks={[t0.sendAt, t1.sendAt, t2.sendAt, t3.sendAt]}
       />
     </>
   );
 };
 
-// ---------------------------------------------------------------- 8. why one at a time
+// ---------------------------------------------------------------- 7. why one at a time
 
 const ThreeVersions: React.FC = () => {
   const cue = useCue();
@@ -360,14 +312,14 @@ const ThreeVersions: React.FC = () => {
   );
 };
 
-// ---------------------------------------------------------------- 9. side by side
+// ---------------------------------------------------------------- 8. side by side
 
 const SideBySide: React.FC = () => {
   const frame = useCurrentFrame();
   const cue = useCue();
   const orig = floatUp(frame, 2, { to: { rotX: 3, rotY: 14, rotZ: -3 } });
   const mine = floatUp(frame, cue("ended"), { to: { rotX: 3, rotY: -8, rotZ: 1.5 }, from: { rotY: -36 } });
-  const f = ramp(frame, cue("change"), 24);
+  const f = ramp(frame, cue("changed"), 24);
   return (
     <>
       <div style={{ position: "absolute", left: 140, top: 300, ...rackStyle(f.p, 10, 0.4) }}>
@@ -384,22 +336,18 @@ const SideBySide: React.FC = () => {
   );
 };
 
-// ---------------------------------------------------------------- 10. outro
+// ---------------------------------------------------------------- 9. outro
 
 const Outro: React.FC = () => {
-  const cue = useCue();
   const kicker = useWords("and that's", "it");
-  const caps = useWords("every template", "template");
-  const serif = useWords("comes", "prompt");
+  const caps = useWords("if you want", "this");
+  const serif = useWords("like and", "subscribe");
   const ask = useWords("let me", "next");
   return (
     <Column>
-      <Mixed kicker={kicker} caps={caps} serif={serif} size={150} />
-      <div style={{ height: 46 }} />
-      <Words size={44} base={F.serif} words={ask} />
-      <div style={{ marginTop: 34, height: 84 }}>
-        <ActionChip label="sycamore.to/motion" at={cue("every") + 4} scale={1.3} />
-      </div>
+      <Mixed kicker={kicker} caps={caps} serif={serif} size={120} />
+      <div style={{ height: 50 }} />
+      <Words size={48} base={F.serif} words={ask} />
     </Column>
   );
 };
@@ -423,11 +371,8 @@ export const RecreateRigel: React.FC = () => (
         <Scene from="and it's pretty">
           <ThePrompt />
         </Scene>
-        <Scene from="step two open">
-          <StepTwo />
-        </Scene>
-        <Scene from="step three is">
-          <StepThree />
+        <Scene from="step 2 open">
+          <InClaude />
         </Scene>
         <Scene from="doing it this way">
           <ThreeVersions />

@@ -32,18 +32,17 @@ Long-form (landscape, 1920x1080, 30 fps), **voiceover only** (no face). Value, n
   rounded, red ink (`C.red`), italic serif title. The perforated stub with barcode only on the
   prompt ticket and the receipt (where the stub carries the prompt length); template cards have no
   stub.
-- **Type** (tokens.ts `F`):
-  - `caps`: Archivo condensed bold caps (font-stretch 72%).
-  - `serif` / `italic`: Feature Display (trial, local only; falls back to Instrument Serif).
-  - `grotesk`: Alte Haas Grotesk, for long display sentences.
-  - `mono`: JetBrains Mono, small labels on cards.
-  - `body`: Inter, card body text.
-- **Mixed lines** are the signature: a caps line plus an italic serif line in the same thought
-  ("I DIDN'T ANIMATE / *any of this by hand.*"). White on the sky.
+- **Type: two fonts, nothing else.** Alte Haas Grotesk (sans) and Feature Display (serif, UPRIGHT).
+  The user rejected the condensed bold caps (Archivo), mono labels (they look AI-made) and the
+  italic serif. In tokens.ts the old role names still exist but now map to these two:
+  `caps` = Alte Haas sentence case, `italic` = upright serif, `mono` = small Alte Haas.
+  `body` (Inter) only for small text inside UI cards.
+- **Mixed lines**: a sans line + a serif line in the same thought ("for any text / you want.").
+  White on the sky.
 - **Text hierarchy** (loosely after Sycamore's Magic Edit levels, `sycamore-mono/docs/magic-edit-structure.md`):
   - L0 setup: small serif line (~52-64 px).
-  - L1 accent: a word swapped to the italic serif.
-  - L2 point: a caps line + italic line (~136-210 px).
+  - L1 accent: a word swapped to the serif.
+  - L2 point: a sans line + serif line (~120-150 px).
   - L3 peak (1-3 per video): a full-frame mixed line that racks out of focus when a card arrives in
     front of it.
   - Numbers count up (a ticket stub or a receipt total). Lists become receipt rows. A link or
@@ -96,11 +95,14 @@ the word.
 
 ## Sizes that worked (first full video)
 
-- Mixed lines: caps ~150 px with the italic line ~155 px (200+ filled the screen: too big).
+- Mixed lines: sans ~120-150 px with the serif line about the same (200+ filled the screen).
+- Naming the template at the start: a lower third (darkened bottom), the name only, centred,
+  written as it's spoken. No subtitle line.
+- Outro: no Sycamore plug; a plain "like and subscribe".
 - Sizing demos: big words ~120 px, serif lines around them 56-72 px (not 190 vs 40).
 - Showing a template: inside a device (`MacBook` opening, template looping on its screen), not
   a bare card. A browser page goes in `SafariWindow`.
-- Before/after: plain media cards with a small italic label above each ("Reference" / "Output"),
+- Before/after: plain media cards with a small serif label above each ("Reference" / "Output"),
   no titles or captions under them.
 
 ## Never (the user rejected these)

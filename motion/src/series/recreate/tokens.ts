@@ -9,7 +9,7 @@
  *
  * Sizes are px at 1920x1080 (the series is landscape first).
  */
-import { GROTESK, MONO, SANS, SERIF, SERIF_FALLBACK } from "./fonts";
+import { GROTESK, SERIF, SERIF_FALLBACK } from "./fonts";
 
 const serifStack = `"${SERIF}", "${SERIF_FALLBACK}", serif`;
 
@@ -32,14 +32,18 @@ export const C = {
 } as const;
 
 export const F = {
-  /** Condensed bold caps. */
-  caps: { fontFamily: `"${SANS}", sans-serif`, fontWeight: 760, fontStretch: "72%", letterSpacing: "-0.025em", lineHeight: 0.86, textTransform: "uppercase" as const },
+  /**
+   * The sans line of a mixed line. Alte Haas Grotesk in sentence case (the user dropped the
+   * condensed bold caps: only one sans and one serif in this series).
+   */
+  caps: { fontFamily: `"${GROTESK}", sans-serif`, fontWeight: 400, letterSpacing: "-0.035em", lineHeight: 0.95 },
   /** Serif partner for caps lines (regular, set at the same size as the caps). Feature Display. */
   serif: { fontFamily: serifStack, fontWeight: 400, letterSpacing: "-0.02em", lineHeight: 0.9 },
-  /** Italic serif: the emphasis word. */
-  italic: { fontFamily: serifStack, fontStyle: "italic" as const, fontWeight: 400, letterSpacing: "-0.01em" },
+  /** The serif line / emphasis: Feature Display, UPRIGHT (the user doesn't want the italic). */
+  italic: { fontFamily: serifStack, fontWeight: 400, letterSpacing: "-0.015em" },
   /** Grotesk for long display sentences (Matthieu / Butter lines). Alte Haas Grotesk. */
   grotesk: { fontFamily: `"${GROTESK}", sans-serif`, fontWeight: 400, letterSpacing: "-0.03em", lineHeight: 1.0 },
   body: { fontFamily: `"Inter", sans-serif`, fontWeight: 420, letterSpacing: "-0.01em" },
-  mono: { fontFamily: `"${MONO}", monospace`, fontWeight: 500, letterSpacing: "0.04em", textTransform: "uppercase" as const },
+  /** Small labels on cards. Was JetBrains Mono caps; the user finds mono AI-looking, so: plain sans. */
+  mono: { fontFamily: `"${GROTESK}", sans-serif`, fontWeight: 400, letterSpacing: "-0.01em" },
 } as const;

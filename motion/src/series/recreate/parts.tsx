@@ -2,7 +2,7 @@
  * Beat-level parts for "recreate" videos, made for the Type Staircase film and reusable:
  *
  *   LowerThird   the bottom of the frame darkens (codemotion's caption shade, tinted for the sky)
- *                and a name writes itself out word by word as it's spoken, with a small mono line
+ *                and a name writes itself out, centred, word by word as it's spoken
  *   StepTitle    "01" huge in italic serif + STEP ONE + a short label; floats in, then flies off
  *                on the speed ramp when the step's content arrives (`outAt`)
  *   ChoiceCards  2-4 option cards (logo, name, one line) float in on cue; one can take focus on a
@@ -20,23 +20,17 @@ import { C, F } from "./tokens";
 
 // ---------------------------------------------------------------- LowerThird
 
-export const LowerThird: React.FC<{ name: WordSpec[]; detail?: string; detailAt?: number; outAt?: number }> = ({ name, detail, detailAt, outAt }) => {
+export const LowerThird: React.FC<{ name: WordSpec[]; outAt?: number; size?: number }> = ({ name, outAt, size = 112 }) => {
   const frame = useCurrentFrame();
   const start = name[0]?.at ?? 0;
   const shade = tween(frame, start - 6, 16, 0, 1, "softInOut") * (outAt === undefined ? 1 : tween(frame, outAt, 16, 1, 0, "softInOut"));
   const gone = outAt !== undefined ? tween(frame, outAt, 14, 0, 1, "accelExit") : 0;
-  const d = enter(frame, detailAt ?? start + 6, { from: { y: 14, blur: 4 }, frames: 12 });
   if (shade <= 0.001 && frame > start) return null;
   return (
     <>
       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(0deg, rgba(10,28,64,0.62) 0%, rgba(10,28,64,0.28) 26%, rgba(10,28,64,0) 46%)", opacity: shade, pointerEvents: "none" }} />
-      <div style={{ position: "absolute", left: 120, bottom: 96, color: C.white, opacity: 1 - gone, transform: `translateY(${gone * 30}px)`, filter: gone > 0.02 ? `blur(${gone * 10}px)` : undefined }}>
-        <div style={{ display: "flex", alignItems: "baseline", gap: 0 }}>
-          <Words size={118} base={{ ...F.italic, lineHeight: 1 }} words={name} gap={0.18} />
-        </div>
-        {detail && (
-          <div style={{ ...F.mono, fontSize: 22, marginTop: 14, opacity: d.visible ? d.opacity * 0.9 : 0, transform: `translateY(${d.y}px)` }}>{detail}</div>
-        )}
+      <div style={{ position: "absolute", left: 0, right: 0, bottom: 90, display: "flex", justifyContent: "center", color: C.white, opacity: 1 - gone, transform: `translateY(${gone * 30}px)`, filter: gone > 0.02 ? `blur(${gone * 10}px)` : undefined }}>
+        <Words size={size} base={{ ...F.serif, lineHeight: 1 }} words={name} gap={0.2} />
       </div>
     </>
   );

@@ -364,6 +364,8 @@ export const ClaudeWindow: React.FC<{
 export type ClaudeTurn = {
   /** The ask: appears in the composer on `at`, is sent on `sendAt`. */
   text: string;
+  /** A pasted file instead of (or with) text: shows as a file chip in the composer and the bubble. */
+  file?: { name: string; meta: string };
   at: number;
   sendAt: number;
   /** Claude's reply lands on `replyAt` (a working line with a timer runs until then). */
@@ -382,9 +384,10 @@ const PREVIEW_H = PREVIEW_W * 0.5625;
 const TURN_GAP = 34;
 
 /**
- * Claude Code mid-conversation: each turn's ask arrives in the composer, gets sent (the button
- * presses, the bubble joins the thread), Claude works with a running timer, then replies with a
- * line and a playing preview. The thread glides up to keep the newest turn in view.
+ * Claude Code as a conversation: before the first send it shows the greeting; each turn's ask (a
+ * line, or a pasted file chip) arrives in the composer, gets sent (the button presses, the bubble
+ * joins the thread), Claude works with a running timer, then replies with a line and a playing
+ * preview. The thread glides up to keep the newest turn in view.
  */
 export const ClaudeThread: React.FC<{ width: number; height: number; model?: string; turns: ClaudeTurn[] }> = ({ width, height, model = "Opus 5.5", turns }) => {
   const frame = useCurrentFrame();
@@ -406,6 +409,12 @@ export const ClaudeThread: React.FC<{ width: number; height: number; model?: str
   return (
     <div style={{ width, height, borderRadius: 20, overflow: "hidden", background: CL.window, color: CL.text, ...F.body, letterSpacing: "-0.01em", boxShadow: "0 50px 100px rgba(10,30,70,0.38), 0 10px 24px rgba(10,30,70,0.2)", position: "relative" }}>
       <ClaudeTitleBar />
+      {turns.length > 0 && frame < turns[0].sendAt + 12 && (
+        <div style={{ position: "absolute", top: 210, width: "100%", display: "flex", justifyContent: "center", alignItems: "center", gap: 22, opacity: tween(frame, turns[0].sendAt, 12, 1, 0, "softInOut") }}>
+          <Img src={staticFile("recreate/claude-icon.svg")} style={{ width: 62, height: 62 }} />
+          <span style={{ ...F.serif, fontSize: 64, letterSpacing: "-0.01em", color: CL.text }}>Hey there</span>
+        </div>
+      )}
       <div style={{ position: "absolute", top: viewTop, left, width: colW, height: viewH, overflow: "hidden" }}>
         <div style={{ transform: `translateY(${-scroll}px)` }}>
           {turns.map((t, i) => {
@@ -417,7 +426,7 @@ export const ClaudeThread: React.FC<{ width: number; height: number; model?: str
             return (
               <div key={i} style={{ position: "absolute", top: tops[i], left: 0, right: 0 }}>
                 <div style={{ display: "flex", justifyContent: "flex-end", height: BUBBLE_H, alignItems: "flex-start", transform: `translateY(${b.y}px)`, opacity: b.opacity }}>
-                  <div style={{ background: CL.card, borderRadius: 18, padding: "18px 26px", fontSize: 25, color: CL.text, maxWidth: colW * 0.8 }}>{t.text}</div>
+                  {t.file ? <FileChip file={t.file} /> : <div style={{ background: CL.card, borderRadius: 18, padding: "18px 26px", fontSize: 25, color: CL.text, maxWidth: colW * 0.8 }}>{t.text}</div>}
                 </div>
                 <div style={{ marginTop: 22, display: "flex", gap: 18 }}>
                   <Img src={staticFile("recreate/claude-icon.svg")} style={{ width: 36, height: 36, flexShrink: 0, transform: working ? `rotate(${(frame - t.sendAt) * 6}deg)` : undefined, opacity: frame >= t.sendAt + 6 ? 1 : 0 }} />
@@ -452,13 +461,27 @@ export const ClaudeThread: React.FC<{ width: number; height: number; model?: str
       {/* composer */}
       <div style={{ position: "absolute", left, width: colW, bottom: 30, background: CL.card, border: `1.5px solid ${CL.cardLine}`, borderRadius: 26, padding: "22px 24px", boxShadow: "0 20px 50px rgba(0,0,0,0.3)" }}>
         <div style={{ fontSize: 26, minHeight: 36, color: current ? CL.text : CL.faint }}>
-          {current ? (() => { const e = enter(frame, current.at, { from: { y: 10, blur: 4 }, frames: 10 }); return <span style={{ display: "inline-block", transform: `translateY(${e.y}px)`, opacity: e.opacity }}>{current.text}</span>; })() : "Reply to Claude…"}
+          {current ? (() => {
+            const e = enter(frame, current.at, { from: { y: 10, blur: 4 }, frames: 10 });
+            return <div style={{ transform: `translateY(${e.y}px)`, opacity: e.opacity }}>{current.file ? <FileChip file={current.file} /> : current.text}</div>;
+          })() : frame < (turns[0]?.sendAt ?? 0) ? "How can I help you today?" : "Reply to Claude…"}
         </div>
         <ClaudeControls model={model} press={pressAt(frame, lastSend > -999 ? lastSend : undefined)} />
       </div>
     </div>
   );
 };
+
+/** A pasted file as Claude Code shows it: document icon, name, meta. */
+const FileChip: React.FC<{ file: { name: string; meta: string } }> = ({ file }) => (
+  <div style={{ display: "inline-flex", alignItems: "center", gap: 16, background: CL.chip, borderRadius: 16, padding: "12px 22px 12px 14px" }}>
+    <FileIcon kind="md" />
+    <div>
+      <div style={{ fontSize: 23, color: CL.text }}>{file.name}</div>
+      <div style={{ fontSize: 17, color: CL.muted, marginTop: 3 }}>{file.meta}</div>
+    </div>
+  </div>
+);
 
 /** Where ClaudeThread's send button sits, relative to the window (for the cursor). */
 export const threadSendButton = (width: number, height: number): [number, number] => {
