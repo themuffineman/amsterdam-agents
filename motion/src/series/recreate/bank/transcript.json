@@ -1,0 +1,339 @@
+{
+ "words": [
+  {
+   "text": "Here",
+   "start": 0.4,
+   "end": 0.68
+  },
+  {
+   "text": "are",
+   "start": 0.74,
+   "end": 0.95
+  },
+  {
+   "text": "three",
+   "start": 1.01,
+   "end": 1.359
+  },
+  {
+   "text": "templates",
+   "start": 1.419,
+   "end": 2.049
+  },
+  {
+   "text": "from",
+   "start": 2.109,
+   "end": 2.388
+  },
+  {
+   "text": "the",
+   "start": 2.448,
+   "end": 2.658
+  },
+  {
+   "text": "site.",
+   "start": 2.718,
+   "end": 2.998
+  },
+  {
+   "text": "Antares,",
+   "start": 3.508,
+   "end": 3.997
+  },
+  {
+   "text": "Sirius,",
+   "start": 4.237,
+   "end": 4.657
+  },
+  {
+   "text": "and",
+   "start": 4.897,
+   "end": 5.107
+  },
+  {
+   "text": "Deneb.",
+   "start": 5.167,
+   "end": 5.516
+  },
+  {
+   "text": "Pick",
+   "start": 6.026,
+   "end": 6.306
+  },
+  {
+   "text": "the",
+   "start": 6.366,
+   "end": 6.576
+  },
+  {
+   "text": "one",
+   "start": 6.636,
+   "end": 6.846
+  },
+  {
+   "text": "you",
+   "start": 6.906,
+   "end": 7.115
+  },
+  {
+   "text": "like.",
+   "start": 7.175,
+   "end": 7.455
+  },
+  {
+   "text": "There",
+   "start": 7.965,
+   "end": 8.315
+  },
+  {
+   "text": "are",
+   "start": 8.375,
+   "end": 8.585
+  },
+  {
+   "text": "twelve",
+   "start": 8.645,
+   "end": 9.064
+  },
+  {
+   "text": "of",
+   "start": 9.124,
+   "end": 9.284
+  },
+  {
+   "text": "them",
+   "start": 9.344,
+   "end": 9.624
+  },
+  {
+   "text": "so",
+   "start": 9.684,
+   "end": 9.844
+  },
+  {
+   "text": "far,",
+   "start": 9.904,
+   "end": 10.114
+  },
+  {
+   "text": "and",
+   "start": 10.354,
+   "end": 10.563
+  },
+  {
+   "text": "every",
+   "start": 10.623,
+   "end": 10.973
+  },
+  {
+   "text": "single",
+   "start": 11.033,
+   "end": 11.453
+  },
+  {
+   "text": "one",
+   "start": 11.513,
+   "end": 11.722
+  },
+  {
+   "text": "is",
+   "start": 11.782,
+   "end": 11.942
+  },
+  {
+   "text": "free",
+   "start": 12.002,
+   "end": 12.282
+  },
+  {
+   "text": "to",
+   "start": 12.342,
+   "end": 12.502
+  },
+  {
+   "text": "use.",
+   "start": 12.562,
+   "end": 12.772
+  },
+  {
+   "text": "This",
+   "start": 13.282,
+   "end": 13.562
+  },
+  {
+   "text": "is",
+   "start": 13.622,
+   "end": 13.782
+  },
+  {
+   "text": "the",
+   "start": 13.842,
+   "end": 14.051
+  },
+  {
+   "text": "one",
+   "start": 14.111,
+   "end": 14.321
+  },
+  {
+   "text": "we're",
+   "start": 14.381,
+   "end": 14.661
+  },
+  {
+   "text": "rebuilding",
+   "start": 14.721,
+   "end": 15.42
+  },
+  {
+   "text": "today.",
+   "start": 15.48,
+   "end": 15.83
+  },
+  {
+   "text": "Serif",
+   "start": 16.34,
+   "end": 16.69
+  },
+  {
+   "text": "emphasis",
+   "start": 16.75,
+   "end": 17.309
+  },
+  {
+   "text": "captions.",
+   "start": 17.369,
+   "end": 17.928
+  },
+  {
+   "text": "You'll",
+   "start": 18.438,
+   "end": 18.788
+  },
+  {
+   "text": "find",
+   "start": 18.848,
+   "end": 19.128
+  },
+  {
+   "text": "it",
+   "start": 19.188,
+   "end": 19.348
+  },
+  {
+   "text": "on",
+   "start": 19.408,
+   "end": 19.568
+  },
+  {
+   "text": "sycamore",
+   "start": 19.628,
+   "end": 20.187
+  },
+  {
+   "text": "dot",
+   "start": 20.247,
+   "end": 20.457
+  },
+  {
+   "text": "to",
+   "start": 20.517,
+   "end": 20.677
+  },
+  {
+   "text": "slash",
+   "start": 20.737,
+   "end": 21.087
+  },
+  {
+   "text": "motion.",
+   "start": 21.147,
+   "end": 21.566
+  },
+  {
+   "text": "Each",
+   "start": 22.076,
+   "end": 22.356
+  },
+  {
+   "text": "template",
+   "start": 22.416,
+   "end": 22.975
+  },
+  {
+   "text": "is",
+   "start": 23.035,
+   "end": 23.195
+  },
+  {
+   "text": "built",
+   "start": 23.255,
+   "end": 23.605
+  },
+  {
+   "text": "from",
+   "start": 23.665,
+   "end": 23.945
+  },
+  {
+   "text": "small",
+   "start": 24.005,
+   "end": 24.354
+  },
+  {
+   "text": "parts.",
+   "start": 24.414,
+   "end": 24.764
+  },
+  {
+   "text": "A",
+   "start": 25.274,
+   "end": 25.434
+  },
+  {
+   "text": "headline,",
+   "start": 25.494,
+   "end": 26.054
+  },
+  {
+   "text": "a",
+   "start": 26.294,
+   "end": 26.454
+  },
+  {
+   "text": "highlight,",
+   "start": 26.514,
+   "end": 27.143
+  },
+  {
+   "text": "a",
+   "start": 27.383,
+   "end": 27.543
+  },
+  {
+   "text": "caption,",
+   "start": 27.603,
+   "end": 28.092
+  },
+  {
+   "text": "and",
+   "start": 28.332,
+   "end": 28.542
+  },
+  {
+   "text": "a",
+   "start": 28.602,
+   "end": 28.762
+  },
+  {
+   "text": "camera",
+   "start": 28.822,
+   "end": 29.242
+  },
+  {
+   "text": "move.",
+   "start": 29.302,
+   "end": 29.582
+  }
+ ]
+}

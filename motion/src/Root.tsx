@@ -11,6 +11,7 @@ import { BEST_TIMES, BestTimes } from "./compositions/BestTimes";
 import { CONSISTENCY, Consistency } from "./compositions/Consistency";
 import { RECREATE_LOOK, RecreateLook } from "./series/recreate/LookBook";
 import { REEL, RecreateReel } from "./series/recreate/reel/Reel";
+import { BANK_DEMO, RecreateBank } from "./series/recreate/bank/Demo";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -49,6 +50,12 @@ export const RemotionRoot: React.FC = () => {
         id="RecreateReel"
         component={RecreateReel}
         durationInFrames={REEL.durationInFrames}
+        {...LANDSCAPE}
+      />
+      <Composition
+        id="RecreateBank"
+        component={RecreateBank}
+        durationInFrames={BANK_DEMO.durationInFrames}
         {...LANDSCAPE}
       />
     </>

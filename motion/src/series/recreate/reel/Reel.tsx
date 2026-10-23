@@ -21,21 +21,12 @@ import React from "react";
 import { AbsoluteFill, useCurrentFrame } from "remotion";
 import { tween } from "../../../lib/eases";
 import { PromptTicket } from "../kit";
-import { Words } from "../moves";
+import { Words, glide, rackStyle } from "../moves";
 import { Scene, TranscriptProvider, Track, lengthOf, useCue, useWords } from "../timing";
 import { C, F } from "../tokens";
 import transcript from "./transcript.json";
 
 export const REEL = { durationInFrames: lengthOf(transcript) } as const;
-
-type Key = { at: number; v: number; dur?: number };
-
-/** Chained eased glide: from each key's value to the next, softInOut over `dur` frames. */
-const glide = (frame: number, keys: Key[]) => keys.slice(1).reduce((v, k) => v + (k.v - v) * tween(frame, k.at, k.dur ?? 36, 0, 1, "softInOut"), keys[0].v);
-
-/** Focus pull: 0 = sharp, 1 = fully racked out. Blur, a slight push back, and a fade. */
-const rackStyle = (k: number, blur = 14, fade = 0.25): React.CSSProperties =>
-  k <= 0.001 ? {} : { filter: `blur(${k * blur}px)`, transform: `scale(${1 - k * 0.05})`, opacity: 1 - k * fade };
 
 type Spoken = { text: string; at: number }[];
 
