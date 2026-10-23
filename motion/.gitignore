@@ -14,3 +14,6 @@ research/
 # Only Alte Haas Grotesk (freeware, ships with its licence) is committed.
 public/fonts/experiment/*
 !public/fonts/experiment/AlteHaasGrotesk*
+# Licensed / trial fonts used by the series but not redistributable (public repo).
+# Copy them here locally; renders fall back when missing (src/series/recreate/fonts.ts).
+public/fonts/local/

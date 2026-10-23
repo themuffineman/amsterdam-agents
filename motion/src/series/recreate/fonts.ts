@@ -1,23 +1,40 @@
 /**
- * Fonts for the "recreate" series (prompt -> motion graphic tutorials). All SIL OFL 1.1,
- * vendored latin woff2 from Google Fonts (public/fonts/), loaded like lib/fonts.ts:
- * - Archivo, variable weight AND width: the condensed bold caps (font-stretch ~68-75%).
- * - Instrument Serif, regular + italic: the serif half of every mixed line.
- * - JetBrains Mono: ticket labels, prompt text, small print.
+ * Fonts for the "recreate" series (prompt -> motion graphic tutorials), loaded like lib/fonts.ts:
+ * - Archivo, variable weight AND width (SIL OFL): the condensed bold caps (font-stretch ~72%).
+ * - Feature Display, regular + italic (Commercial Type, TRIAL): every serif / italic line.
+ *   Not redistributable, so it lives in public/fonts/local/ (gitignored) and is OPTIONAL: when
+ *   the files are missing (a fresh clone, the cloud film agent) the render falls back to
+ *   Instrument Serif and logs a warning instead of failing.
+ * - Instrument Serif, regular + italic (SIL OFL): the serif fallback.
+ * - Alte Haas Grotesk (freeware, licence file alongside): long display sentences.
+ * - JetBrains Mono (SIL OFL): ticket labels, small print.
  * Body text stays Inter (lib/fonts.ts).
  */
 import { cancelRender, continueRender, delayRender, staticFile } from "remotion";
 
 export const SANS = "Archivo";
-export const SERIF = "Instrument Serif";
+export const SERIF = "Feature Display";
+export const SERIF_FALLBACK = "Instrument Serif";
+export const GROTESK = "Alte Haas Grotesk";
 export const MONO = "JetBrains Mono";
 
-const FACES: [string, string, FontFaceDescriptors][] = [
+type Face = [family: string, file: string, desc: FontFaceDescriptors];
+
+const REQUIRED: Face[] = [
   [SANS, "fonts/Archivo-Variable-latin.woff2", { weight: "100 900", stretch: "62% 125%" }],
-  [SERIF, "fonts/InstrumentSerif-Regular-latin.woff2", { style: "normal" }],
-  [SERIF, "fonts/InstrumentSerif-Italic-latin.woff2", { style: "italic" }],
+  [SERIF_FALLBACK, "fonts/InstrumentSerif-Regular-latin.woff2", { style: "normal" }],
+  [SERIF_FALLBACK, "fonts/InstrumentSerif-Italic-latin.woff2", { style: "italic" }],
+  [GROTESK, "fonts/AlteHaasGroteskRegular.ttf", { weight: "400" }],
+  [GROTESK, "fonts/AlteHaasGroteskBold.ttf", { weight: "700" }],
   [MONO, "fonts/JetBrainsMono-Variable-latin.woff2", { weight: "100 800" }],
 ];
+
+const OPTIONAL: Face[] = [
+  [SERIF, "fonts/local/FeatureDisplay-Regular-Trial.otf", { style: "normal" }],
+  [SERIF, "fonts/local/FeatureDisplay-RegularItalic-Trial.otf", { style: "italic" }],
+];
+
+const load = ([family, file, desc]: Face) => new FontFace(family, `url(${staticFile(file)})`, desc).load().then((f) => document.fonts.add(f));
 
 let started = false;
 
@@ -25,11 +42,10 @@ export const loadSeriesFonts = () => {
   if (started || typeof document === "undefined") return;
   started = true;
   const handle = delayRender("Loading recreate series fonts");
-  Promise.all(
-    FACES.map(([family, file, desc]) =>
-      new FontFace(family, `url(${staticFile(file)}) format("woff2")`, desc).load().then((f) => document.fonts.add(f)),
-    ),
-  )
+  const optional = Promise.all(OPTIONAL.map(load)).catch(() => {
+    console.warn(`[recreate] ${SERIF} not found in public/fonts/local/: serif lines fall back to ${SERIF_FALLBACK}.`);
+  });
+  Promise.all([...REQUIRED.map(load), optional])
     .then(() => continueRender(handle))
     .catch((err) => cancelRender(err));
 };
