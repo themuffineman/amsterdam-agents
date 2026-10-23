@@ -31,6 +31,11 @@ headers); creator transcripts in `motion/research/` stay local (gitignored).
 ## The film agent (`src/film.ts`, `.github/workflows/films.yml`)
 
 Not a campaign like the page agents: one film is a 1-2 hour coding job in `motion/`, and a person reviews it.
+Two kinds (studio `motion_films.kind`, migration 0035): **explainer** (a title from /motion-gen's queue, the Motion
+Film Brief) and **recreate** (a video about one sycamore.to/motion template and how to make it with Claude Code:
+the Recreate Brief, studio `lib/motion-films/recreate-prompt.ts`, which sends the agent to
+`motion/src/series/recreate/SERIES.md`). This runner treats both the same; recreate videos also use
+`npm run narrate` (faster-whisper, installed by film.ts, model cached by the workflow).
 
 - **Start:** studio `/motion-gen` → draw a title → **Make film** (landscape or portrait) → a `motion_films` row
   `queued` (studio `lib/motion-films/`, migration 0032). No schedule yet (the user wants the button first).
