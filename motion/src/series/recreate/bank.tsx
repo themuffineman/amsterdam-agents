@@ -455,7 +455,7 @@ export const PromptDoc: React.FC<{
         {cued.map(({ s }, k) => {
           const next = k + 1 < cued.length ? cued[k + 1].s.at! : total.at;
           if (frame < s.at!) return null;
-          const out = tween(frame, next - 2, 14, 0, 1, "softInOut");
+          const out = tween(frame, next - 10, 10, 0, 1, "softInOut"); // fully gone before the next label lands
           if (out >= 1) return null;
           const e = enter(frame, s.at!, { from: { y: 60, blur: 12 }, frames: 14 });
           return (

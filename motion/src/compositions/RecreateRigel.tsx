@@ -82,7 +82,7 @@ const TheLook: React.FC = () => {
   const back = ramp(frame, cue("slides"), 26);
   // card: centre -> left & smaller on "look" -> centre & bigger on "slides"
   const x = -430 * side.p + 430 * back.p;
-  const s = 1 - 0.36 * side.p + 0.46 * back.p;
+  const s = 1 - 0.36 * side.p + 0.36 * back.p;
   const demoRack = tween(frame, cue("slides"), 18, 0, 1, "softInOut");
   return (
     <>
