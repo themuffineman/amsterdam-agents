@@ -127,14 +127,17 @@ const TheTurn: React.FC = () => {
   const rack2 = tween(frame, cardAt + 4, 26, 0, 1, "softInOut");
   const pose = floatUp(frame, cardAt);
   const cam = glide(frame, [{ at: 0, v: 1 }, { at: cardAt + 6, v: 1.08, dur: 50 }]);
+  // hooks first, never inside a condition
+  const w1 = { kicker: useWords("here's", "thing"), caps: useWords("i", "animate"), serif: useWords("any", "hand") };
+  const w2 = { caps: useWords("it", "from"), serif: useWords("one", "prompt") };
   return (
     <AbsoluteFill style={{ transform: `scale(${cam})` }}>
       <Column style={rackStyle(rack1, 14, 1)}>
-        <Mixed kicker={useWords("here's", "thing")} caps={useWords("i", "animate")} serif={useWords("any", "hand")} size={200} />
+        <Mixed {...w1} size={200} />
       </Column>
       {frame >= t2 - 2 && (
         <Column style={rackStyle(rack2, 14, 0.25)}>
-          <Mixed caps={useWords("it", "from")} serif={useWords("one", "prompt")} size={210} />
+          <Mixed {...w2} size={210} />
         </Column>
       )}
       <div style={{ position: "absolute", left: 660, top: 170 }}>
