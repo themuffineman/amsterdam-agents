@@ -36,7 +36,8 @@ import { Float3D, InlineChip, Words, floatUp, glide, rackStyle, ramp } from "../
 import { Scene, TranscriptProvider, Track, lengthOf, useCue, useWords } from "../series/recreate/timing";
 import { C, F } from "../series/recreate/tokens";
 import { ClaudeWindow, Cursor, TemplatePage } from "../series/recreate/ui";
-import { MacBook, SafariWindow } from "../series/recreate/devices";
+import { SafariWindow } from "../series/recreate/devices";
+import { MacBook } from "../series/recreate/macbook";
 import transcript from "../films/recreate-rigel/transcript.json";
 
 export const RECREATE_RIGEL = { durationInFrames: lengthOf(transcript) } as const;
@@ -86,7 +87,7 @@ const TheLook: React.FC = () => {
   const demoRack = tween(frame, cue("slides"), 18, 0, 1, "softInOut");
   return (
     <>
-      <div style={{ position: "absolute", left: 960 - W / 2, top: 70, filter: side.blur + back.blur > 0.4 ? `blur(${(side.blur + back.blur) * 0.6}px)` : undefined }}>
+      <div style={{ position: "absolute", left: 960 - W / 2, top: 130, filter: side.blur + back.blur > 0.4 ? `blur(${(side.blur + back.blur) * 0.6}px)` : undefined }}>
         <Float3D pose={rise} x={x} scale={s}>
           <MacBook width={W} openAt={10}>
             <TemplateClip id={ID} trim={TRIM} />

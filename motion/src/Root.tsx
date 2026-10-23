@@ -14,6 +14,7 @@ import { REEL, RecreateReel } from "./series/recreate/reel/Reel";
 import { BANK_DEMO, RecreateBank } from "./series/recreate/bank/Demo";
 import { FONT_TEST, RecreateFontTest } from "./series/recreate/bank/FontTest";
 import { RECREATE_RIGEL, RecreateRigel } from "./compositions/RecreateRigel";
+import { MACBOOK_LAB, MacBookLab } from "./series/recreate/MacBookLab";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -58,6 +59,12 @@ export const RemotionRoot: React.FC = () => {
         id="RecreateBank"
         component={RecreateBank}
         durationInFrames={BANK_DEMO.durationInFrames}
+        {...LANDSCAPE}
+      />
+      <Composition
+        id="MacBookLab"
+        component={MacBookLab}
+        durationInFrames={MACBOOK_LAB.durationInFrames}
         {...LANDSCAPE}
       />
       <Composition

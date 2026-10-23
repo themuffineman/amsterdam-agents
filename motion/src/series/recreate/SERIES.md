@@ -85,7 +85,7 @@ the word.
 
 1. Decide what the beat should look like first; then check whether the bank has it
    (`MediaTicket`, `DealtTickets`, `TicketBoard`, `TicketStatement`, `ReceiptTicket`, `PromptDoc`,
-   `MediaSentence`, `ActionChip`, `PromptTicket`, devices.tsx `MacBook` / `SafariWindow`, ui.tsx
+   `MediaSentence`, `ActionChip`, `PromptTicket`, macbook.tsx `MacBook`, devices.tsx `SafariWindow`, ui.tsx
    `ClaudeWindow` / `TemplatePage` / `Cursor`). Only reuse it if it really fits.
 2. Otherwise build it from the same parts: `TicketShell` for anything card-like, `F` / `C`
    tokens only, `floatUp` / `rackStyle` / `ramp` / `glide` for motion, cue frames as props (it never

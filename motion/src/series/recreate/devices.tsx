@@ -1,10 +1,6 @@
 /**
- * Device mockups for the "recreate" series, frame-driven (no scroll, no framer-motion):
+ * Device mockups for the "recreate" series, frame-driven. (The MacBook lives in macbook.tsx.)
  *
- * - MacBook: ported from Aceternity UI's MacBook Scroll (ui.aceternity.com/components/macbook-scroll):
- *   dark lid with a bezel, silver deck with keyboard, speaker grilles and trackpad. Here the lid is
- *   hinged at the deck and OPENS on `openAt` (from closed, flat over the keyboard, up to ~100°),
- *   then the screen wakes and shows `children` (the template, looping).
  * - SafariWindow: the toolbar of Magic UI's Safari mockup (magicui.design/docs/components/safari,
  *   MIT, icon paths kept), drawn with our tokens: rounded window, dots, address pill, URL that can
  *   type in on a cue.
@@ -12,99 +8,7 @@
 import React from "react";
 import { useCurrentFrame } from "remotion";
 import { tween } from "../../lib/eases";
-import { ramp } from "./moves";
 import { F } from "./tokens";
-
-// ---------------------------------------------------------------- MacBook
-
-const KEY_ROWS = [14, 14, 14, 13, 12, 9];
-
-const Keyboard: React.FC<{ w: number; h: number }> = ({ w, h }) => {
-  const gap = w * 0.006;
-  const rowH = (h - gap * (KEY_ROWS.length + 1)) / KEY_ROWS.length;
-  return (
-    <div style={{ width: w, height: h, background: "#0B0B0C", borderRadius: w * 0.012, padding: gap, display: "flex", flexDirection: "column", gap }}>
-      {KEY_ROWS.map((n, r) => (
-        <div key={r} style={{ display: "flex", gap, height: r === 0 ? rowH * 0.6 : rowH }}>
-          {Array.from({ length: n }, (_, i) => {
-            const wide = (r === 5 && i === 4) ? 5 : (r > 0 && (i === 0 || i === n - 1) ? 1.5 : 1);
-            return <div key={i} style={{ flex: wide, background: "#141416", borderRadius: w * 0.004, boxShadow: "inset 0 -1px 0 #000, inset 0 1px 0 rgba(255,255,255,0.05)" }} />;
-          })}
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const Grille: React.FC<{ w: number; h: number }> = ({ w, h }) => (
-  <div style={{ width: w, height: h, backgroundImage: "radial-gradient(circle, #8E8E93 0.9px, transparent 1.1px)", backgroundSize: "6px 6px", opacity: 0.6 }} />
-);
-
-/**
- * A MacBook seen from the front and a little above. `openAt`: the lid swings open on a speed
- * ramp (slow, fast, settle); the screen lights up as it passes upright. Width = deck width, px.
- */
-export const MacBook: React.FC<{ width: number; openAt: number; children: React.ReactNode }> = ({ width, openAt, children }) => {
-  const frame = useCurrentFrame();
-  const open = ramp(frame, openAt, 34, 0).p; // 0 closed -> 1 open
-  const lidAngle = -88 + 96 * open; // rotateX of the lid about its bottom edge: -88 = lying on the deck
-  const glow = tween(frame, openAt + 20, 14, 0, 1, "softInOut");
-  const lidW = width * 0.86;
-  const lidH = lidW * 0.64;
-  const bezel = lidW * 0.025;
-  const deckH = width * 0.62;
-  return (
-    <div style={{ width, position: "relative", perspective: 2600, perspectiveOrigin: "50% 10%" }}>
-      {/* lid */}
-      <div
-        style={{
-          width: lidW,
-          height: lidH,
-          margin: "0 auto",
-          transformOrigin: "50% 100%",
-          transform: `rotateX(${lidAngle}deg)`,
-          background: "#0A0A0B",
-          borderRadius: `${lidW * 0.03}px ${lidW * 0.03}px ${lidW * 0.008}px ${lidW * 0.008}px`,
-          padding: bezel,
-          boxShadow: "0 0 0 2px #2A2A2D inset, 0 30px 60px rgba(10,30,70,0.25)",
-          position: "relative",
-          zIndex: 2,
-        }}
-      >
-        <div style={{ position: "absolute", top: bezel * 0.35, left: "50%", width: 6, height: 6, marginLeft: -3, borderRadius: 99, background: "#1E1E22" }} />
-        <div style={{ width: "100%", height: "100%", borderRadius: lidW * 0.01, overflow: "hidden", position: "relative", background: "#000" }}>
-          <div style={{ position: "absolute", inset: 0, opacity: glow }}>{children}</div>
-        </div>
-      </div>
-      {/* deck, seen in perspective, hinged at the lid's bottom edge */}
-      <div style={{ transformOrigin: "50% 0%", transform: "rotateX(72deg)", marginTop: -2 }}>
-        <div
-          style={{
-            width,
-            height: deckH,
-            background: "linear-gradient(180deg, #D7D8DC 0%, #C9CACF 100%)",
-            borderRadius: width * 0.03,
-            boxShadow: "0 0 0 1.5px #B5B6BB inset, 0 40px 80px rgba(10,30,70,0.3)",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          <div style={{ position: "absolute", top: deckH * 0.02, left: "10%", width: "80%", height: deckH * 0.03, background: "#0B0B0C", borderRadius: 4 }} />
-          <div style={{ position: "absolute", top: deckH * 0.08, left: width * 0.02 }}>
-            <Grille w={width * 0.07} h={deckH * 0.5} />
-          </div>
-          <div style={{ position: "absolute", top: deckH * 0.08, right: width * 0.02 }}>
-            <Grille w={width * 0.07} h={deckH * 0.5} />
-          </div>
-          <div style={{ position: "absolute", top: deckH * 0.08, left: width * 0.11 }}>
-            <Keyboard w={width * 0.78} h={deckH * 0.5} />
-          </div>
-          <div style={{ position: "absolute", top: deckH * 0.62, left: "30%", width: "40%", height: deckH * 0.34, borderRadius: width * 0.02, boxShadow: "inset 0 0 0 1.5px rgba(0,0,0,0.12)", background: "rgba(255,255,255,0.12)" }} />
-        </div>
-      </div>
-    </div>
-  );
-};
 
 // ---------------------------------------------------------------- Safari
 
