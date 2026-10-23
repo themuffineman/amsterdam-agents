@@ -2,12 +2,15 @@
 // so all films share the 30 fps clock the motion-craft timings assume.
 import React from "react";
 import "./lib/fonts"; // starts the font load before any frame renders
+import "./series/recreate/fonts";
 import { Composition } from "remotion";
 import { LANDSCAPE } from "./lib/presets";
 import { PROOF_WORDS_WHOLE, ProofWordsWhole } from "./compositions/ProofWordsWhole";
 import { INSTAGRAM_BEST_TIMES, InstagramBestTimes } from "./compositions/InstagramBestTimes";
 import { BEST_TIMES, BestTimes } from "./compositions/BestTimes";
 import { CONSISTENCY, Consistency } from "./compositions/Consistency";
+import { RECREATE_LOOK, RecreateLook } from "./series/recreate/LookBook";
+import { REEL, RecreateReel } from "./series/recreate/reel/Reel";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -34,6 +37,18 @@ export const RemotionRoot: React.FC = () => {
         id="Consistency"
         component={Consistency}
         durationInFrames={CONSISTENCY.durationInFrames}
+        {...LANDSCAPE}
+      />
+      <Composition
+        id="RecreateLook"
+        component={RecreateLook}
+        durationInFrames={RECREATE_LOOK.durationInFrames}
+        {...LANDSCAPE}
+      />
+      <Composition
+        id="RecreateReel"
+        component={RecreateReel}
+        durationInFrames={REEL.durationInFrames}
         {...LANDSCAPE}
       />
     </>
