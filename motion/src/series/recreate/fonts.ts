@@ -1,10 +1,11 @@
 /**
  * Fonts for the "recreate" series (prompt -> motion graphic tutorials), loaded like lib/fonts.ts:
  * - Archivo, variable weight AND width (SIL OFL): the condensed bold caps (font-stretch ~72%).
- * - Feature Display, regular + italic (Commercial Type, TRIAL): every serif / italic line.
- *   Not redistributable, so it lives in public/fonts/local/ (gitignored) and is OPTIONAL: when
- *   the files are missing (a fresh clone, the cloud film agent) the render falls back to
- *   Instrument Serif and logs a warning instead of failing.
+ * - Feature Display, regular + italic (Commercial Type, TRIAL): every serif line. Not in this
+ *   public repo: it lives in public/fonts/local/ (gitignored) and in the GCS bucket
+ *   (`npm run fonts -- upload | download`); the cloud film runner downloads it before every
+ *   film and fails if it can't. On a fresh local clone without it, renders fall back to
+ *   Instrument Serif with a warning: run `npm run fonts -- download` first.
  * - Instrument Serif, regular + italic (SIL OFL): the serif fallback.
  * - Alte Haas Grotesk (freeware, licence file alongside): long display sentences.
  * - JetBrains Mono (SIL OFL): ticket labels, small print.

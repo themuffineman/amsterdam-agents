@@ -254,6 +254,14 @@ async function makeFilm(claim: Required<Claimed>) {
       sh("python3", ["-m", "pip", "install", "-q", "faster-whisper==1.2.1"]);
     }
 
+    // Licensed fonts that can't be in this public repo (Feature Display) come from the GCS
+    // bucket; this process holds the keys. A missing font fails the film instead of rendering
+    // with a fallback typeface.
+    if (!existsSync(join(MOTION, "public", "fonts", "local", "FeatureDisplay-Regular-Trial.otf"))) {
+      log("downloading the licensed fonts");
+      sh("npm", ["run", "fonts", "--", "download"], MOTION);
+    }
+
     // 3. Claude Code makes the film
     const resultFile = join(MOTION, "out", "film-result.json");
     if (existsSync(resultFile)) writeFileSync(resultFile, ""); // a redo's old result doesn't count

@@ -8,5 +8,6 @@ Fonts vendored from Google Fonts (latin subset woff2), all under the SIL Open Fo
   AlteHaasGrotesk-licence.txt (keep it next to the font files).
 
 Not in the repo (public/fonts/local/, gitignored): Feature Display (Commercial Type, TRIAL
-files: buy a licence before publishing videos with it). Without it, renders fall back to
-Instrument Serif.
+files: buy a licence before publishing videos with it). Kept in the GCS bucket instead
+(motion-assets/fonts/): `npm run fonts -- download` fetches it; the cloud film runner does that
+before every film.
