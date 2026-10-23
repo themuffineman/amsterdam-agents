@@ -213,7 +213,8 @@ const Runs: React.FC<{ runs: Run[]; size: number }> = ({ runs, size }) => (
 export const TicketShell: React.FC<{
   width: number;
   ink?: string;
-  stub: { left: React.ReactNode; right: React.ReactNode; footer?: React.ReactNode; seed?: string; barcode?: number };
+  /** The perforated stub with barcode. Omit it for a plain card (the template cards). */
+  stub?: { left: React.ReactNode; right: React.ReactNode; footer?: React.ReactNode; seed?: string; barcode?: number };
   focus?: number;
   dim?: number;
   style?: React.CSSProperties;
@@ -232,19 +233,23 @@ export const TicketShell: React.FC<{
         ...style,
       }}
     >
-      <div style={{ ...card, borderBottomLeftRadius: width * 0.03, borderBottomRightRadius: width * 0.03, paddingBottom: pad * 0.9 }}>{children}</div>
-      {/* perforation */}
-      <div style={{ height: 0, margin: `0 ${width * 0.04}px`, borderTop: `4px dashed ${C.sky}` }} />
-      <div style={{ ...card, borderTopLeftRadius: width * 0.03, borderTopRightRadius: width * 0.03, paddingTop: pad * 0.9 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", ...F.mono, fontSize: width * 0.036 }}>
-          <span>{stub.left}</span>
-          <span>{stub.right}</span>
-        </div>
-        <div style={{ marginTop: pad * 0.6 }}>
-          <Barcode width={width - pad * 2} height={width * (stub.barcode ?? 0.13)} color={ink} seed={stub.seed ?? "ticket"} />
-        </div>
-        {stub.footer && <div style={{ ...F.mono, fontSize: width * 0.032, marginTop: pad * 0.5 }}>{stub.footer}</div>}
-      </div>
+      <div style={stub ? { ...card, borderBottomLeftRadius: width * 0.03, borderBottomRightRadius: width * 0.03, paddingBottom: pad * 0.9 } : card}>{children}</div>
+      {stub && (
+        <>
+          {/* perforation */}
+          <div style={{ height: 0, margin: `0 ${width * 0.04}px`, borderTop: `4px dashed ${C.sky}` }} />
+          <div style={{ ...card, borderTopLeftRadius: width * 0.03, borderTopRightRadius: width * 0.03, paddingTop: pad * 0.9 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", ...F.mono, fontSize: width * 0.036 }}>
+              <span>{stub.left}</span>
+              <span>{stub.right}</span>
+            </div>
+            <div style={{ marginTop: pad * 0.6 }}>
+              <Barcode width={width - pad * 2} height={width * (stub.barcode ?? 0.13)} color={ink} seed={stub.seed ?? "ticket"} />
+            </div>
+            {stub.footer && <div style={{ ...F.mono, fontSize: width * 0.032, marginTop: pad * 0.5 }}>{stub.footer}</div>}
+          </div>
+        </>
+      )}
     </div>
   );
 };

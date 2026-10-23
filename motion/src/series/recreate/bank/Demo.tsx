@@ -6,7 +6,7 @@
  *                      "pick" -> Deneb takes focus, the others part and go soft.
  * 2 "there are twelve" TicketBoard: all twelve on a tilted board that scrolls under the title.
  * 3 "this is the one"  TicketStatement: Deneb returns as the tall ticket (carried object),
- *                      sticker on "today", action chip pressed on "motion".
+ *                      action chip pressed on "motion".
  * 4 "each template"    MediaSentence: the parts, each with its template opening the line.
  * 5 "the prompt"       ReceiptTicket: palette / type / easing / timing on cue, highlight glides,
  *                      "vague vibe" row struck, total counts up on "two thousand words".
@@ -56,7 +56,6 @@ const TheOne: React.FC = () => {
     <TicketStatement
       big={{ id: "serif-emphasis-captions", at: 2 }}
       small={{ id: "swipe-to-quote", at: cue("rebuilding"), still: true }}
-      sticker={{ text: "Today's build", at: cue("today") }}
       kicker={useWords("this", "today")}
       caps={useWords("serif", "emphasis")}
       serif={useWords("captions", "captions")}

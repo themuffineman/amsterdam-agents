@@ -5,10 +5,10 @@
  * list with rows on cue + a total that lands last (ListCard), a highlight that glides row to row
  * (useStepper), a tilted board the camera scrolls over with faded edges (PerspectiveBoard).
  *
- *   MediaTicket      a template as a ticket: playing preview, italic codename, name, stub
+ *   MediaTicket      a template as a card: playing preview, italic codename, name, category
  *   DealtTickets     2-4 tickets float up on cue; one can take focus while the rest go soft
  *   TicketBoard      all templates on a tilted, scrolling board under a mixed title
- *   TicketStatement  two tickets + sticker left, statement + action chip right
+ *   TicketStatement  two tickets left, statement + action chip right
  *   ReceiptTicket    a receipt: rows on cue, a gliding highlight, struck rows, a counted total
  *   MediaSentence    a sentence whose media chips open gaps as it's spoken (Butter)
  *
@@ -17,7 +17,7 @@
 import React from "react";
 import { Img, Loop, OffthreadVideo, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { enter, tween } from "../../lib/eases";
-import { Arrow, Diamond, Sticker, TicketShell } from "./kit";
+import { Arrow, Diamond, TicketShell } from "./kit";
 import { Float3D, OpeningChip, Words, floatUp, rackStyle, type WordSpec } from "./moves";
 import { TEMPLATES, type TemplateId } from "./templates";
 import { C, F } from "./tokens";
@@ -49,8 +49,8 @@ export const TemplateClip: React.FC<{ id: TemplateId; still?: boolean; fit?: "co
 };
 
 /**
- * A template as a ticket: the preview playing in a rounded window, the codename in italic serif,
- * its number, its name; the stub carries category, length and the site.
+ * A template as a card (the ticket's top, no stub): the preview playing in a rounded window, the
+ * codename in italic serif, its number, its name, and its category + length in mono.
  */
 export const MediaTicket: React.FC<{ id: TemplateId; width: number; focus?: number; dim?: number; still?: boolean; tall?: boolean }> = ({ id, width, focus, dim, still, tall }) => {
   const t = TEMPLATES[id];
@@ -58,12 +58,7 @@ export const MediaTicket: React.FC<{ id: TemplateId; width: number; focus?: numb
   const inner = width - pad * 2;
   const mediaH = (tall ?? t.vertical) ? inner * 1.15 : inner * 0.5625;
   return (
-    <TicketShell
-      width={width}
-      focus={focus}
-      dim={dim}
-      stub={{ left: t.category, right: `${t.sec.toFixed(1)} s`, footer: "sycamore.to/motion", seed: id, barcode: 0.09 }}
-    >
+    <TicketShell width={width} focus={focus} dim={dim}>
       <div style={{ width: inner, height: mediaH, borderRadius: width * 0.03, overflow: "hidden", position: "relative", background: C.paperDeep }}>
         <TemplateClip id={id} still={still} />
       </div>
@@ -72,6 +67,10 @@ export const MediaTicket: React.FC<{ id: TemplateId; width: number; focus?: numb
         <span style={{ ...F.mono, fontSize: width * 0.034 }}>Nº {String(t.n).padStart(2, "0")}</span>
       </div>
       <div style={{ ...F.body, fontSize: width * 0.044, marginTop: pad * 0.25 }}>{t.name}</div>
+      <div style={{ display: "flex", justifyContent: "space-between", ...F.mono, fontSize: width * 0.032, marginTop: pad * 0.6 }}>
+        <span>{t.category}</span>
+        <span>{t.sec.toFixed(1)} s</span>
+      </div>
     </TicketShell>
   );
 };
@@ -201,24 +200,21 @@ export const ActionChip: React.FC<{ label: string; at: number; pressAt?: number;
 // ---------------------------------------------------------------- TicketStatement
 
 /**
- * Left: a tall ticket and a smaller one float in, overlapping; a die-cut sticker slaps onto the
- * seam (the one overshoot). Right: serif kicker, caps line, italic line, an action chip that gets
- * pressed. The tall ticket can carry over from a DealtTickets focus.
+ * Left: a tall ticket and a smaller one float in, overlapping. Right: serif kicker, caps line,
+ * italic line, an action chip that gets pressed. The tall ticket can carry over from a DealtTickets focus.
  */
 export const TicketStatement: React.FC<{
   big: { id: TemplateId; at: number };
   small?: { id: TemplateId; at: number; still?: boolean };
-  sticker?: { text: React.ReactNode; at: number; bg?: string };
   kicker?: Spoken;
   caps: Spoken;
   serif: Spoken;
   action?: { label: string; at: number; pressAt?: number };
   ink?: string;
-}> = ({ big, small, sticker, kicker, caps, serif, action, ink = C.white }) => {
+}> = ({ big, small, kicker, caps, serif, action, ink = C.white }) => {
   const frame = useCurrentFrame();
   const p1 = floatUp(frame, big.at, { to: { rotX: 3, rotY: 10, rotZ: -3 } });
   const p2 = small ? floatUp(frame, small.at, { to: { rotX: 3, rotY: -8, rotZ: 4 }, from: { rotY: -40, rotZ: 14 } }) : null;
-  const slap = sticker ? tween(frame, sticker.at, 15, 0, 1, "popOver") : 0;
   return (
     <>
       {small && p2 && (
@@ -233,13 +229,6 @@ export const TicketStatement: React.FC<{
           <MediaTicket id={big.id} width={430} />
         </Float3D>
       </div>
-      {sticker && frame >= sticker.at && (
-        <div style={{ position: "absolute", left: 470, top: 250, transform: `scale(${0.4 + 0.6 * slap}) rotate(${(1 - slap) * -20}deg)`, transformOrigin: "30% 60%" }}>
-          <Sticker bg={sticker.bg ?? C.pink} tilt={-9} size={54}>
-            {sticker.text}
-          </Sticker>
-        </div>
-      )}
       <div style={{ position: "absolute", left: 1000, width: 860, top: 0, bottom: 0, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", color: ink }}>
         {kicker && <Words size={52} base={F.serif} words={kicker} />}
         <div style={{ height: 14 }} />
