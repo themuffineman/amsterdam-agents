@@ -24,6 +24,44 @@ Long-form (landscape, 1920x1080, 30 fps), **voiceover only** (no face). Value, n
 4. **Extra value** to get past a minute: what the result looks like without the prompt, what's
    inside the prompt, a remix round, fixing a miss.
 
+## Making one, end to end
+
+The worked example is `src/compositions/RecreateRigel.tsx` (Type Staircase) with its film folder
+`src/films/recreate-rigel/`. Copy its structure for a new template; don't copy its words.
+
+1. **Pick the template** (`src/series/recreate/templates.ts`, previews in
+   `public/recreate/templates/<id>.mp4`). Watch it frame by frame before writing anything:
+   `ffmpeg -i public/recreate/templates/<id>.mp4 -vf "fps=2.4,scale=480:-1,tile=4x4" -frames:v 1 out/<id>-frames.png`,
+   then look at the image. Describe only what it really does (sizes, entrance, layout, camera,
+   colours). If it opens on an empty frame, set a `trim` for `TemplateClip`.
+2. **Script** in `src/films/<slug>/script.json` (same `voice` / `model` as recreate-rigel, NO
+   `prompt` field: Gemini TTS reads it aloud). One segment per beat, optional `pause` (seconds
+   after it; ~0.35 inside a beat, ~0.7 between beats, ~1.6 between asks to Claude so replies
+   have time on screen). The shape:
+   - the discovery: I was going through Sycamore Motion and found this one; what I liked, in
+     specifics (Codegrid-style: what it is, what makes it feel like itself);
+   - what you'll learn: the same kind of animation for any text, with Claude Code and Sycamore;
+   - the renderers aside (Remotion / HyperFrames / a web page with screenshots; "I'm using
+     Remotion");
+   - step one: the site, Copy prompt; what's in the prompt (the specifics that make it itself);
+   - step two: paste into Claude Code, run it as is first, then the remix asks one at a time in
+     the same conversation;
+   - why one at a time; the original next to mine; outro: like and subscribe (no plug).
+   Talk like you're telling a friend. No fragment lists, punchline triplets or presenter tone.
+3. **Voice:** `npm run voice -- <slug>`, then **`npm run narrate -- <slug>`**: joins the clips
+   with their pauses into `public/films/<slug>/voice.wav` and writes word timings to
+   `src/films/<slug>/transcript.json`. Read the transcript it prints and use the words it
+   actually wrote as cues (it may write "Step 2", "webpage", "changed").
+4. **Build** `src/compositions/Recreate<Name>.tsx` and register it in `src/Root.tsx`:
+   `TranscriptProvider` > `Track` > one `Scene` per beat, cues from `useCue` / `useWords`,
+   `<Audio src={staticFile("films/<slug>/voice.wav")} />`. Check the hardest beats as stills.
+   Coordinates for cursor clicks (Copy prompt, send) must be measured on a still.
+5. **Review:** `npm run review -- <Id>` and the contact sheet; fix the top problems, once more.
+6. **Placeholders:** there is no real prompt or real Claude output yet. Outputs are the
+   template preview with a CSS filter, the prompt text and word count are dummies, and the site
+   page / Claude windows are drawn. Keep them, mark them in the composition's header comment,
+   and list them under `weak` in the result file.
+
 ## Design language
 
 - **Ground: the sky** (`SkyGround`): soft blue gradient. Every scene, unless the user asks otherwise.

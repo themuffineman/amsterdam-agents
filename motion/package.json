@@ -18,7 +18,8 @@
     "music": "node scripts/music.mjs",
     "final": "node scripts/final.mjs",
     "cloud": "node scripts/cloud.mjs",
-    "watch": "node --env-file=.env scripts/watch.mjs"
+    "watch": "node --env-file=.env scripts/watch.mjs",
+    "narrate": "node scripts/narrate.mjs"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.520",

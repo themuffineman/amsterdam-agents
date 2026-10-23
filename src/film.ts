@@ -1,7 +1,9 @@
 /**
  * The film agent: `node src/film.ts` (config in agents/films.json), run by the films workflow
  * every ~10 minutes. Different from the page agents (run.ts): one film is a 1-2 hour coding
- * job in motion/, not a page the studio checks.
+ * job in motion/, not a page the studio checks. Two kinds, decided by the studio's brief: an
+ * explainer film (Motion Film Brief) or a "recreate" video about a sycamore.to/motion template
+ * (Recreate Brief, motion/src/series/recreate/SERIES.md). This runner treats both the same.
  *
  *   1. Claim the oldest queued film from the studio (POST /api/agent/films/next); none -> exit.
  *   2. Branch film/<slug>-<id> (from the previous attempt's branch for a redo).
@@ -240,13 +242,16 @@ async function makeFilm(claim: Required<Claimed>) {
     writeMotionEnv();
     // Only now (a film was claimed) install what making it needs; empty polls stay quick.
     if (process.env.GITHUB_ACTIONS) {
-      log("installing ffmpeg, motion's packages, Claude Code and yt-dlp");
+      log("installing ffmpeg, motion's packages, Claude Code, yt-dlp and faster-whisper");
       // GitHub's Ubuntu image has no ffmpeg; music, review and cloud all need the full one.
       sh("sudo", ["apt-get", "update", "-qq"]);
       sh("sudo", ["apt-get", "install", "-y", "-qq", "ffmpeg"]);
       sh("npm", ["ci", "--ignore-scripts", "--no-audit", "--no-fund"], MOTION);
       sh("npm", ["install", "-g", "@anthropic-ai/claude-code", "--no-audit", "--no-fund"]);
       sh("pipx", ["install", "yt-dlp"]);
+      // npm run narrate (recreate videos): word timings from faster-whisper; the workflow
+      // caches its model in ~/.cache/huggingface.
+      sh("python3", ["-m", "pip", "install", "-q", "faster-whisper==1.2.1"]);
     }
 
     // 3. Claude Code makes the film

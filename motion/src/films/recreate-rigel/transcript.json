@@ -2,7 +2,7 @@
  "words": [
   {
    "text": "So",
-   "start": 0.0,
+   "start": 0,
    "end": 0.28
   },
   {
@@ -873,11 +873,11 @@
   {
    "text": "in",
    "start": 52.8,
-   "end": 53.0
+   "end": 53
   },
   {
    "text": "a",
-   "start": 53.0,
+   "start": 53,
    "end": 53.08
   },
   {
@@ -943,11 +943,11 @@
   {
    "text": "by",
    "start": 56.78,
-   "end": 57.0
+   "end": 57
   },
   {
    "text": "itself.",
-   "start": 57.0,
+   "start": 57,
    "end": 57.3
   },
   {
@@ -1123,11 +1123,11 @@
   {
    "text": "because",
    "start": 67.7,
-   "end": 68.0
+   "end": 68
   },
   {
    "text": "I",
-   "start": 68.0,
+   "start": 68,
    "end": 68.16
   },
   {
@@ -1227,7 +1227,7 @@
   },
   {
    "text": "go",
-   "start": 73.0,
+   "start": 73,
    "end": 73.14
   },
   {
@@ -1378,11 +1378,11 @@
   {
    "text": "used",
    "start": 84.8,
-   "end": 85.0
+   "end": 85
   },
   {
    "text": "to",
-   "start": 85.0,
+   "start": 85,
    "end": 85.22
   },
   {
@@ -1503,11 +1503,11 @@
   {
    "text": "big",
    "start": 92.8,
-   "end": 93.0
+   "end": 93
   },
   {
    "text": "words",
-   "start": 93.0,
+   "start": 93,
    "end": 93.36
   },
   {
@@ -1838,11 +1838,11 @@
   {
    "text": "as",
    "start": 113.68,
-   "end": 114.0
+   "end": 114
   },
   {
    "text": "it",
-   "start": 114.0,
+   "start": 114,
    "end": 114.14
   },
   {
@@ -1853,11 +1853,11 @@
   {
    "text": "I'd",
    "start": 114.4,
-   "end": 115.0
+   "end": 115
   },
   {
    "text": "run",
-   "start": 115.0,
+   "start": 115,
    "end": 115.12
   },
   {
@@ -2073,11 +2073,11 @@
   {
    "text": "one",
    "start": 126.76,
-   "end": 127.0
+   "end": 127
   },
   {
    "text": "thing",
-   "start": 127.0,
+   "start": 127,
    "end": 127.18
   },
   {
@@ -2343,11 +2343,11 @@
   {
    "text": "each",
    "start": 144.74,
-   "end": 145.0
+   "end": 145
   },
   {
    "text": "change",
-   "start": 145.0,
+   "start": 145,
    "end": 145.32
   },
   {

@@ -37,7 +37,8 @@ AI-made. Work from this folder (`cd motion`): it has its own `package.json`, `no
 Videos for the prompt -> motion graphic tutorial series (sycamore.to/motion templates rebuilt with
 Claude Code) have their own look and motion: read `src/series/recreate/SERIES.md` before building
 one. Its rules override the general motion-craft defaults where they differ (3D tilts, speed-ramp
-transitions, mixed caps + serif type).
+transitions, Alte Haas + Feature Display only). Its voice pipeline: `npm run voice -- <slug>`, then
+`npm run narrate -- <slug>` (joined voice.wav + faster-whisper word timings, the video's clock).
 
 ## Layout
 
