@@ -1,0 +1,95 @@
+{
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "segments": [
+    {
+      "id": "intro1",
+      "text": "In this video we're going to recreate this motion graphic. It's called Type Staircase, and it's one of the templates on Sycamore Motion.",
+      "pause": 0.35
+    },
+    {
+      "id": "intro2",
+      "text": "The trick is in the layout. Each line of the sentence starts about eighty percent of the way across the line above it, so as the words come in, the whole thing steps down and to the right.",
+      "pause": 0.35
+    },
+    {
+      "id": "intro3",
+      "text": "The lines also take turns being tiny and huge. Your eye skips the small connecting words and lands on the big ones, so you could almost read it from the big words alone.",
+      "pause": 0.35
+    },
+    {
+      "id": "intro4",
+      "text": "And the camera never sits still. It stays zoomed in and drifts after each new word on a soft spring, so you only ever see a slice of the sentence, and you want to see where it goes next.",
+      "pause": 0.7
+    },
+    {
+      "id": "promise",
+      "text": "We're going to make it with one prompt, and all we need is Claude Code and Sycamore.",
+      "pause": 2.1
+    },
+    {
+      "id": "render",
+      "text": "Claude Code needs something to render the video with. In this video we're using Remotion, but you could also use HyperFrames, or just have Claude build it as a web page and take screenshots of it.",
+      "pause": 0.7
+    },
+    {
+      "id": "step1a",
+      "text": "Step one. Head to sycamore dot TO slash motion and open Type Staircase.",
+      "pause": 0.35
+    },
+    {
+      "id": "step1b",
+      "text": "Next to the preview there's a copy prompt button. Click it, and the full prompt for this exact animation is on your clipboard.",
+      "pause": 0.35
+    },
+    {
+      "id": "step1c",
+      "text": "What makes it work is spelled out in there: the eighty percent step, the size pattern of the lines, and the spring the camera rides on.",
+      "pause": 0.7
+    },
+    {
+      "id": "step2a",
+      "text": "Step two. Open Claude Code, paste the prompt, and send it without changing anything.",
+      "pause": 0.35
+    },
+    {
+      "id": "step2b",
+      "text": "Give it a while. What comes back is the staircase from the site.",
+      "pause": 0.7
+    },
+    {
+      "id": "step3a",
+      "text": "Now we can bend it into something of our own, one message at a time.",
+      "pause": 0.5
+    },
+    {
+      "id": "ask1",
+      "text": "First, I wanted the words to slide in from the right on a smooth ease, with no bounce and no blur.",
+      "pause": 1.6
+    },
+    {
+      "id": "ask2",
+      "text": "Then I flipped the staircase, so it climbs up the screen instead of stepping down.",
+      "pause": 1.6
+    },
+    {
+      "id": "ask3",
+      "text": "And finally, a yellow background with navy text, and my own sentence about the first second of a video.",
+      "pause": 1.6
+    },
+    {
+      "id": "why",
+      "text": "Going one change per message means you can watch exactly what each request did, and when something looks off, you know which one to undo.",
+      "pause": 0.7
+    },
+    {
+      "id": "result",
+      "text": "Here's where we started, and here's where we ended up. Same idea underneath, the stepped rows and the chasing camera, but it climbs now, it glides, and it says something new.",
+      "pause": 0.7
+    },
+    {
+      "id": "outro",
+      "text": "And that's it. Honestly, the only reason we get to keep making videos like this is because people leave a like. And if you're feeling really generous, hit subscribe too. Tell me in the comments which template I should rebuild next."
+    }
+  ]
+}

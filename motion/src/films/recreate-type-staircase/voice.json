@@ -1,0 +1,98 @@
+{
+  "film": "recreate-type-staircase",
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "createdAt": "2026-10-24T15:06:29.420Z",
+  "segments": {
+    "intro1": {
+      "file": "films/recreate-type-staircase/audio/intro1.wav",
+      "durationSec": 7.02,
+      "marks": {}
+    },
+    "intro2": {
+      "file": "films/recreate-type-staircase/audio/intro2.wav",
+      "durationSec": 10.3,
+      "marks": {}
+    },
+    "intro3": {
+      "file": "films/recreate-type-staircase/audio/intro3.wav",
+      "durationSec": 9.32,
+      "marks": {}
+    },
+    "intro4": {
+      "file": "films/recreate-type-staircase/audio/intro4.wav",
+      "durationSec": 10.36,
+      "marks": {}
+    },
+    "promise": {
+      "file": "films/recreate-type-staircase/audio/promise.wav",
+      "durationSec": 4.36,
+      "marks": {}
+    },
+    "render": {
+      "file": "films/recreate-type-staircase/audio/render.wav",
+      "durationSec": 9,
+      "marks": {}
+    },
+    "step1a": {
+      "file": "films/recreate-type-staircase/audio/step1a.wav",
+      "durationSec": 4.87,
+      "marks": {}
+    },
+    "step1b": {
+      "file": "films/recreate-type-staircase/audio/step1b.wav",
+      "durationSec": 6.37,
+      "marks": {}
+    },
+    "step1c": {
+      "file": "films/recreate-type-staircase/audio/step1c.wav",
+      "durationSec": 7.19,
+      "marks": {}
+    },
+    "step2a": {
+      "file": "films/recreate-type-staircase/audio/step2a.wav",
+      "durationSec": 5.61,
+      "marks": {}
+    },
+    "step2b": {
+      "file": "films/recreate-type-staircase/audio/step2b.wav",
+      "durationSec": 3.01,
+      "marks": {}
+    },
+    "step3a": {
+      "file": "films/recreate-type-staircase/audio/step3a.wav",
+      "durationSec": 4.35,
+      "marks": {}
+    },
+    "ask1": {
+      "file": "films/recreate-type-staircase/audio/ask1.wav",
+      "durationSec": 5.4,
+      "marks": {}
+    },
+    "ask2": {
+      "file": "films/recreate-type-staircase/audio/ask2.wav",
+      "durationSec": 4.27,
+      "marks": {}
+    },
+    "ask3": {
+      "file": "films/recreate-type-staircase/audio/ask3.wav",
+      "durationSec": 6.59,
+      "marks": {}
+    },
+    "why": {
+      "file": "films/recreate-type-staircase/audio/why.wav",
+      "durationSec": 7.79,
+      "marks": {}
+    },
+    "result": {
+      "file": "films/recreate-type-staircase/audio/result.wav",
+      "durationSec": 12.65,
+      "marks": {}
+    },
+    "outro": {
+      "file": "films/recreate-type-staircase/audio/outro.wav",
+      "durationSec": 11.11,
+      "marks": {}
+    }
+  }
+}

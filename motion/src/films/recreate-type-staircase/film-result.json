@@ -1,0 +1,41 @@
+{
+  "compositionId": "RecreateRigel2",
+  "slug": "recreate-type-staircase",
+  "title": "How I recreated Type Staircase with Claude Code",
+  "description": "Type Staircase is a kinetic type template from Sycamore Motion: a sentence built word by word, each line starting 80% of the way along the line above, lines alternating tiny and huge, with a zoomed-in camera that chases the newest word on a soft spring. This video explains why it looks good, copies its prompt from sycamore.to/motion, pastes it into Claude Code to get the original back, then changes it one message at a time: words that slide in from the right on a smooth ease, a staircase that climbs up the screen instead of down, and a yellow and navy version with a new sentence.\n\nTurn your footage into viral clips with Sycamore: https://sycamore.to",
+  "claims": [
+    {
+      "claim": "The page and the Copy prompt click are the live sycamore.to/motion/type-staircase page",
+      "source": "npm run page on 2026-10-24: public/films/recreate-type-staircase/page/page.png and copied.png, button position from capture.json"
+    },
+    {
+      "claim": "The prompt shown (and its 435 words in the Claude file chip) is what the Copy prompt button copies",
+      "source": "src/films/recreate-type-staircase/prompt.md (copied by npm run page; identical to the worked example's recreate-rigel/prompt.md)"
+    },
+    {
+      "claim": "Each line starts 80% of the way along the line above; lines cycle small/big/medium sizes; the camera holds a 1.3x zoom and follows the newest word on an underdamped spring",
+      "source": "prompt.md (Layout and Animation sections), checked against the template preview frame by frame"
+    },
+    {
+      "claim": "The original output (run 1) is what the prompt produces",
+      "source": "src/films/recreate-type-staircase/builds/Staircase.tsx with no extra props, written by this agent following prompt.md; compared as a still with public/recreate/templates/type-staircase.mp4. Not built by a fresh Claude Code session from the pasted prompt"
+    },
+    {
+      "claim": "The three changes (slide in from the right with no bounce or blur; staircase climbs up; yellow/navy colours, softer blue small rows and the sentence 'The first second decides if people stay or scroll right past your video.')",
+      "source": "builds/runs.ts props on the same component; the asks and replies shown in the Claude Code thread are written to match these real changes"
+    },
+    {
+      "claim": "The Claude Code window",
+      "source": "the series' ClaudeThread component (src/series/recreate/ui.tsx), a redrawn conversation, not a screen recording; same as the worked example"
+    }
+  ],
+  "gates": {
+    "G0": true,
+    "G2": true,
+    "G3": true,
+    "movingShare": 0.444
+  },
+  "weak": "Same template as the worked example RecreateRigel, so the structure (MacBook intro, tools, renderer cards, page, prompt doc, Claude thread, three versions, side by side, outro) is close to that film; what's new is the script, the two diagram beats in the intro (the 80% step built as type with a blue bar, and the nine rows at their real size ratios with the small rows dimming), the three remixes, and the closing line. The Claude Code thread is the series' drawn component, not a real screen recording, and the replies' wording is written by me, not quoted from a real session. Run 1 was written by this agent from the prompt (as the worked example did), not produced by pasting the prompt into a fresh Claude Code. Whisper dropped 'from the site' in 'what comes back is the staircase from the site' from the transcript (the audio has it, nothing is cued on it). The 'climb up' and 'yellow' previews inside the Claude replies are small (440 px), so at the start of each loop they show only a word or two. The renderer card row and the PromptDoc each hold a single card for a moment before the rest arrive. No music or sound effects. G1/G4/G5 judged by eye on the contact sheet: no page chrome; the PromptDoc beat has two elements (doc card + big label), as in the worked example.",
+  "changed": "The template is the worked example's template (Type Staircase), so the composition is RecreateRigel2 as the brief allowed, and the film folder is recreate-type-staircase. I picked three changes different from the worked example's (slide-in ease, climbing layout, yellow/navy + own sentence) so the two videos don't show the same remixes. The script doesn't mention the prompt's word count, so the PromptDoc count never appears. Added StaircaseRun1/3/4 compositions in Root.tsx for checking the runs.",
+  "summary": "A walkthrough of the Type Staircase template: why its 80% stepped rows, mixed sizes and chasing camera work, copying its prompt from sycamore.to/motion, getting it back in Claude Code, and remixing it in three messages into a climbing, sliding, yellow version."
+}

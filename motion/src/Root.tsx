@@ -17,6 +17,9 @@ import { RECREATE_RIGEL, RecreateRigel } from "./compositions/RecreateRigel";
 import { MACBOOK_LAB, MacBookLab } from "./series/recreate/MacBookLab";
 import { Rigel as RigelRun1, calculateRigelMetadata as run1Meta, rigelDefaultProps as run1Props } from "./films/recreate-rigel/builds/Run1";
 import { RUNS } from "./films/recreate-rigel/builds/runs";
+import { Staircase, calculateStaircaseMetadata, staircaseDefaultProps } from "./films/recreate-type-staircase/builds/Staircase";
+import { RUNS as STAIR_RUNS } from "./films/recreate-type-staircase/builds/runs";
+import { RECREATE_RIGEL_2, RecreateRigel2 } from "./compositions/RecreateRigel2";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -65,6 +68,15 @@ export const RemotionRoot: React.FC = () => {
       />
       <Composition id="RigelRun1" component={RigelRun1} defaultProps={run1Props} calculateMetadata={run1Meta} durationInFrames={300} {...LANDSCAPE} />
       <Composition id="RigelRun4" component={RigelRun1} defaultProps={RUNS[3].props} calculateMetadata={run1Meta} durationInFrames={300} {...LANDSCAPE} />
+      <Composition id="StaircaseRun1" component={Staircase} defaultProps={staircaseDefaultProps} calculateMetadata={calculateStaircaseMetadata} durationInFrames={300} {...LANDSCAPE} />
+      <Composition id="StaircaseRun3" component={Staircase} defaultProps={STAIR_RUNS[2].props} calculateMetadata={calculateStaircaseMetadata} durationInFrames={300} {...LANDSCAPE} />
+      <Composition id="StaircaseRun4" component={Staircase} defaultProps={STAIR_RUNS[3].props} calculateMetadata={calculateStaircaseMetadata} durationInFrames={300} {...LANDSCAPE} />
+      <Composition
+        id="RecreateRigel2"
+        component={RecreateRigel2}
+        durationInFrames={RECREATE_RIGEL_2.durationInFrames}
+        {...LANDSCAPE}
+      />
       <Composition
         id="MacBookLab"
         component={MacBookLab}
