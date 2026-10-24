@@ -1,2679 +1,2069 @@
 {
  "words": [
   {
-   "text": "So",
+   "text": "In",
    "start": 0,
-   "end": 0.28
-  },
-  {
-   "text": "I",
-   "start": 0.28,
-   "end": 0.58
-  },
-  {
-   "text": "was",
-   "start": 0.58,
-   "end": 0.72
-  },
-  {
-   "text": "going",
-   "start": 0.72,
-   "end": 0.96
-  },
-  {
-   "text": "through",
-   "start": 0.96,
-   "end": 1.16
-  },
-  {
-   "text": "the",
-   "start": 1.16,
-   "end": 1.34
-  },
-  {
-   "text": "templates",
-   "start": 1.34,
-   "end": 1.64
-  },
-  {
-   "text": "on",
-   "start": 1.64,
-   "end": 1.9
-  },
-  {
-   "text": "Sycamore",
-   "start": 1.9,
-   "end": 2.3
-  },
-  {
-   "text": "Motion",
-   "start": 2.3,
-   "end": 2.58
-  },
-  {
-   "text": "the",
-   "start": 2.58,
-   "end": 2.76
-  },
-  {
-   "text": "other",
-   "start": 2.76,
-   "end": 2.88
-  },
-  {
-   "text": "day",
-   "start": 2.88,
-   "end": 3.12
-  },
-  {
-   "text": "and",
-   "start": 3.12,
-   "end": 3.66
-  },
-  {
-   "text": "I",
-   "start": 3.66,
-   "end": 3.8
-  },
-  {
-   "text": "came",
-   "start": 3.8,
-   "end": 3.98
-  },
-  {
-   "text": "across",
-   "start": 3.98,
-   "end": 4.28
+   "end": 0.16
   },
   {
    "text": "this",
-   "start": 4.28,
-   "end": 4.46
-  },
-  {
-   "text": "one",
-   "start": 4.46,
-   "end": 4.74
-  },
-  {
-   "text": "called",
-   "start": 4.74,
-   "end": 5.2
-  },
-  {
-   "text": "type",
-   "start": 5.2,
-   "end": 5.62
-  },
-  {
-   "text": "staircase.",
-   "start": 5.62,
-   "end": 6.14
-  },
-  {
-   "text": "And",
-   "start": 6.8,
-   "end": 7.08
-  },
-  {
-   "text": "I",
-   "start": 7.08,
-   "end": 7.18
-  },
-  {
-   "text": "really",
-   "start": 7.18,
-   "end": 7.36
-  },
-  {
-   "text": "liked",
-   "start": 7.36,
-   "end": 7.62
-  },
-  {
-   "text": "it.",
-   "start": 7.62,
-   "end": 7.92
-  },
-  {
-   "text": "It",
-   "start": 8.3,
-   "end": 8.5
-  },
-  {
-   "text": "takes",
-   "start": 8.5,
-   "end": 8.72
-  },
-  {
-   "text": "one",
-   "start": 8.72,
-   "end": 9.18
-  },
-  {
-   "text": "sentence",
-   "start": 9.18,
-   "end": 9.68
-  },
-  {
-   "text": "and",
-   "start": 9.68,
-   "end": 10.12
-  },
-  {
-   "text": "builds",
-   "start": 10.12,
-   "end": 10.44
-  },
-  {
-   "text": "it",
-   "start": 10.44,
-   "end": 10.7
-  },
-  {
-   "text": "a",
-   "start": 10.7,
-   "end": 10.92
-  },
-  {
-   "text": "word",
-   "start": 10.92,
-   "end": 11.18
-  },
-  {
-   "text": "at",
-   "start": 11.18,
-   "end": 11.32
-  },
-  {
-   "text": "a",
-   "start": 11.32,
-   "end": 11.44
-  },
-  {
-   "text": "time",
-   "start": 11.44,
-   "end": 11.72
-  },
-  {
-   "text": "and",
-   "start": 11.72,
-   "end": 12.44
-  },
-  {
-   "text": "every",
-   "start": 12.44,
-   "end": 12.82
-  },
-  {
-   "text": "new",
-   "start": 12.82,
-   "end": 13.06
-  },
-  {
-   "text": "word",
-   "start": 13.06,
-   "end": 13.38
-  },
-  {
-   "text": "drops",
-   "start": 13.38,
-   "end": 13.74
-  },
-  {
-   "text": "down",
-   "start": 13.74,
-   "end": 14.1
-  },
-  {
-   "text": "a",
-   "start": 14.1,
-   "end": 14.22
-  },
-  {
-   "text": "step",
-   "start": 14.22,
-   "end": 14.54
-  },
-  {
-   "text": "and",
-   "start": 14.54,
-   "end": 15.06
-  },
-  {
-   "text": "over",
-   "start": 15.06,
-   "end": 15.4
-  },
-  {
-   "text": "to",
-   "start": 15.4,
-   "end": 15.58
-  },
-  {
-   "text": "the",
-   "start": 15.58,
-   "end": 15.68
-  },
-  {
-   "text": "right.",
-   "start": 15.68,
-   "end": 15.94
-  },
-  {
-   "text": "So",
-   "start": 16.3,
-   "end": 16.36
-  },
-  {
-   "text": "the",
-   "start": 16.36,
-   "end": 16.62
-  },
-  {
-   "text": "whole",
-   "start": 16.62,
-   "end": 16.82
-  },
-  {
-   "text": "thing",
-   "start": 16.82,
-   "end": 17.06
-  },
-  {
-   "text": "kind",
-   "start": 17.06,
-   "end": 17.26
-  },
-  {
-   "text": "of",
-   "start": 17.26,
-   "end": 17.46
-  },
-  {
-   "text": "walks",
-   "start": 17.46,
-   "end": 17.92
-  },
-  {
-   "text": "down",
-   "start": 17.92,
-   "end": 18.24
-  },
-  {
-   "text": "the",
-   "start": 18.24,
-   "end": 18.38
-  },
-  {
-   "text": "screen",
-   "start": 18.38,
-   "end": 18.68
-  },
-  {
-   "text": "like",
-   "start": 18.68,
-   "end": 18.9
-  },
-  {
-   "text": "a",
-   "start": 18.9,
-   "end": 19.02
-  },
-  {
-   "text": "staircase.",
-   "start": 19.02,
-   "end": 19.34
-  },
-  {
-   "text": "What",
-   "start": 19.92,
-   "end": 20.14
-  },
-  {
-   "text": "I",
-   "start": 20.14,
-   "end": 20.26
-  },
-  {
-   "text": "like",
-   "start": 20.26,
-   "end": 20.42
-  },
-  {
-   "text": "most",
-   "start": 20.42,
-   "end": 20.72
-  },
-  {
-   "text": "is",
-   "start": 20.72,
-   "end": 20.98
-  },
-  {
-   "text": "the",
-   "start": 20.98,
-   "end": 21.16
-  },
-  {
-   "text": "sizing.",
-   "start": 21.16,
-   "end": 21.62
-  },
-  {
-   "text": "The",
-   "start": 22.02,
-   "end": 22.24
-  },
-  {
-   "text": "words",
-   "start": 22.24,
-   "end": 22.44
-  },
-  {
-   "text": "that",
-   "start": 22.44,
-   "end": 22.6
-  },
-  {
-   "text": "actually",
-   "start": 22.6,
-   "end": 22.9
-  },
-  {
-   "text": "matter",
-   "start": 22.9,
-   "end": 23.34
-  },
-  {
-   "text": "like",
-   "start": 23.34,
-   "end": 23.68
-  },
-  {
-   "text": "content",
-   "start": 23.68,
-   "end": 24.28
-  },
-  {
-   "text": "and",
-   "start": 24.28,
-   "end": 24.62
-  },
-  {
-   "text": "system",
-   "start": 24.62,
-   "end": 25.08
-  },
-  {
-   "text": "come",
-   "start": 25.08,
-   "end": 25.4
-  },
-  {
-   "text": "in",
-   "start": 25.4,
-   "end": 25.56
-  },
-  {
-   "text": "big",
-   "start": 25.56,
-   "end": 25.8
-  },
-  {
-   "text": "and",
-   "start": 25.8,
-   "end": 26.48
-  },
-  {
-   "text": "the",
-   "start": 26.48,
-   "end": 26.7
-  },
-  {
-   "text": "little",
-   "start": 26.7,
-   "end": 26.92
-  },
-  {
-   "text": "words",
-   "start": 26.92,
-   "end": 27.18
-  },
-  {
-   "text": "in",
-   "start": 27.18,
-   "end": 27.32
-  },
-  {
-   "text": "between",
-   "start": 27.32,
-   "end": 27.62
-  },
-  {
-   "text": "stay",
-   "start": 27.62,
-   "end": 27.9
-  },
-  {
-   "text": "small.",
-   "start": 27.9,
-   "end": 28.26
-  },
-  {
-   "text": "So",
-   "start": 28.46,
-   "end": 28.92
-  },
-  {
-   "text": "even",
-   "start": 28.92,
-   "end": 29.3
-  },
-  {
-   "text": "if",
-   "start": 29.3,
-   "end": 29.44
-  },
-  {
-   "text": "you",
-   "start": 29.44,
-   "end": 29.52
-  },
-  {
-   "text": "only",
-   "start": 29.52,
-   "end": 29.72
-  },
-  {
-   "text": "half",
-   "start": 29.72,
-   "end": 30.06
-  },
-  {
-   "text": "-watching,",
-   "start": 30.06,
-   "end": 30.38
-  },
-  {
-   "text": "you",
-   "start": 30.84,
-   "end": 30.94
-  },
-  {
-   "text": "still",
-   "start": 30.94,
-   "end": 31.16
-  },
-  {
-   "text": "get",
-   "start": 31.16,
-   "end": 31.36
-  },
-  {
-   "text": "the",
-   "start": 31.36,
-   "end": 31.54
-  },
-  {
-   "text": "point.",
-   "start": 31.54,
-   "end": 31.74
-  },
-  {
-   "text": "Every",
-   "start": 32.16,
-   "end": 32.36
-  },
-  {
-   "text": "word",
-   "start": 32.36,
-   "end": 32.64
-  },
-  {
-   "text": "slides",
-   "start": 32.64,
-   "end": 33.06
-  },
-  {
-   "text": "in",
-   "start": 33.06,
-   "end": 33.48
-  },
-  {
-   "text": "out",
-   "start": 33.48,
-   "end": 33.7
-  },
-  {
-   "text": "of",
-   "start": 33.7,
-   "end": 33.78
-  },
-  {
-   "text": "a",
-   "start": 33.78,
-   "end": 33.92
-  },
-  {
-   "text": "soft",
-   "start": 33.92,
-   "end": 34.16
-  },
-  {
-   "text": "blur,",
-   "start": 34.16,
-   "end": 34.54
-  },
-  {
-   "text": "and",
-   "start": 35.04,
-   "end": 35.16
-  },
-  {
-   "text": "the",
-   "start": 35.16,
-   "end": 35.34
-  },
-  {
-   "text": "camera",
-   "start": 35.34,
-   "end": 35.58
-  },
-  {
-   "text": "keeps",
-   "start": 35.58,
-   "end": 35.86
-  },
-  {
-   "text": "following",
-   "start": 35.86,
-   "end": 36.32
-  },
-  {
-   "text": "the",
-   "start": 36.32,
-   "end": 36.56
-  },
-  {
-   "text": "newest",
-   "start": 36.56,
-   "end": 36.82
-  },
-  {
-   "text": "one.",
-   "start": 36.82,
-   "end": 37.08
-  },
-  {
-   "text": "So",
-   "start": 37.38,
-   "end": 37.56
-  },
-  {
-   "text": "the",
-   "start": 37.56,
-   "end": 37.74
-  },
-  {
-   "text": "older",
-   "start": 37.74,
-   "end": 38.04
-  },
-  {
-   "text": "words",
-   "start": 38.04,
-   "end": 38.42
-  },
-  {
-   "text": "just",
-   "start": 38.42,
-   "end": 38.64
-  },
-  {
-   "text": "drift",
-   "start": 38.64,
-   "end": 39.02
-  },
-  {
-   "text": "off",
-   "start": 39.02,
-   "end": 39.22
-  },
-  {
-   "text": "to",
-   "start": 39.22,
-   "end": 39.36
-  },
-  {
-   "text": "the",
-   "start": 39.36,
-   "end": 39.48
-  },
-  {
-   "text": "left.",
-   "start": 39.48,
-   "end": 39.68
-  },
-  {
-   "text": "It's",
-   "start": 40.18,
-   "end": 40.42
-  },
-  {
-   "text": "simple,",
-   "start": 40.42,
-   "end": 40.64
-  },
-  {
-   "text": "but",
-   "start": 40.86,
-   "end": 41.08
-  },
-  {
-   "text": "it",
-   "start": 41.08,
-   "end": 41.3
-  },
-  {
-   "text": "feels",
-   "start": 41.3,
-   "end": 41.54
-  },
-  {
-   "text": "really",
-   "start": 41.54,
-   "end": 41.92
-  },
-  {
-   "text": "smooth.",
-   "start": 41.92,
-   "end": 42.38
-  },
-  {
-   "text": "So",
-   "start": 43.3,
-   "end": 43.46
-  },
-  {
-   "text": "in",
-   "start": 43.46,
-   "end": 43.64
-  },
-  {
-   "text": "this",
-   "start": 43.64,
-   "end": 43.78
+   "start": 0.16,
+   "end": 0.32
   },
   {
    "text": "video,",
-   "start": 43.78,
-   "end": 44.06
+   "start": 0.32,
+   "end": 0.64
   },
   {
-   "text": "I'm",
-   "start": 44.18,
-   "end": 44.38
+   "text": "we're",
+   "start": 0.82,
+   "end": 1.04
   },
   {
-   "text": "going",
-   "start": 44.38,
-   "end": 44.4
+   "text": "gonna",
+   "start": 1.04,
+   "end": 1.04
   },
   {
-   "text": "to",
-   "start": 44.4,
-   "end": 44.5
-  },
-  {
-   "text": "show",
-   "start": 44.5,
-   "end": 44.64
-  },
-  {
-   "text": "you",
-   "start": 44.64,
-   "end": 44.8
-  },
-  {
-   "text": "how",
-   "start": 44.8,
-   "end": 45.02
-  },
-  {
-   "text": "to",
-   "start": 45.02,
-   "end": 45.16
-  },
-  {
-   "text": "make",
-   "start": 45.16,
-   "end": 45.38
+   "text": "recreate",
+   "start": 1.04,
+   "end": 1.56
   },
   {
    "text": "this",
-   "start": 45.38,
-   "end": 45.66
-  },
-  {
-   "text": "same",
-   "start": 45.66,
-   "end": 46.06
-  },
-  {
-   "text": "kind",
-   "start": 46.06,
-   "end": 46.3
-  },
-  {
-   "text": "of",
-   "start": 46.3,
-   "end": 46.44
-  },
-  {
-   "text": "animation",
-   "start": 46.44,
-   "end": 46.8
-  },
-  {
-   "text": "for",
-   "start": 46.8,
-   "end": 47.26
-  },
-  {
-   "text": "any",
-   "start": 47.26,
-   "end": 47.68
-  },
-  {
-   "text": "text",
-   "start": 47.68,
-   "end": 47.94
-  },
-  {
-   "text": "you",
-   "start": 47.94,
-   "end": 48.16
-  },
-  {
-   "text": "want.",
-   "start": 48.16,
-   "end": 48.4
-  },
-  {
-   "text": "All",
-   "start": 48.98,
-   "end": 49.1
-  },
-  {
-   "text": "you",
-   "start": 49.1,
-   "end": 49.2
-  },
-  {
-   "text": "need",
-   "start": 49.2,
-   "end": 49.4
-  },
-  {
-   "text": "is",
-   "start": 49.4,
-   "end": 49.68
-  },
-  {
-   "text": "Claude",
-   "start": 49.68,
-   "end": 49.9
-  },
-  {
-   "text": "Code",
-   "start": 49.9,
-   "end": 50.18
-  },
-  {
-   "text": "and",
-   "start": 50.18,
-   "end": 50.66
-  },
-  {
-   "text": "Sycamore.",
-   "start": 50.66,
-   "end": 51.18
-  },
-  {
-   "text": "And",
-   "start": 51.56,
-   "end": 51.7
-  },
-  {
-   "text": "I'll",
-   "start": 51.7,
-   "end": 51.92
-  },
-  {
-   "text": "explain",
-   "start": 51.92,
-   "end": 52.14
-  },
-  {
-   "text": "the",
-   "start": 52.14,
-   "end": 52.28
-  },
-  {
-   "text": "Sycamore",
-   "start": 52.28,
-   "end": 52.58
-  },
-  {
-   "text": "part",
-   "start": 52.58,
-   "end": 52.8
-  },
-  {
-   "text": "in",
-   "start": 52.8,
-   "end": 53
-  },
-  {
-   "text": "a",
-   "start": 53,
-   "end": 53.08
-  },
-  {
-   "text": "minute.",
-   "start": 53.08,
-   "end": 53.24
-  },
-  {
-   "text": "Quick",
-   "start": 54.08,
-   "end": 54.2
-  },
-  {
-   "text": "thing",
-   "start": 54.2,
-   "end": 54.42
-  },
-  {
-   "text": "before",
-   "start": 54.42,
-   "end": 54.7
-  },
-  {
-   "text": "we",
-   "start": 54.7,
-   "end": 54.86
-  },
-  {
-   "text": "start.",
-   "start": 54.86,
-   "end": 55.14
-  },
-  {
-   "text": "Claude",
-   "start": 55.46,
-   "end": 55.68
-  },
-  {
-   "text": "Code",
-   "start": 55.68,
-   "end": 55.94
-  },
-  {
-   "text": "can't",
-   "start": 55.94,
-   "end": 56.32
-  },
-  {
-   "text": "make",
-   "start": 56.32,
-   "end": 56.42
-  },
-  {
-   "text": "a",
-   "start": 56.42,
-   "end": 56.58
-  },
-  {
-   "text": "video",
-   "start": 56.58,
-   "end": 56.78
-  },
-  {
-   "text": "by",
-   "start": 56.78,
-   "end": 57
-  },
-  {
-   "text": "itself.",
-   "start": 57,
-   "end": 57.3
-  },
-  {
-   "text": "It",
-   "start": 57.6,
-   "end": 57.72
-  },
-  {
-   "text": "needs",
-   "start": 57.72,
-   "end": 57.88
-  },
-  {
-   "text": "something",
-   "start": 57.88,
-   "end": 58.1
-  },
-  {
-   "text": "to",
-   "start": 58.1,
-   "end": 58.34
-  },
-  {
-   "text": "render",
-   "start": 58.34,
-   "end": 58.5
-  },
-  {
-   "text": "with.",
-   "start": 58.5,
-   "end": 58.82
-  },
-  {
-   "text": "You",
-   "start": 58.82,
-   "end": 59.4
-  },
-  {
-   "text": "can",
-   "start": 59.4,
-   "end": 59.54
-  },
-  {
-   "text": "use",
-   "start": 59.54,
-   "end": 59.84
-  },
-  {
-   "text": "remotion",
-   "start": 59.84,
-   "end": 60.38
-  },
-  {
-   "text": "or",
-   "start": 60.38,
-   "end": 60.84
-  },
-  {
-   "text": "hyperframes,",
-   "start": 60.84,
-   "end": 61.6
-  },
-  {
-   "text": "or",
-   "start": 61.92,
-   "end": 61.96
-  },
-  {
-   "text": "honestly,",
-   "start": 61.96,
-   "end": 62.52
-  },
-  {
-   "text": "you",
-   "start": 62.86,
-   "end": 62.98
-  },
-  {
-   "text": "could",
-   "start": 62.98,
-   "end": 63.1
-  },
-  {
-   "text": "just",
-   "start": 63.1,
-   "end": 63.26
-  },
-  {
-   "text": "have",
-   "start": 63.26,
-   "end": 63.5
-  },
-  {
-   "text": "it",
-   "start": 63.5,
-   "end": 63.64
-  },
-  {
-   "text": "build",
-   "start": 63.64,
-   "end": 63.78
-  },
-  {
-   "text": "a",
-   "start": 63.78,
-   "end": 63.92
-  },
-  {
-   "text": "webpage",
-   "start": 63.92,
-   "end": 64.24
-  },
-  {
-   "text": "and",
-   "start": 64.24,
-   "end": 64.52
-  },
-  {
-   "text": "take",
-   "start": 64.52,
-   "end": 64.74
-  },
-  {
-   "text": "screenshots",
-   "start": 64.74,
-   "end": 65.18
-  },
-  {
-   "text": "a",
-   "start": 65.18,
-   "end": 65.42
-  },
-  {
-   "text": "few",
-   "start": 65.42,
-   "end": 65.54
-  },
-  {
-   "text": "times",
-   "start": 65.54,
-   "end": 65.72
-  },
-  {
-   "text": "a",
-   "start": 65.72,
-   "end": 65.86
-  },
-  {
-   "text": "second.",
-   "start": 65.86,
-   "end": 66.08
-  },
-  {
-   "text": "I'm",
-   "start": 66.72,
-   "end": 66.78
-  },
-  {
-   "text": "using",
-   "start": 66.78,
-   "end": 67.02
-  },
-  {
-   "text": "remotion",
-   "start": 67.02,
-   "end": 67.42
-  },
-  {
-   "text": "here",
-   "start": 67.42,
-   "end": 67.7
-  },
-  {
-   "text": "because",
-   "start": 67.7,
-   "end": 68
-  },
-  {
-   "text": "I",
-   "start": 68,
-   "end": 68.16
-  },
-  {
-   "text": "already",
-   "start": 68.16,
-   "end": 68.38
-  },
-  {
-   "text": "have",
-   "start": 68.38,
-   "end": 68.58
-  },
-  {
-   "text": "it",
-   "start": 68.58,
-   "end": 68.7
-  },
-  {
-   "text": "set",
-   "start": 68.7,
-   "end": 68.84
-  },
-  {
-   "text": "up,",
-   "start": 68.84,
-   "end": 69.06
-  },
-  {
-   "text": "so",
-   "start": 69.16,
-   "end": 69.36
-  },
-  {
-   "text": "I",
-   "start": 69.36,
-   "end": 69.52
-  },
-  {
-   "text": "just",
-   "start": 69.52,
-   "end": 69.68
-  },
-  {
-   "text": "paste",
-   "start": 69.68,
-   "end": 69.9
-  },
-  {
-   "text": "the",
-   "start": 69.9,
-   "end": 70.06
-  },
-  {
-   "text": "prompt",
-   "start": 70.06,
-   "end": 70.26
-  },
-  {
-   "text": "in",
-   "start": 70.26,
-   "end": 70.52
-  },
-  {
-   "text": "and",
-   "start": 70.52,
-   "end": 70.68
-  },
-  {
-   "text": "let",
-   "start": 70.68,
-   "end": 70.78
-  },
-  {
-   "text": "it",
-   "start": 70.78,
-   "end": 70.9
-  },
-  {
-   "text": "run.",
-   "start": 70.9,
-   "end": 71.1
-  },
-  {
-   "text": "Okay,",
-   "start": 71.92,
-   "end": 72.16
-  },
-  {
-   "text": "step",
-   "start": 72.36,
-   "end": 72.46
-  },
-  {
-   "text": "one,",
-   "start": 72.46,
-   "end": 72.78
-  },
-  {
-   "text": "go",
-   "start": 73,
-   "end": 73.14
-  },
-  {
-   "text": "to",
-   "start": 73.14,
-   "end": 73.44
-  },
-  {
-   "text": "sycamore",
-   "start": 73.44,
-   "end": 73.98
-  },
-  {
-   "text": ".to",
-   "start": 73.98,
-   "end": 74.8
-  },
-  {
-   "text": "slash",
-   "start": 74.8,
-   "end": 75.26
+   "start": 1.56,
+   "end": 1.9
   },
   {
    "text": "motion",
-   "start": 75.26,
-   "end": 75.94
+   "start": 1.9,
+   "end": 2.22
   },
   {
-   "text": "and",
-   "start": 76.6,
-   "end": 76.84
-  },
-  {
-   "text": "find",
-   "start": 76.84,
-   "end": 77.36
-  },
-  {
-   "text": "type",
-   "start": 77.36,
-   "end": 77.78
-  },
-  {
-   "text": "staircase.",
-   "start": 77.78,
-   "end": 78.3
-  },
-  {
-   "text": "Under",
-   "start": 78.92,
-   "end": 79.2
-  },
-  {
-   "text": "the",
-   "start": 79.2,
-   "end": 79.34
-  },
-  {
-   "text": "preview,",
-   "start": 79.34,
-   "end": 79.68
-  },
-  {
-   "text": "there's",
-   "start": 79.76,
-   "end": 80.02
-  },
-  {
-   "text": "a",
-   "start": 80.02,
-   "end": 80.14
-  },
-  {
-   "text": "button",
-   "start": 80.14,
-   "end": 80.34
-  },
-  {
-   "text": "that",
-   "start": 80.34,
-   "end": 80.52
-  },
-  {
-   "text": "says",
-   "start": 80.52,
-   "end": 80.86
-  },
-  {
-   "text": "copy",
-   "start": 80.86,
-   "end": 81.32
-  },
-  {
-   "text": "prompt.",
-   "start": 81.32,
-   "end": 81.8
-  },
-  {
-   "text": "Click",
-   "start": 82.28,
-   "end": 82.36
-  },
-  {
-   "text": "that",
-   "start": 82.36,
-   "end": 82.7
-  },
-  {
-   "text": "and",
-   "start": 82.7,
-   "end": 82.98
-  },
-  {
-   "text": "you",
-   "start": 82.98,
-   "end": 83.14
-  },
-  {
-   "text": "get",
-   "start": 83.14,
-   "end": 83.3
-  },
-  {
-   "text": "the",
-   "start": 83.3,
-   "end": 83.52
-  },
-  {
-   "text": "whole",
-   "start": 83.52,
-   "end": 83.94
-  },
-  {
-   "text": "prompt",
-   "start": 83.94,
-   "end": 84.36
-  },
-  {
-   "text": "that",
-   "start": 84.36,
-   "end": 84.64
-  },
-  {
-   "text": "was",
-   "start": 84.64,
-   "end": 84.8
-  },
-  {
-   "text": "used",
-   "start": 84.8,
-   "end": 85
-  },
-  {
-   "text": "to",
-   "start": 85,
-   "end": 85.22
-  },
-  {
-   "text": "make",
-   "start": 85.22,
-   "end": 85.46
-  },
-  {
-   "text": "this",
-   "start": 85.46,
-   "end": 85.74
-  },
-  {
-   "text": "exact",
-   "start": 85.74,
-   "end": 86.12
-  },
-  {
-   "text": "animation.",
-   "start": 86.12,
-   "end": 86.62
-  },
-  {
-   "text": "And",
-   "start": 87.32,
-   "end": 87.66
-  },
-  {
-   "text": "it's",
-   "start": 87.66,
-   "end": 87.84
-  },
-  {
-   "text": "pretty",
-   "start": 87.84,
-   "end": 88.02
-  },
-  {
-   "text": "detailed.",
-   "start": 88.02,
-   "end": 88.48
-  },
-  {
-   "text": "It",
-   "start": 88.48,
-   "end": 88.82
-  },
-  {
-   "text": "covers",
-   "start": 88.82,
-   "end": 89.14
-  },
-  {
-   "text": "all",
-   "start": 89.14,
-   "end": 89.52
-  },
-  {
-   "text": "the",
-   "start": 89.52,
-   "end": 89.7
-  },
-  {
-   "text": "little",
-   "start": 89.7,
-   "end": 89.9
-  },
-  {
-   "text": "things",
-   "start": 89.9,
-   "end": 90.16
-  },
-  {
-   "text": "that",
-   "start": 90.16,
-   "end": 90.32
-  },
-  {
-   "text": "make",
-   "start": 90.32,
-   "end": 90.54
-  },
-  {
-   "text": "this",
-   "start": 90.54,
-   "end": 90.76
-  },
-  {
-   "text": "one",
-   "start": 90.76,
-   "end": 90.92
-  },
-  {
-   "text": "feel",
-   "start": 90.92,
-   "end": 91.26
-  },
-  {
-   "text": "like",
-   "start": 91.26,
-   "end": 91.6
-  },
-  {
-   "text": "itself,",
-   "start": 91.6,
-   "end": 92.1
-  },
-  {
-   "text": "like",
-   "start": 92.56,
-   "end": 92.58
-  },
-  {
-   "text": "the",
-   "start": 92.58,
-   "end": 92.8
-  },
-  {
-   "text": "big",
-   "start": 92.8,
-   "end": 93
-  },
-  {
-   "text": "words",
-   "start": 93,
-   "end": 93.36
-  },
-  {
-   "text": "being",
-   "start": 93.36,
-   "end": 93.78
-  },
-  {
-   "text": "way",
-   "start": 93.78,
-   "end": 94.14
-  },
-  {
-   "text": "bigger",
-   "start": 94.14,
-   "end": 94.44
-  },
-  {
-   "text": "than",
-   "start": 94.44,
-   "end": 94.58
-  },
-  {
-   "text": "the",
-   "start": 94.58,
-   "end": 94.7
-  },
-  {
-   "text": "small",
-   "start": 94.7,
-   "end": 94.88
-  },
-  {
-   "text": "ones,",
-   "start": 94.88,
-   "end": 95.18
-  },
-  {
-   "text": "every",
-   "start": 95.84,
-   "end": 96.04
-  },
-  {
-   "text": "word",
-   "start": 96.04,
-   "end": 96.28
-  },
-  {
-   "text": "coming",
-   "start": 96.28,
-   "end": 96.56
-  },
-  {
-   "text": "in",
-   "start": 96.56,
-   "end": 96.9
-  },
-  {
-   "text": "out",
-   "start": 96.9,
-   "end": 97.16
-  },
-  {
-   "text": "of",
-   "start": 97.16,
-   "end": 97.24
-  },
-  {
-   "text": "a",
-   "start": 97.24,
-   "end": 97.4
-  },
-  {
-   "text": "blur",
-   "start": 97.4,
-   "end": 97.68
-  },
-  {
-   "text": "instead",
-   "start": 97.68,
-   "end": 98.02
-  },
-  {
-   "text": "of",
-   "start": 98.02,
-   "end": 98.14
-  },
-  {
-   "text": "just",
-   "start": 98.14,
-   "end": 98.26
-  },
-  {
-   "text": "fading",
-   "start": 98.26,
-   "end": 98.52
-  },
-  {
-   "text": "in,",
-   "start": 98.52,
-   "end": 98.96
-  },
-  {
-   "text": "each",
-   "start": 99.34,
-   "end": 99.6
-  },
-  {
-   "text": "line",
-   "start": 99.6,
-   "end": 99.88
-  },
-  {
-   "text": "stepping",
-   "start": 99.88,
-   "end": 100.18
-  },
-  {
-   "text": "down",
-   "start": 100.18,
-   "end": 100.6
-  },
-  {
-   "text": "and",
-   "start": 100.6,
-   "end": 100.76
-  },
-  {
-   "text": "to",
-   "start": 100.76,
-   "end": 100.86
-  },
-  {
-   "text": "the",
-   "start": 100.86,
-   "end": 100.98
-  },
-  {
-   "text": "right,",
-   "start": 100.98,
-   "end": 101.18
-  },
-  {
-   "text": "and",
-   "start": 101.94,
-   "end": 102.16
-  },
-  {
-   "text": "the",
-   "start": 102.16,
-   "end": 102.28
-  },
-  {
-   "text": "camera",
-   "start": 102.28,
-   "end": 102.58
-  },
-  {
-   "text": "always",
-   "start": 102.58,
-   "end": 102.96
-  },
-  {
-   "text": "following",
-   "start": 102.96,
-   "end": 103.42
-  },
-  {
-   "text": "the",
-   "start": 103.42,
-   "end": 103.64
-  },
-  {
-   "text": "newest",
-   "start": 103.64,
-   "end": 103.86
-  },
-  {
-   "text": "word.",
-   "start": 103.86,
-   "end": 104.14
+   "text": "graphic.",
+   "start": 2.22,
+   "end": 2.54
   },
   {
    "text": "It's",
-   "start": 104.82,
-   "end": 105.14
+   "start": 2.86,
+   "end": 3.08
   },
   {
-   "text": "close",
-   "start": 105.14,
-   "end": 105.32
+   "text": "called",
+   "start": 3.08,
+   "end": 3.3
   },
   {
-   "text": "to",
-   "start": 105.32,
-   "end": 105.48
+   "text": "Type",
+   "start": 3.3,
+   "end": 3.62
   },
   {
-   "text": "2",
-   "start": 105.48,
-   "end": 105.68
-  },
-  {
-   "text": ",000",
-   "start": 105.68,
-   "end": 105.96
-  },
-  {
-   "text": "words,",
-   "start": 105.96,
-   "end": 106.3
-  },
-  {
-   "text": "so",
-   "start": 106.42,
-   "end": 106.66
-  },
-  {
-   "text": "you",
-   "start": 106.66,
-   "end": 106.92
-  },
-  {
-   "text": "don't",
-   "start": 106.92,
-   "end": 107.08
-  },
-  {
-   "text": "have",
-   "start": 107.08,
-   "end": 107.24
-  },
-  {
-   "text": "to",
-   "start": 107.24,
-   "end": 107.38
-  },
-  {
-   "text": "figure",
-   "start": 107.38,
-   "end": 107.6
-  },
-  {
-   "text": "any",
-   "start": 107.6,
-   "end": 107.8
-  },
-  {
-   "text": "of",
-   "start": 107.8,
-   "end": 107.92
-  },
-  {
-   "text": "that",
-   "start": 107.92,
-   "end": 108.06
-  },
-  {
-   "text": "out",
-   "start": 108.06,
-   "end": 108.22
-  },
-  {
-   "text": "yourself.",
-   "start": 108.22,
-   "end": 108.66
-  },
-  {
-   "text": "Step",
-   "start": 109.54,
-   "end": 109.62
-  },
-  {
-   "text": "2.",
-   "start": 109.62,
-   "end": 109.82
-  },
-  {
-   "text": "Open",
-   "start": 110.58,
-   "end": 110.58
-  },
-  {
-   "text": "Claude",
-   "start": 110.58,
-   "end": 111.06
-  },
-  {
-   "text": "Code,",
-   "start": 111.06,
-   "end": 111.4
-  },
-  {
-   "text": "paste",
-   "start": 111.8,
-   "end": 112.04
-  },
-  {
-   "text": "a",
-   "start": 112.04,
-   "end": 112.22
-  },
-  {
-   "text": "prompt",
-   "start": 112.22,
-   "end": 112.4
-  },
-  {
-   "text": "in,",
-   "start": 112.4,
-   "end": 112.7
+   "text": "Staircase,",
+   "start": 3.62,
+   "end": 4.12
   },
   {
    "text": "and",
-   "start": 112.88,
-   "end": 113.1
+   "start": 4.42,
+   "end": 4.58
   },
   {
-   "text": "send",
-   "start": 113.1,
-   "end": 113.44
+   "text": "it's",
+   "start": 4.58,
+   "end": 4.78
   },
   {
-   "text": "it",
-   "start": 113.44,
-   "end": 113.68
+   "text": "one",
+   "start": 4.78,
+   "end": 4.88
   },
   {
-   "text": "as",
-   "start": 113.68,
-   "end": 114
-  },
-  {
-   "text": "it",
-   "start": 114,
-   "end": 114.14
-  },
-  {
-   "text": "is.",
-   "start": 114.14,
-   "end": 114.4
-  },
-  {
-   "text": "I'd",
-   "start": 114.4,
-   "end": 115
-  },
-  {
-   "text": "run",
-   "start": 115,
-   "end": 115.12
+   "text": "of",
+   "start": 4.88,
+   "end": 4.96
   },
   {
    "text": "the",
-   "start": 115.12,
+   "start": 4.96,
+   "end": 5.08
+  },
+  {
+   "text": "templates",
+   "start": 5.08,
+   "end": 5.4
+  },
+  {
+   "text": "on",
+   "start": 5.4,
+   "end": 5.68
+  },
+  {
+   "text": "Sycamore",
+   "start": 5.68,
+   "end": 6.06
+  },
+  {
+   "text": "Motion.",
+   "start": 6.06,
+   "end": 6.24
+  },
+  {
+   "text": "It",
+   "start": 6.88,
+   "end": 7.02
+  },
+  {
+   "text": "builds",
+   "start": 7.02,
+   "end": 7.34
+  },
+  {
+   "text": "one",
+   "start": 7.34,
+   "end": 7.7
+  },
+  {
+   "text": "sentence",
+   "start": 7.7,
+   "end": 8.16
+  },
+  {
+   "text": "a",
+   "start": 8.16,
+   "end": 8.52
+  },
+  {
+   "text": "word",
+   "start": 8.52,
+   "end": 8.78
+  },
+  {
+   "text": "at",
+   "start": 8.78,
+   "end": 8.98
+  },
+  {
+   "text": "a",
+   "start": 8.98,
+   "end": 9.08
+  },
+  {
+   "text": "time.",
+   "start": 9.08,
+   "end": 9.4
+  },
+  {
+   "text": "Every",
+   "start": 9.98,
+   "end": 10.16
+  },
+  {
+   "text": "new",
+   "start": 10.16,
+   "end": 10.38
+  },
+  {
+   "text": "row",
+   "start": 10.38,
+   "end": 10.6
+  },
+  {
+   "text": "starts",
+   "start": 10.6,
+   "end": 11.02
+  },
+  {
+   "text": "most",
+   "start": 11.02,
+   "end": 11.42
+  },
+  {
+   "text": "of",
+   "start": 11.42,
+   "end": 11.62
+  },
+  {
+   "text": "the",
+   "start": 11.62,
+   "end": 11.74
+  },
+  {
+   "text": "way",
+   "start": 11.74,
+   "end": 11.9
+  },
+  {
+   "text": "along",
+   "start": 11.9,
+   "end": 12.16
+  },
+  {
+   "text": "the",
+   "start": 12.16,
+   "end": 12.32
+  },
+  {
+   "text": "row",
+   "start": 12.32,
+   "end": 12.52
+  },
+  {
+   "text": "above",
+   "start": 12.52,
+   "end": 12.76
+  },
+  {
+   "text": "it,",
+   "start": 12.76,
+   "end": 13.02
+  },
+  {
+   "text": "so",
+   "start": 13.06,
+   "end": 13.32
+  },
+  {
+   "text": "the",
+   "start": 13.32,
+   "end": 13.68
+  },
+  {
+   "text": "text",
+   "start": 13.68,
+   "end": 14.04
+  },
+  {
+   "text": "walks",
+   "start": 14.04,
+   "end": 14.5
+  },
+  {
+   "text": "down",
+   "start": 14.5,
+   "end": 14.86
+  },
+  {
+   "text": "the",
+   "start": 14.86,
+   "end": 15.02
+  },
+  {
+   "text": "screen",
+   "start": 15.02,
+   "end": 15.34
+  },
+  {
+   "text": "like",
+   "start": 15.34,
+   "end": 15.56
+  },
+  {
+   "text": "a",
+   "start": 15.56,
+   "end": 15.72
+  },
+  {
+   "text": "staircase.",
+   "start": 15.72,
+   "end": 16.02
+  },
+  {
+   "text": "The",
+   "start": 16.68,
+   "end": 16.9
+  },
+  {
+   "text": "rows",
+   "start": 16.9,
+   "end": 17.16
+  },
+  {
+   "text": "switch",
+   "start": 17.16,
+   "end": 17.52
+  },
+  {
+   "text": "between",
+   "start": 17.52,
+   "end": 17.94
+  },
+  {
+   "text": "big",
+   "start": 17.94,
+   "end": 18.22
+  },
+  {
+   "text": "and",
+   "start": 18.22,
+   "end": 18.4
+  },
+  {
+   "text": "small,",
+   "start": 18.4,
+   "end": 18.76
+  },
+  {
+   "text": "so",
+   "start": 18.88,
+   "end": 19.16
+  },
+  {
+   "text": "the",
+   "start": 19.16,
+   "end": 19.62
+  },
+  {
+   "text": "words",
+   "start": 19.62,
+   "end": 19.86
+  },
+  {
+   "text": "that",
+   "start": 19.86,
+   "end": 20.08
+  },
+  {
+   "text": "carry",
+   "start": 20.08,
+   "end": 20.32
+  },
+  {
+   "text": "the",
+   "start": 20.32,
+   "end": 20.5
+  },
+  {
+   "text": "point,",
+   "start": 20.5,
+   "end": 20.8
+  },
+  {
+   "text": "like",
+   "start": 21.08,
+   "end": 21.18
+  },
+  {
+   "text": "content",
+   "start": 21.18,
+   "end": 21.8
+  },
+  {
+   "text": "and",
+   "start": 21.8,
+   "end": 22.2
+  },
+  {
+   "text": "system,",
+   "start": 22.2,
+   "end": 22.64
+  },
+  {
+   "text": "stand",
+   "start": 22.82,
+   "end": 23.1
+  },
+  {
+   "text": "out,",
+   "start": 23.1,
+   "end": 23.4
+  },
+  {
+   "text": "and",
+   "start": 23.66,
+   "end": 23.96
+  },
+  {
+   "text": "the",
+   "start": 23.96,
+   "end": 24.32
+  },
+  {
+   "text": "little",
+   "start": 24.32,
+   "end": 24.52
+  },
+  {
+   "text": "words",
+   "start": 24.52,
+   "end": 24.84
+  },
+  {
+   "text": "in",
+   "start": 24.84,
+   "end": 25
+  },
+  {
+   "text": "between",
+   "start": 25,
+   "end": 25.32
+  },
+  {
+   "text": "stay",
+   "start": 25.32,
+   "end": 25.7
+  },
+  {
+   "text": "out",
+   "start": 25.7,
+   "end": 25.92
+  },
+  {
+   "text": "of",
+   "start": 25.92,
+   "end": 26.02
+  },
+  {
+   "text": "the",
+   "start": 26.02,
+   "end": 26.14
+  },
+  {
+   "text": "way.",
+   "start": 26.14,
+   "end": 26.34
+  },
+  {
+   "text": "Each",
+   "start": 26.34,
+   "end": 26.98
+  },
+  {
+   "text": "word",
+   "start": 26.98,
+   "end": 27.3
+  },
+  {
+   "text": "springs",
+   "start": 27.3,
+   "end": 27.82
+  },
+  {
+   "text": "up",
+   "start": 27.82,
+   "end": 28.08
+  },
+  {
+   "text": "into",
+   "start": 28.08,
+   "end": 28.3
+  },
+  {
+   "text": "place",
+   "start": 28.3,
+   "end": 28.56
+  },
+  {
+   "text": "with",
+   "start": 28.56,
+   "end": 28.78
+  },
+  {
+   "text": "a",
+   "start": 28.78,
+   "end": 28.9
+  },
+  {
+   "text": "little",
+   "start": 28.9,
+   "end": 29.14
+  },
+  {
+   "text": "overshoot",
+   "start": 29.14,
+   "end": 29.92
+  },
+  {
+   "text": "and",
+   "start": 29.92,
+   "end": 30.62
+  },
+  {
+   "text": "the",
+   "start": 30.62,
+   "end": 30.8
+  },
+  {
+   "text": "camera",
+   "start": 30.8,
+   "end": 31.04
+  },
+  {
+   "text": "stays",
+   "start": 31.04,
+   "end": 31.34
+  },
+  {
+   "text": "zoomed",
+   "start": 31.34,
+   "end": 31.86
+  },
+  {
+   "text": "in",
+   "start": 31.86,
+   "end": 32.02
+  },
+  {
+   "text": "and",
+   "start": 32.02,
+   "end": 32.22
+  },
+  {
+   "text": "keeps",
+   "start": 32.22,
+   "end": 32.48
+  },
+  {
+   "text": "chasing",
+   "start": 32.48,
+   "end": 32.82
+  },
+  {
+   "text": "the",
+   "start": 32.82,
+   "end": 33.04
+  },
+  {
+   "text": "newest",
+   "start": 33.04,
+   "end": 33.3
+  },
+  {
+   "text": "word",
+   "start": 33.3,
+   "end": 33.62
+  },
+  {
+   "text": "so",
+   "start": 33.62,
+   "end": 33.92
+  },
+  {
+   "text": "the",
+   "start": 33.92,
+   "end": 34.06
+  },
+  {
+   "text": "older",
+   "start": 34.06,
+   "end": 34.3
+  },
+  {
+   "text": "ones",
+   "start": 34.3,
+   "end": 34.58
+  },
+  {
+   "text": "slide",
+   "start": 34.58,
+   "end": 34.9
+  },
+  {
+   "text": "off",
+   "start": 34.9,
+   "end": 35.06
+  },
+  {
+   "text": "to",
+   "start": 35.06,
+   "end": 35.18
+  },
+  {
+   "text": "the",
+   "start": 35.18,
+   "end": 35.28
+  },
+  {
+   "text": "left.",
+   "start": 35.28,
+   "end": 35.46
+  },
+  {
+   "text": "It's",
+   "start": 36.34,
+   "end": 36.46
+  },
+  {
+   "text": "a",
+   "start": 36.46,
+   "end": 36.56
+  },
+  {
+   "text": "simple",
+   "start": 36.56,
+   "end": 36.76
+  },
+  {
+   "text": "idea",
+   "start": 36.76,
+   "end": 37.16
+  },
+  {
+   "text": "but",
+   "start": 37.16,
+   "end": 37.48
+  },
+  {
+   "text": "the",
+   "start": 37.48,
+   "end": 37.76
+  },
+  {
+   "text": "motion",
+   "start": 37.76,
+   "end": 38.08
+  },
+  {
+   "text": "makes",
+   "start": 38.08,
+   "end": 38.32
+  },
+  {
+   "text": "it",
+   "start": 38.32,
+   "end": 38.52
+  },
+  {
+   "text": "feel",
+   "start": 38.52,
+   "end": 38.88
+  },
+  {
+   "text": "alive.",
+   "start": 38.88,
+   "end": 39.62
+  },
+  {
+   "text": "We're",
+   "start": 40.66,
+   "end": 40.9
+  },
+  {
+   "text": "gonna",
+   "start": 40.9,
+   "end": 40.94
+  },
+  {
+   "text": "make",
+   "start": 40.94,
+   "end": 41.14
+  },
+  {
+   "text": "it",
+   "start": 41.14,
+   "end": 41.26
+  },
+  {
+   "text": "with",
+   "start": 41.26,
+   "end": 41.38
+  },
+  {
+   "text": "one",
+   "start": 41.38,
+   "end": 41.66
+  },
+  {
+   "text": "prompt",
+   "start": 41.66,
+   "end": 41.94
+  },
+  {
+   "text": "and",
+   "start": 41.94,
+   "end": 42.14
+  },
+  {
+   "text": "all",
+   "start": 42.14,
+   "end": 42.32
+  },
+  {
+   "text": "we",
+   "start": 42.32,
+   "end": 42.48
+  },
+  {
+   "text": "need",
+   "start": 42.48,
+   "end": 42.62
+  },
+  {
+   "text": "is",
+   "start": 42.62,
+   "end": 42.86
+  },
+  {
+   "text": "Claude",
+   "start": 42.86,
+   "end": 43.07
+  },
+  {
+   "text": "Code",
+   "start": 43.07,
+   "end": 43.28
+  },
+  {
+   "text": "and",
+   "start": 43.28,
+   "end": 43.54
+  },
+  {
+   "text": "Sycamore.",
+   "start": 43.54,
+   "end": 43.96
+  },
+  {
+   "text": "Claude",
+   "start": 44.8,
+   "end": 45.06
+  },
+  {
+   "text": "Code",
+   "start": 45.06,
+   "end": 45.32
+  },
+  {
+   "text": "needs",
+   "start": 45.32,
+   "end": 45.62
+  },
+  {
+   "text": "something",
+   "start": 45.62,
+   "end": 45.92
+  },
+  {
+   "text": "to",
+   "start": 45.92,
+   "end": 46.3
+  },
+  {
+   "text": "render",
+   "start": 46.3,
+   "end": 46.64
+  },
+  {
+   "text": "the",
+   "start": 46.64,
+   "end": 46.9
+  },
+  {
+   "text": "video",
+   "start": 46.9,
+   "end": 47.18
+  },
+  {
+   "text": "with.",
+   "start": 47.18,
+   "end": 47.58
+  },
+  {
+   "text": "In",
+   "start": 48.08,
+   "end": 48.16
+  },
+  {
+   "text": "this",
+   "start": 48.16,
+   "end": 48.32
+  },
+  {
+   "text": "video",
+   "start": 48.32,
+   "end": 48.58
+  },
+  {
+   "text": "we're",
+   "start": 48.58,
+   "end": 48.82
+  },
+  {
+   "text": "using",
+   "start": 48.82,
+   "end": 49.08
+  },
+  {
+   "text": "remotion",
+   "start": 49.08,
+   "end": 49.56
+  },
+  {
+   "text": "for",
+   "start": 49.56,
+   "end": 49.86
+  },
+  {
+   "text": "that",
+   "start": 49.86,
+   "end": 50.1
+  },
+  {
+   "text": "but",
+   "start": 50.1,
+   "end": 50.34
+  },
+  {
+   "text": "you",
+   "start": 50.34,
+   "end": 50.58
+  },
+  {
+   "text": "can",
+   "start": 50.58,
+   "end": 50.74
+  },
+  {
+   "text": "use",
+   "start": 50.74,
+   "end": 50.92
+  },
+  {
+   "text": "other",
+   "start": 50.92,
+   "end": 51.14
+  },
+  {
+   "text": "tools",
+   "start": 51.14,
+   "end": 51.4
+  },
+  {
+   "text": "too",
+   "start": 51.4,
+   "end": 51.64
+  },
+  {
+   "text": "if",
+   "start": 51.64,
+   "end": 51.74
+  },
+  {
+   "text": "you",
+   "start": 51.74,
+   "end": 51.84
+  },
+  {
+   "text": "prefer.",
+   "start": 51.84,
+   "end": 52.12
+  },
+  {
+   "text": "Step",
+   "start": 53.16,
+   "end": 53.16
+  },
+  {
+   "text": "one,",
+   "start": 53.16,
+   "end": 53.46
+  },
+  {
+   "text": "go",
+   "start": 53.74,
+   "end": 53.88
+  },
+  {
+   "text": "to",
+   "start": 53.88,
+   "end": 54.1
+  },
+  {
+   "text": "sycamore",
+   "start": 54.1,
+   "end": 54.66
+  },
+  {
+   "text": ".to",
+   "start": 54.66,
+   "end": 55.42
+  },
+  {
+   "text": "slash",
+   "start": 55.42,
+   "end": 55.9
+  },
+  {
+   "text": "motion",
+   "start": 55.9,
+   "end": 56.58
+  },
+  {
+   "text": "and",
+   "start": 56.58,
+   "end": 57.1
+  },
+  {
+   "text": "open",
+   "start": 57.1,
+   "end": 57.46
+  },
+  {
+   "text": "type",
+   "start": 57.46,
+   "end": 57.78
+  },
+  {
+   "text": "staircase.",
+   "start": 57.78,
+   "end": 58.34
+  },
+  {
+   "text": "On",
+   "start": 59.04,
+   "end": 59.14
+  },
+  {
+   "text": "the",
+   "start": 59.14,
+   "end": 59.24
+  },
+  {
+   "text": "right,",
+   "start": 59.24,
+   "end": 59.44
+  },
+  {
+   "text": "there's",
+   "start": 59.48,
+   "end": 59.7
+  },
+  {
+   "text": "a",
+   "start": 59.7,
+   "end": 59.84
+  },
+  {
+   "text": "copy",
+   "start": 59.84,
+   "end": 60.22
+  },
+  {
+   "text": "prompt",
+   "start": 60.22,
+   "end": 60.58
+  },
+  {
+   "text": "button.",
+   "start": 60.58,
+   "end": 60.96
+  },
+  {
+   "text": "Click",
+   "start": 61.46,
+   "end": 61.68
+  },
+  {
+   "text": "it",
+   "start": 61.68,
+   "end": 61.9
+  },
+  {
+   "text": "and",
+   "start": 61.9,
+   "end": 62.16
+  },
+  {
+   "text": "you've",
+   "start": 62.16,
+   "end": 62.48
+  },
+  {
+   "text": "got",
+   "start": 62.48,
+   "end": 62.62
+  },
+  {
+   "text": "the",
+   "start": 62.62,
+   "end": 62.8
+  },
+  {
+   "text": "prompt",
+   "start": 62.8,
+   "end": 63.08
+  },
+  {
+   "text": "that",
+   "start": 63.08,
+   "end": 63.26
+  },
+  {
+   "text": "made",
+   "start": 63.26,
+   "end": 63.46
+  },
+  {
+   "text": "this",
+   "start": 63.46,
+   "end": 63.8
+  },
+  {
+   "text": "exact",
+   "start": 63.8,
+   "end": 64.28
+  },
+  {
+   "text": "animation.",
+   "start": 64.28,
+   "end": 64.72
+  },
+  {
+   "text": "The",
+   "start": 65.3,
+   "end": 65.48
+  },
+  {
+   "text": "important",
+   "start": 65.48,
+   "end": 65.8
+  },
+  {
+   "text": "parts",
+   "start": 65.8,
+   "end": 66.22
+  },
+  {
+   "text": "are",
+   "start": 66.22,
+   "end": 66.42
+  },
+  {
+   "text": "all",
+   "start": 66.42,
+   "end": 66.68
+  },
+  {
+   "text": "in",
+   "start": 66.68,
+   "end": 66.86
+  },
+  {
+   "text": "there,",
+   "start": 66.86,
+   "end": 67.08
+  },
+  {
+   "text": "like",
+   "start": 67.32,
+   "end": 67.5
+  },
+  {
+   "text": "how",
+   "start": 67.5,
+   "end": 67.82
+  },
+  {
+   "text": "far",
+   "start": 67.82,
+   "end": 68.1
+  },
+  {
+   "text": "each",
+   "start": 68.1,
+   "end": 68.36
+  },
+  {
+   "text": "row",
+   "start": 68.36,
+   "end": 68.6
+  },
+  {
+   "text": "steps",
+   "start": 68.6,
+   "end": 68.84
+  },
+  {
+   "text": "over,",
+   "start": 68.84,
+   "end": 69.22
+  },
+  {
+   "text": "the",
+   "start": 69.56,
+   "end": 69.88
+  },
+  {
+   "text": "spring",
+   "start": 69.88,
+   "end": 70.18
+  },
+  {
+   "text": "on",
+   "start": 70.18,
+   "end": 70.38
+  },
+  {
+   "text": "every",
+   "start": 70.38,
+   "end": 70.7
+  },
+  {
+   "text": "word,",
+   "start": 70.7,
+   "end": 71.06
+  },
+  {
+   "text": "and",
+   "start": 71.2,
+   "end": 71.62
+  },
+  {
+   "text": "how",
+   "start": 71.62,
+   "end": 71.76
+  },
+  {
+   "text": "the",
+   "start": 71.76,
+   "end": 71.9
+  },
+  {
+   "text": "camera",
+   "start": 71.9,
+   "end": 72.14
+  },
+  {
+   "text": "follows",
+   "start": 72.14,
+   "end": 72.48
+  },
+  {
+   "text": "along.",
+   "start": 72.48,
+   "end": 72.82
+  },
+  {
+   "text": "Step",
+   "start": 73.9,
+   "end": 74.12
+  },
+  {
+   "text": "two,",
+   "start": 74.12,
+   "end": 74.36
+  },
+  {
+   "text": "open",
+   "start": 74.52,
+   "end": 74.84
+  },
+  {
+   "text": "Claude",
+   "start": 74.84,
+   "end": 75.2
+  },
+  {
+   "text": "Code,",
+   "start": 75.2,
+   "end": 75.5
+  },
+  {
+   "text": "paste",
+   "start": 75.8,
+   "end": 76.04
+  },
+  {
+   "text": "the",
+   "start": 76.04,
+   "end": 76.2
+  },
+  {
+   "text": "prompt",
+   "start": 76.2,
+   "end": 76.42
+  },
+  {
+   "text": "in",
+   "start": 76.42,
+   "end": 76.62
+  },
+  {
+   "text": "and",
+   "start": 76.62,
+   "end": 76.84
+  },
+  {
+   "text": "send",
+   "start": 76.84,
+   "end": 77.06
+  },
+  {
+   "text": "it",
+   "start": 77.06,
+   "end": 77.22
+  },
+  {
+   "text": "as",
+   "start": 77.22,
+   "end": 77.4
+  },
+  {
+   "text": "it",
+   "start": 77.4,
+   "end": 77.52
+  },
+  {
+   "text": "is.",
+   "start": 77.52,
+   "end": 77.94
+  },
+  {
+   "text": "Give",
+   "start": 77.94,
+   "end": 78.38
+  },
+  {
+   "text": "it",
+   "start": 78.38,
+   "end": 78.5
+  },
+  {
+   "text": "a",
+   "start": 78.5,
+   "end": 78.62
+  },
+  {
+   "text": "while.",
+   "start": 78.62,
+   "end": 78.92
+  },
+  {
+   "text": "When",
+   "start": 79.42,
+   "end": 79.56
+  },
+  {
+   "text": "it's",
+   "start": 79.56,
+   "end": 79.74
+  },
+  {
+   "text": "done,",
+   "start": 79.74,
+   "end": 79.98
+  },
+  {
+   "text": "you",
+   "start": 80.24,
+   "end": 80.34
+  },
+  {
+   "text": "get",
+   "start": 80.34,
+   "end": 80.5
+  },
+  {
+   "text": "back",
+   "start": 80.5,
+   "end": 80.7
+  },
+  {
+   "text": "the",
+   "start": 80.7,
+   "end": 80.86
+  },
+  {
+   "text": "same",
+   "start": 80.86,
+   "end": 81.2
+  },
+  {
+   "text": "staircase",
+   "start": 81.2,
+   "end": 81.56
+  },
+  {
+   "text": "you",
+   "start": 81.56,
+   "end": 81.82
+  },
+  {
+   "text": "saw",
+   "start": 81.82,
+   "end": 81.98
+  },
+  {
+   "text": "on",
+   "start": 81.98,
+   "end": 82.1
+  },
+  {
+   "text": "the",
+   "start": 82.1,
+   "end": 82.16
+  },
+  {
+   "text": "site.",
+   "start": 82.16,
+   "end": 82.42
+  },
+  {
+   "text": "Now,",
+   "start": 83.58,
+   "end": 83.74
+  },
+  {
+   "text": "let's",
+   "start": 84.04,
+   "end": 84.34
+  },
+  {
+   "text": "make",
+   "start": 84.34,
+   "end": 84.48
+  },
+  {
+   "text": "it",
+   "start": 84.48,
+   "end": 84.58
+  },
+  {
+   "text": "our",
+   "start": 84.58,
+   "end": 84.7
+  },
+  {
+   "text": "own.",
+   "start": 84.7,
+   "end": 84.92
+  },
+  {
+   "text": "I'd",
+   "start": 85.2,
+   "end": 85.4
+  },
+  {
+   "text": "do",
+   "start": 85.4,
+   "end": 85.5
+  },
+  {
+   "text": "this",
+   "start": 85.5,
+   "end": 85.68
+  },
+  {
+   "text": "one",
+   "start": 85.68,
+   "end": 85.98
+  },
+  {
+   "text": "change",
+   "start": 85.98,
+   "end": 86.3
+  },
+  {
+   "text": "at",
+   "start": 86.3,
+   "end": 86.48
+  },
+  {
+   "text": "a",
+   "start": 86.48,
+   "end": 86.6
+  },
+  {
+   "text": "time.",
+   "start": 86.6,
+   "end": 86.84
+  },
+  {
+   "text": "First,",
+   "start": 87.7,
+   "end": 87.8
+  },
+  {
+   "text": "I",
+   "start": 88.08,
+   "end": 88.12
+  },
+  {
+   "text": "asked",
+   "start": 88.12,
+   "end": 88.38
+  },
+  {
+   "text": "for",
+   "start": 88.38,
+   "end": 88.6
+  },
+  {
+   "text": "a",
+   "start": 88.6,
+   "end": 88.78
+  },
+  {
+   "text": "dark",
+   "start": 88.78,
+   "end": 89.02
+  },
+  {
+   "text": "background",
+   "start": 89.02,
+   "end": 89.52
+  },
+  {
+   "text": "with",
+   "start": 89.52,
+   "end": 89.92
+  },
+  {
+   "text": "the",
+   "start": 89.92,
+   "end": 90.22
+  },
+  {
+   "text": "big",
+   "start": 90.22,
+   "end": 90.48
+  },
+  {
+   "text": "words",
+   "start": 90.48,
+   "end": 90.76
+  },
+  {
+   "text": "in",
+   "start": 90.76,
+   "end": 90.96
+  },
+  {
+   "text": "orange.",
+   "start": 90.96,
+   "end": 91.28
+  },
+  {
+   "text": "Then",
+   "start": 93,
+   "end": 93.32
+  },
+  {
+   "text": "I",
+   "start": 93.32,
+   "end": 93.48
+  },
+  {
+   "text": "asked",
+   "start": 93.48,
+   "end": 93.64
+  },
+  {
+   "text": "it",
+   "start": 93.64,
+   "end": 93.78
+  },
+  {
+   "text": "to",
+   "start": 93.78,
+   "end": 93.96
+  },
+  {
+   "text": "drop",
+   "start": 93.96,
+   "end": 94.34
+  },
+  {
+   "text": "each",
+   "start": 94.34,
+   "end": 94.58
+  },
+  {
+   "text": "warden",
+   "start": 94.58,
+   "end": 94.86
+  },
+  {
+   "text": "from",
+   "start": 94.86,
+   "end": 95.08
+  },
+  {
+   "text": "above",
+   "start": 95.08,
+   "end": 95.36
+  },
+  {
+   "text": "with",
+   "start": 95.36,
+   "end": 95.58
+  },
+  {
+   "text": "a",
+   "start": 95.58,
+   "end": 95.78
+  },
+  {
+   "text": "bouncy",
+   "start": 95.78,
+   "end": 96.16
+  },
+  {
+   "text": "spring",
+   "start": 96.16,
+   "end": 96.64
+  },
+  {
+   "text": "instead",
+   "start": 96.64,
+   "end": 97.12
+  },
+  {
+   "text": "of",
+   "start": 97.12,
+   "end": 97.28
+  },
+  {
+   "text": "rising",
+   "start": 97.28,
+   "end": 97.64
+  },
+  {
+   "text": "out",
+   "start": 97.64,
+   "end": 97.88
+  },
+  {
+   "text": "of",
+   "start": 97.88,
+   "end": 97.96
+  },
+  {
+   "text": "a",
+   "start": 97.96,
+   "end": 98.08
+  },
+  {
+   "text": "blur.",
+   "start": 98.08,
+   "end": 98.26
+  },
+  {
+   "text": "And",
+   "start": 100.12,
+   "end": 100.28
+  },
+  {
+   "text": "last,",
+   "start": 100.28,
+   "end": 100.54
+  },
+  {
+   "text": "I",
+   "start": 100.9,
+   "end": 101.1
+  },
+  {
+   "text": "asked",
+   "start": 101.1,
+   "end": 101.26
+  },
+  {
+   "text": "the",
+   "start": 101.26,
+   "end": 101.42
+  },
+  {
+   "text": "camera",
+   "start": 101.42,
+   "end": 101.6
+  },
+  {
+   "text": "to",
+   "start": 101.6,
+   "end": 101.82
+  },
+  {
+   "text": "tilt",
+   "start": 101.82,
+   "end": 102.04
+  },
+  {
+   "text": "a",
+   "start": 102.04,
+   "end": 102.24
+  },
+  {
+   "text": "little",
+   "start": 102.24,
+   "end": 102.46
+  },
+  {
+   "text": "into",
+   "start": 102.46,
+   "end": 102.88
+  },
+  {
+   "text": "each",
+   "start": 102.88,
+   "end": 103.18
+  },
+  {
+   "text": "new",
+   "start": 103.18,
+   "end": 103.44
+  },
+  {
+   "text": "row",
+   "start": 103.44,
+   "end": 103.68
+  },
+  {
+   "text": "and",
+   "start": 103.68,
+   "end": 104.24
+  },
+  {
+   "text": "gave",
+   "start": 104.24,
+   "end": 104.44
+  },
+  {
+   "text": "it",
+   "start": 104.44,
+   "end": 104.56
+  },
+  {
+   "text": "my",
+   "start": 104.56,
+   "end": 104.68
+  },
+  {
+   "text": "own",
+   "start": 104.68,
+   "end": 104.82
+  },
+  {
+   "text": "sentence.",
+   "start": 104.82,
+   "end": 105.2
+  },
+  {
+   "text": "Doing",
+   "start": 106.8,
+   "end": 107.28
+  },
+  {
+   "text": "it",
+   "start": 107.28,
+   "end": 107.52
+  },
+  {
+   "text": "one",
+   "start": 107.52,
+   "end": 107.82
+  },
+  {
+   "text": "step",
+   "start": 107.82,
+   "end": 108.08
+  },
+  {
+   "text": "at",
+   "start": 108.08,
+   "end": 108.22
+  },
+  {
+   "text": "a",
+   "start": 108.22,
+   "end": 108.32
+  },
+  {
+   "text": "time",
+   "start": 108.32,
+   "end": 108.64
+  },
+  {
+   "text": "makes",
+   "start": 108.64,
+   "end": 108.96
+  },
+  {
+   "text": "it",
+   "start": 108.96,
+   "end": 109.18
+  },
+  {
+   "text": "easy",
+   "start": 109.18,
+   "end": 109.42
+  },
+  {
+   "text": "to",
+   "start": 109.42,
+   "end": 109.64
+  },
+  {
+   "text": "see",
+   "start": 109.64,
+   "end": 109.88
+  },
+  {
+   "text": "what",
+   "start": 109.88,
+   "end": 110.18
+  },
+  {
+   "text": "each",
+   "start": 110.18,
+   "end": 110.42
+  },
+  {
+   "text": "change",
+   "start": 110.42,
+   "end": 110.74
+  },
+  {
+   "text": "did,",
+   "start": 110.74,
+   "end": 111.04
+  },
+  {
+   "text": "and",
+   "start": 111.34,
+   "end": 111.68
+  },
+  {
+   "text": "if",
+   "start": 111.68,
+   "end": 111.84
+  },
+  {
+   "text": "something",
+   "start": 111.84,
+   "end": 112.06
+  },
+  {
+   "text": "breaks",
+   "start": 112.06,
+   "end": 112.42
+  },
+  {
+   "text": "you",
+   "start": 112.42,
+   "end": 112.78
+  },
+  {
+   "text": "know",
+   "start": 112.78,
+   "end": 112.92
+  },
+  {
+   "text": "which",
+   "start": 112.92,
+   "end": 113.1
+  },
+  {
+   "text": "message",
+   "start": 113.1,
+   "end": 113.42
+  },
+  {
+   "text": "cost",
+   "start": 113.42,
+   "end": 113.7
+  },
+  {
+   "text": "it.",
+   "start": 113.7,
+   "end": 114.06
+  },
+  {
+   "text": "So",
+   "start": 114.7,
+   "end": 114.88
+  },
+  {
+   "text": "here's",
+   "start": 114.88,
+   "end": 115.16
+  },
+  {
+   "text": "the",
+   "start": 115.16,
    "end": 115.26
   },
   {
    "text": "original",
    "start": 115.26,
-   "end": 115.54
-  },
-  {
-   "text": "first,",
-   "start": 115.54,
-   "end": 116.02
-  },
-  {
-   "text": "just",
-   "start": 116.38,
-   "end": 116.46
-  },
-  {
-   "text": "so",
-   "start": 116.46,
-   "end": 116.64
-  },
-  {
-   "text": "you",
-   "start": 116.64,
-   "end": 116.78
-  },
-  {
-   "text": "know",
-   "start": 116.78,
-   "end": 117.02
-  },
-  {
-   "text": "it",
-   "start": 117.02,
-   "end": 117.16
-  },
-  {
-   "text": "works",
-   "start": 117.16,
-   "end": 117.46
-  },
-  {
-   "text": "before",
-   "start": 117.46,
-   "end": 117.78
-  },
-  {
-   "text": "you",
-   "start": 117.78,
-   "end": 117.92
-  },
-  {
-   "text": "start",
-   "start": 117.92,
-   "end": 118.1
-  },
-  {
-   "text": "changing",
-   "start": 118.1,
-   "end": 118.48
-  },
-  {
-   "text": "things.",
-   "start": 118.48,
-   "end": 118.94
-  },
-  {
-   "text": "This",
-   "start": 119.48,
-   "end": 119.74
-  },
-  {
-   "text": "took",
-   "start": 119.74,
-   "end": 119.92
-  },
-  {
-   "text": "about",
-   "start": 119.92,
-   "end": 120.16
-  },
-  {
-   "text": "10",
-   "start": 120.16,
-   "end": 120.44
-  },
-  {
-   "text": "minutes,",
-   "start": 120.44,
-   "end": 120.76
-  },
-  {
-   "text": "and",
-   "start": 121.14,
-   "end": 121.18
-  },
-  {
-   "text": "it",
-   "start": 121.18,
-   "end": 121.32
-  },
-  {
-   "text": "came",
-   "start": 121.32,
-   "end": 121.46
-  },
-  {
-   "text": "back",
-   "start": 121.46,
-   "end": 121.74
-  },
-  {
-   "text": "looking",
-   "start": 121.74,
-   "end": 122.02
-  },
-  {
-   "text": "pretty",
-   "start": 122.02,
-   "end": 122.34
-  },
-  {
-   "text": "much",
-   "start": 122.34,
-   "end": 122.56
-  },
-  {
-   "text": "the",
-   "start": 122.56,
-   "end": 122.74
-  },
-  {
-   "text": "same",
-   "start": 122.74,
-   "end": 122.94
-  },
-  {
-   "text": "as",
-   "start": 122.94,
-   "end": 123.08
-  },
-  {
-   "text": "the",
-   "start": 123.08,
-   "end": 123.2
-  },
-  {
-   "text": "one",
-   "start": 123.2,
-   "end": 123.32
-  },
-  {
-   "text": "on",
-   "start": 123.32,
-   "end": 123.42
-  },
-  {
-   "text": "the",
-   "start": 123.42,
-   "end": 123.52
-  },
-  {
-   "text": "site.",
-   "start": 123.52,
-   "end": 123.74
-  },
-  {
-   "text": "Now",
-   "start": 124.66,
-   "end": 124.78
-  },
-  {
-   "text": "you",
-   "start": 124.78,
-   "end": 124.98
-  },
-  {
-   "text": "make",
-   "start": 124.98,
-   "end": 125.14
-  },
-  {
-   "text": "it",
-   "start": 125.14,
-   "end": 125.32
-  },
-  {
-   "text": "yours.",
-   "start": 125.32,
-   "end": 125.54
-  },
-  {
-   "text": "I'd",
-   "start": 126.28,
-   "end": 126.52
-  },
-  {
-   "text": "do",
-   "start": 126.52,
-   "end": 126.62
-  },
-  {
-   "text": "this",
-   "start": 126.62,
-   "end": 126.76
-  },
-  {
-   "text": "one",
-   "start": 126.76,
-   "end": 127
-  },
-  {
-   "text": "thing",
-   "start": 127,
-   "end": 127.18
-  },
-  {
-   "text": "at",
-   "start": 127.18,
-   "end": 127.32
-  },
-  {
-   "text": "a",
-   "start": 127.32,
-   "end": 127.44
-  },
-  {
-   "text": "time",
-   "start": 127.44,
-   "end": 127.74
-  },
-  {
-   "text": "instead",
-   "start": 127.74,
-   "end": 128.06
-  },
-  {
-   "text": "of",
-   "start": 128.06,
-   "end": 128.3
-  },
-  {
-   "text": "cramming",
-   "start": 128.3,
-   "end": 128.74
-  },
-  {
-   "text": "everything",
-   "start": 128.74,
-   "end": 129.04
-  },
-  {
-   "text": "into",
-   "start": 129.04,
-   "end": 129.24
-  },
-  {
-   "text": "one",
-   "start": 129.24,
-   "end": 129.42
-  },
-  {
-   "text": "message.",
-   "start": 129.42,
-   "end": 129.74
-  },
-  {
-   "text": "First",
-   "start": 130.42,
-   "end": 130.7
-  },
-  {
-   "text": "I",
-   "start": 130.7,
-   "end": 130.94
-  },
-  {
-   "text": "asked",
-   "start": 130.94,
-   "end": 131.12
-  },
-  {
-   "text": "it",
-   "start": 131.12,
-   "end": 131.34
-  },
-  {
-   "text": "to",
-   "start": 131.34,
-   "end": 131.46
-  },
-  {
-   "text": "switch",
-   "start": 131.46,
-   "end": 131.7
-  },
-  {
-   "text": "to",
-   "start": 131.7,
-   "end": 131.94
-  },
-  {
-   "text": "a",
-   "start": 131.94,
-   "end": 132.06
-  },
-  {
-   "text": "dark",
-   "start": 132.06,
-   "end": 132.26
-  },
-  {
-   "text": "background.",
-   "start": 132.26,
-   "end": 132.66
-  },
-  {
-   "text": "Then",
-   "start": 134.3,
-   "end": 134.58
-  },
-  {
-   "text": "I",
-   "start": 134.58,
-   "end": 134.7
-  },
-  {
-   "text": "asked",
-   "start": 134.7,
-   "end": 134.88
-  },
-  {
-   "text": "it",
-   "start": 134.88,
-   "end": 135.04
-  },
-  {
-   "text": "to",
-   "start": 135.04,
-   "end": 135.14
-  },
-  {
-   "text": "make",
-   "start": 135.14,
-   "end": 135.26
-  },
-  {
-   "text": "the",
-   "start": 135.26,
-   "end": 135.42
-  },
-  {
-   "text": "big",
-   "start": 135.42,
-   "end": 135.58
-  },
-  {
-   "text": "word",
-   "start": 135.58,
-   "end": 135.82
-  },
-  {
-   "text": "orange.",
-   "start": 135.82,
-   "end": 136.12
-  },
-  {
-   "text": "And",
-   "start": 137.78,
-   "end": 138.1
-  },
-  {
-   "text": "then",
-   "start": 138.1,
-   "end": 138.38
-  },
-  {
-   "text": "I",
-   "start": 138.38,
-   "end": 138.64
-  },
-  {
-   "text": "gave",
-   "start": 138.64,
-   "end": 138.8
-  },
-  {
-   "text": "it",
-   "start": 138.8,
-   "end": 138.94
-  },
-  {
-   "text": "my",
-   "start": 138.94,
-   "end": 139.12
-  },
-  {
-   "text": "own",
-   "start": 139.12,
-   "end": 139.46
-  },
-  {
-   "text": "sentence",
-   "start": 139.46,
-   "end": 139.92
-  },
-  {
-   "text": "to",
-   "start": 139.92,
-   "end": 140.2
-  },
-  {
-   "text": "animate.",
-   "start": 140.2,
-   "end": 140.54
-  },
-  {
-   "text": "Doing",
-   "start": 142.06,
-   "end": 142.5
-  },
-  {
-   "text": "it",
-   "start": 142.5,
-   "end": 142.72
-  },
-  {
-   "text": "this",
-   "start": 142.72,
-   "end": 142.84
-  },
-  {
-   "text": "way",
-   "start": 142.84,
-   "end": 143.08
-  },
-  {
-   "text": "makes",
-   "start": 143.08,
-   "end": 143.28
-  },
-  {
-   "text": "it",
-   "start": 143.28,
-   "end": 143.46
-  },
-  {
-   "text": "a",
-   "start": 143.46,
-   "end": 143.56
-  },
-  {
-   "text": "lot",
-   "start": 143.56,
-   "end": 143.82
-  },
-  {
-   "text": "easier",
-   "start": 143.82,
-   "end": 144.16
-  },
-  {
-   "text": "to",
-   "start": 144.16,
-   "end": 144.4
-  },
-  {
-   "text": "see",
-   "start": 144.4,
-   "end": 144.54
-  },
-  {
-   "text": "what",
-   "start": 144.54,
-   "end": 144.74
-  },
-  {
-   "text": "each",
-   "start": 144.74,
-   "end": 145
-  },
-  {
-   "text": "change",
-   "start": 145,
-   "end": 145.32
-  },
-  {
-   "text": "did.",
-   "start": 145.32,
-   "end": 145.68
-  },
-  {
-   "text": "And",
-   "start": 146.14,
-   "end": 146.16
-  },
-  {
-   "text": "if",
-   "start": 146.16,
-   "end": 146.26
-  },
-  {
-   "text": "something",
-   "start": 146.26,
-   "end": 146.46
-  },
-  {
-   "text": "looks",
-   "start": 146.46,
-   "end": 146.74
-  },
-  {
-   "text": "off,",
-   "start": 146.74,
-   "end": 147.02
-  },
-  {
-   "text": "you",
-   "start": 147.28,
-   "end": 147.36
-  },
-  {
-   "text": "know",
-   "start": 147.36,
-   "end": 147.48
-  },
-  {
-   "text": "exactly",
-   "start": 147.48,
-   "end": 147.88
-  },
-  {
-   "text": "which",
-   "start": 147.88,
-   "end": 148.32
-  },
-  {
-   "text": "message",
-   "start": 148.32,
-   "end": 148.66
-  },
-  {
-   "text": "caused",
-   "start": 148.66,
-   "end": 148.98
-  },
-  {
-   "text": "it.",
-   "start": 148.98,
-   "end": 149.32
-  },
-  {
-   "text": "So",
-   "start": 150.02,
-   "end": 150.18
-  },
-  {
-   "text": "here's",
-   "start": 150.18,
-   "end": 150.68
-  },
-  {
-   "text": "the",
-   "start": 150.68,
-   "end": 150.8
-  },
-  {
-   "text": "original",
-   "start": 150.8,
-   "end": 151.16
+   "end": 115.6
   },
   {
    "text": "next",
-   "start": 151.16,
-   "end": 151.48
+   "start": 115.6,
+   "end": 115.86
   },
   {
    "text": "to",
-   "start": 151.48,
-   "end": 151.72
+   "start": 115.86,
+   "end": 116.08
   },
   {
    "text": "what",
-   "start": 151.72,
-   "end": 151.86
+   "start": 116.08,
+   "end": 116.2
   },
   {
-   "text": "I",
-   "start": 151.86,
-   "end": 151.98
+   "text": "we",
+   "start": 116.2,
+   "end": 116.34
   },
   {
    "text": "ended",
-   "start": 151.98,
-   "end": 152.16
+   "start": 116.34,
+   "end": 116.5
   },
   {
    "text": "up",
-   "start": 152.16,
-   "end": 152.32
+   "start": 116.5,
+   "end": 116.68
   },
   {
    "text": "with.",
-   "start": 152.32,
-   "end": 152.58
+   "start": 116.68,
+   "end": 117.04
   },
   {
-   "text": "The",
-   "start": 152.96,
-   "end": 153.16
+   "text": "It's",
+   "start": 117.3,
+   "end": 117.52
   },
   {
-   "text": "motion",
-   "start": 153.16,
-   "end": 153.4
-  },
-  {
-   "text": "is",
-   "start": 153.4,
-   "end": 153.66
-  },
-  {
-   "text": "basically",
-   "start": 153.66,
-   "end": 153.96
+   "text": "still",
+   "start": 117.52,
+   "end": 117.62
   },
   {
    "text": "the",
-   "start": 153.96,
-   "end": 154.2
+   "start": 117.62,
+   "end": 117.76
   },
   {
-   "text": "same.",
-   "start": 154.2,
-   "end": 154.44
+   "text": "same",
+   "start": 117.76,
+   "end": 117.94
   },
   {
-   "text": "I",
-   "start": 154.82,
-   "end": 154.84
+   "text": "staircase",
+   "start": 117.94,
+   "end": 118.36
   },
   {
-   "text": "just",
-   "start": 154.84,
-   "end": 155.04
+   "text": "but",
+   "start": 118.36,
+   "end": 118.78
   },
   {
-   "text": "changed",
-   "start": 155.04,
-   "end": 155.4
+   "text": "with",
+   "start": 118.78,
+   "end": 118.98
   },
   {
    "text": "the",
-   "start": 155.4,
-   "end": 155.66
+   "start": 118.98,
+   "end": 119.12
   },
   {
-   "text": "colors",
-   "start": 155.66,
-   "end": 155.92
+   "text": "new",
+   "start": 119.12,
+   "end": 119.3
+  },
+  {
+   "text": "colors,",
+   "start": 119.3,
+   "end": 119.72
+  },
+  {
+   "text": "the",
+   "start": 120.1,
+   "end": 120.14
+  },
+  {
+   "text": "drop",
+   "start": 120.14,
+   "end": 120.44
+  },
+  {
+   "text": "-in",
+   "start": 120.44,
+   "end": 120.78
   },
   {
    "text": "and",
-   "start": 155.92,
-   "end": 156.16
+   "start": 120.78,
+   "end": 120.98
   },
   {
    "text": "the",
-   "start": 156.16,
-   "end": 156.26
+   "start": 120.98,
+   "end": 121.1
   },
   {
-   "text": "text.",
-   "start": 156.26,
-   "end": 156.54
+   "text": "tilting",
+   "start": 121.1,
+   "end": 121.38
+  },
+  {
+   "text": "camera",
+   "start": 121.38,
+   "end": 121.78
+  },
+  {
+   "text": "it",
+   "start": 121.78,
+   "end": 122.02
+  },
+  {
+   "text": "feels",
+   "start": 122.02,
+   "end": 122.3
+  },
+  {
+   "text": "like",
+   "start": 122.3,
+   "end": 122.52
+  },
+  {
+   "text": "a",
+   "start": 122.52,
+   "end": 122.64
+  },
+  {
+   "text": "different",
+   "start": 122.64,
+   "end": 122.86
+  },
+  {
+   "text": "piece.",
+   "start": 122.86,
+   "end": 123.16
   },
   {
    "text": "And",
-   "start": 157.5,
-   "end": 157.64
+   "start": 124.12,
+   "end": 124.4
   },
   {
    "text": "that's",
-   "start": 157.64,
-   "end": 157.92
+   "start": 124.4,
+   "end": 124.76
   },
   {
-   "text": "pretty",
-   "start": 157.92,
-   "end": 158.1
-  },
-  {
-   "text": "much",
-   "start": 158.1,
-   "end": 158.3
-  },
-  {
-   "text": "it.",
-   "start": 158.3,
-   "end": 158.5
+   "text": "it!",
+   "start": 124.76,
+   "end": 124.96
   },
   {
    "text": "If",
-   "start": 158.9,
-   "end": 159.06
+   "start": 125.26,
+   "end": 125.4
   },
   {
    "text": "you",
-   "start": 159.06,
-   "end": 159.18
+   "start": 125.4,
+   "end": 125.5
   },
   {
    "text": "want",
-   "start": 159.18,
-   "end": 159.32
+   "start": 125.5,
+   "end": 125.64
   },
   {
    "text": "more",
-   "start": 159.32,
-   "end": 159.48
+   "start": 125.64,
+   "end": 125.76
   },
   {
    "text": "videos",
-   "start": 159.48,
-   "end": 159.74
+   "start": 125.76,
+   "end": 126
   },
   {
    "text": "like",
-   "start": 159.74,
-   "end": 159.96
+   "start": 126,
+   "end": 126.22
   },
   {
    "text": "this,",
-   "start": 159.96,
-   "end": 160.3
+   "start": 126.22,
+   "end": 126.52
   },
   {
    "text": "like",
-   "start": 160.66,
-   "end": 160.76
+   "start": 126.8,
+   "end": 126.9
   },
   {
    "text": "and",
-   "start": 160.76,
-   "end": 160.96
+   "start": 126.9,
+   "end": 127.1
   },
   {
-   "text": "subscribe,",
-   "start": 160.96,
-   "end": 161.38
+   "text": "subscribe",
+   "start": 127.1,
+   "end": 127.56
   },
   {
    "text": "and",
-   "start": 161.42,
-   "end": 161.72
+   "start": 127.56,
+   "end": 127.88
   },
   {
    "text": "let",
-   "start": 161.72,
-   "end": 161.92
+   "start": 127.88,
+   "end": 128.04
   },
   {
    "text": "me",
-   "start": 161.92,
-   "end": 162.02
+   "start": 128.04,
+   "end": 128.14
   },
   {
    "text": "know",
-   "start": 162.02,
-   "end": 162.18
+   "start": 128.14,
+   "end": 128.32
   },
   {
    "text": "which",
-   "start": 162.18,
-   "end": 162.36
+   "start": 128.32,
+   "end": 128.5
   },
   {
    "text": "template",
-   "start": 162.36,
-   "end": 162.68
+   "start": 128.5,
+   "end": 128.92
   },
   {
    "text": "you",
-   "start": 162.68,
-   "end": 162.9
+   "start": 128.92,
+   "end": 129.2
   },
   {
    "text": "want",
-   "start": 162.9,
-   "end": 163.02
+   "start": 129.2,
+   "end": 129.36
   },
   {
    "text": "me",
-   "start": 163.02,
-   "end": 163.12
+   "start": 129.36,
+   "end": 129.48
   },
   {
    "text": "to",
-   "start": 163.12,
-   "end": 163.22
+   "start": 129.48,
+   "end": 129.58
   },
   {
    "text": "try",
-   "start": 163.22,
-   "end": 163.36
+   "start": 129.58,
+   "end": 129.78
   },
   {
    "text": "next.",
-   "start": 163.36,
-   "end": 163.54
+   "start": 129.78,
+   "end": 130.02
   }
  ]
 }

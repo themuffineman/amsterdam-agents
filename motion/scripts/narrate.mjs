@@ -67,6 +67,13 @@ run(python, ["scripts/transcribe-words.py", out, transcriptFile, process.env.WHI
 const t = JSON.parse(fs.readFileSync(transcriptFile, "utf8"));
 const w = t.words;
 while (w.length && /^you\.?$/i.test(w[w.length - 1].text) && w[w.length - 1].end - w[w.length - 1].start < 0.25) w.pop();
+// "Claude Code" heard as one word ("Clotcode", "Cloudcode"): split it back into two, sharing the time.
+for (let i = w.length - 1; i >= 0; i--) {
+  const m = /^(clot|cloud|claud|claude|clod)code([.,!?;:]*)$/i.exec(w[i].text);
+  if (!m) continue;
+  const mid = +((w[i].start + w[i].end) / 2).toFixed(3);
+  w.splice(i, 1, { text: "Claude", start: w[i].start, end: mid }, { text: `Code${m[2]}`, start: mid, end: w[i].end });
+}
 w.forEach((x, i) => {
   const core = x.text.replace(/[.,!?;:]+$/, "");
   if (/^(cloud|clod|claud)$/i.test(core)) x.text = x.text.replace(core, "Claude");

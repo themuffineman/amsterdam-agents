@@ -2,101 +2,96 @@
   "film": "recreate-rigel",
   "voice": "Achird",
   "model": "google/gemini-3.8-flash-lite-tts",
-  "createdAt": "2026-10-23T15:25:50.702Z",
+  "createdAt": "2026-10-24T11:11:36.324Z",
   "segments": {
-    "hook1": {
-      "file": "films/recreate-rigel/audio/hook1.wav",
-      "durationSec": 6.5,
+    "intro1": {
+      "file": "films/recreate-rigel/audio/intro1.wav",
+      "durationSec": 6.48,
       "marks": {}
     },
-    "hook2": {
-      "file": "films/recreate-rigel/audio/hook2.wav",
-      "durationSec": 12.74,
+    "intro2": {
+      "file": "films/recreate-rigel/audio/intro2.wav",
+      "durationSec": 9.48,
       "marks": {}
     },
-    "hook3": {
-      "file": "films/recreate-rigel/audio/hook3.wav",
-      "durationSec": 11.84,
+    "intro3": {
+      "file": "films/recreate-rigel/audio/intro3.wav",
+      "durationSec": 9.77,
       "marks": {}
     },
-    "hook4": {
-      "file": "films/recreate-rigel/audio/hook4.wav",
-      "durationSec": 10.37,
+    "intro4": {
+      "file": "films/recreate-rigel/audio/intro4.wav",
+      "durationSec": 13.13,
       "marks": {}
     },
-    "segue1": {
-      "file": "films/recreate-rigel/audio/segue1.wav",
-      "durationSec": 10.11,
+    "promise": {
+      "file": "films/recreate-rigel/audio/promise.wav",
+      "durationSec": 3.44,
       "marks": {}
     },
-    "tools1": {
-      "file": "films/recreate-rigel/audio/tools1.wav",
-      "durationSec": 12.21,
-      "marks": {}
-    },
-    "tools2": {
-      "file": "films/recreate-rigel/audio/tools2.wav",
-      "durationSec": 4.64,
+    "render": {
+      "file": "films/recreate-rigel/audio/render.wav",
+      "durationSec": 7.42,
       "marks": {}
     },
     "step1a": {
       "file": "films/recreate-rigel/audio/step1a.wav",
-      "durationSec": 6.69,
+      "durationSec": 5.77,
       "marks": {}
     },
     "step1b": {
       "file": "films/recreate-rigel/audio/step1b.wav",
-      "durationSec": 7.83,
+      "durationSec": 5.94,
       "marks": {}
     },
     "step1c": {
       "file": "films/recreate-rigel/audio/step1c.wav",
-      "durationSec": 21.2,
+      "durationSec": 7.64,
       "marks": {}
     },
     "step2a": {
       "file": "films/recreate-rigel/audio/step2a.wav",
-      "durationSec": 5.07,
+      "durationSec": 4.15,
       "marks": {}
     },
     "step2b": {
       "file": "films/recreate-rigel/audio/step2b.wav",
-      "durationSec": 9.01,
+      "durationSec": 4.53,
       "marks": {}
     },
     "step3a": {
       "file": "films/recreate-rigel/audio/step3a.wav",
-      "durationSec": 5.36,
+      "durationSec": 3.54,
       "marks": {}
     },
-    "step3b": {
-      "file": "films/recreate-rigel/audio/step3b.wav",
-      "durationSec": 2.45,
+    "ask1": {
+      "file": "films/recreate-rigel/audio/ask1.wav",
+      "durationSec": 4.09,
       "marks": {}
     },
-    "step3c": {
-      "file": "films/recreate-rigel/audio/step3c.wav",
-      "durationSec": 1.9,
+    "ask2": {
+      "file": "films/recreate-rigel/audio/ask2.wav",
+      "durationSec": 5.39,
       "marks": {}
     },
-    "step3d": {
-      "file": "films/recreate-rigel/audio/step3d.wav",
-      "durationSec": 2.73,
+    "ask3": {
+      "file": "films/recreate-rigel/audio/ask3.wav",
+      "durationSec": 5.29,
       "marks": {}
     },
-    "step3e": {
-      "file": "films/recreate-rigel/audio/step3e.wav",
-      "durationSec": 6.99,
+    "why": {
+      "file": "films/recreate-rigel/audio/why.wav",
+      "durationSec": 6.98,
       "marks": {}
     },
-    "result1": {
-      "file": "films/recreate-rigel/audio/result1.wav",
-      "durationSec": 6.74,
+    "result": {
+      "file": "films/recreate-rigel/audio/result.wav",
+      "durationSec": 8.68,
       "marks": {}
     },
-    "outro1": {
-      "file": "films/recreate-rigel/audio/outro1.wav",
-      "durationSec": 6.35,
+    "outro": {
+      "file": "films/recreate-rigel/audio/outro.wav",
+      "durationSec": 6.22,
       "marks": {}
     }
   }
