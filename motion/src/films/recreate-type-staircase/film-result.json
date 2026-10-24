@@ -1,0 +1,45 @@
+{
+  "compositionId": "RecreateRigel2",
+  "slug": "recreate-type-staircase",
+  "title": "How I recreated Type Staircase with Claude Code",
+  "description": "Type Staircase is a kinetic type template from Sycamore Motion: one sentence built a word at a time, each line stepping down and to the right, big words for the point and tiny ones in between, every word sliding in out of a blur while the camera follows the newest one. This video breaks down what makes it work, then shows how to make the same animation for any sentence: copy the template's prompt from sycamore.to/motion, paste it into Claude Code, run it as is, then remix it one message at a time (dark background, orange words, your own sentence).\n\nTurn your footage into viral clips with Sycamore: https://sycamore.to",
+  "claims": [
+    {
+      "claim": "The template's sentence is 'Most people think you need talent to make content that actually works. But all you really need is a simple system.'",
+      "source": "public/recreate/templates/type-staircase.mp4, watched frame by frame"
+    },
+    {
+      "claim": "Each new chunk drops a line and moves right; big words (content, system) are much larger than the connecting words; words slide in out of a blur; the camera follows the newest word",
+      "source": "public/recreate/templates/type-staircase.mp4, watched frame by frame"
+    },
+    {
+      "claim": "The template has a Copy prompt button on sycamore.to/motion that gives the full prompt",
+      "source": "the brief; the site page in the video is a drawn dummy (ui.tsx TemplatePage), not a recording"
+    },
+    {
+      "claim": "The prompt spells out the sizes, the slide distance and starting blur, the down-and-right steps and the camera follow (shown as a document with sections and '1,940 words')",
+      "source": "PLACEHOLDER: the real prompt hasn't been read; document text and word count are dummies"
+    },
+    {
+      "claim": "'Mine took around ten minutes, and the first version looked really close to the original'",
+      "source": "PLACEHOLDER: no real Claude Code run happened"
+    },
+    {
+      "claim": "Remix outputs: dark background, orange big words, my own sentence ('Good captions keep people watching')",
+      "source": "PLACEHOLDER: all outputs are the original preview with a CSS filter, not real Claude output"
+    },
+    {
+      "claim": "Claude Code needs a renderer: Remotion, HyperFrames, or a web page screenshotted frame by frame",
+      "source": "series format (SERIES.md); general knowledge"
+    }
+  ],
+  "gates": {
+    "G0": true,
+    "G2": true,
+    "G3": true,
+    "movingShare": 0.412
+  },
+  "weak": "Placeholders (need a real run before posting): the prompt document text and its 1,940 word count; 'around ten minutes' and 'looked really close to the original'; every Claude output preview (first run, dark, orange, my sentence, and the Output card in the side-by-side) is the template preview with a CSS invert/sepia filter, so the 'my sentence' version still shows the template's sentence; the sycamore.to/motion page and the Claude Code window are drawn dummies, not screen recordings; the Copy prompt cursor position is reused from RecreateRigel (same page component and size), not re-measured. Other weak spots: the Claude Code window sits on a mostly empty 'Working' state for a few seconds after the first send; in the segue the kicker line sits alone near the top for about 1.5 s before the big line arrives; the stair layout's line widths are estimated from character counts, so spacing between steps is a little uneven; the template-name lower third is the same treatment as the first video. Whisper heard a stray 'message.' in the pause after 'orange' (unused, harmless). Gates are from the 0.5-scale review render; G1/G4/G5 judged by eye on the contact sheet only.",
+  "changed": "The composition id is RecreateRigel2 (RecreateRigel is the worked example for the same template). New bank component StairSentence (bank.tsx): the template's own sentence built as stairs in the series' type, with a camera follow, a pull-back, a blue stepped guide and dimming of the small lines. Fixed scripts/transcribe-words.py: npm run narrate crashed on this runner because the installed PyAV no longer accepts faster-whisper's 'metadata_errors' argument, so the script now decodes audio with ffmpeg to a 16 kHz array and passes that to faster-whisper (same model and output).",
+  "summary": "A 2:39 voiceover video that reads Type Staircase's sentence and rebuilds it as stairs to show its layout, size contrast, blur entrance and camera follow, then walks through copying its prompt from sycamore.to/motion, running it in Claude Code, and remixing it one message at a time."
+}

@@ -12,6 +12,9 @@
  *   ReceiptTicket    a receipt: rows on cue, a gliding highlight, struck rows, a counted total
  *   PromptDoc        the prompt as a real document: sections light up as spoken, big label beside, count at the end
  *   MediaSentence    a sentence with media chips rising into reserved slots as it's spoken (Butter)
+ *   StairSentence    a sentence built as stairs (big sans lines, small serif lines), camera follows
+ *                    the newest line, can pull back to the whole flight, draw a stepped guide, dim
+ *                    the small lines
  *
  * Media is always a real Sycamore template (TemplateClip), never drawn art. Ground: sky.
  */
@@ -19,7 +22,7 @@ import React from "react";
 import { Img, Loop, OffthreadVideo, interpolate, staticFile, useCurrentFrame } from "remotion";
 import { enter, tween } from "../../lib/eases";
 import { Arrow, Diamond, TicketShell } from "./kit";
-import { Float3D, InlineChip, Words, floatUp, rackStyle, ramp, type WordSpec } from "./moves";
+import { Float3D, InlineChip, Words, floatUp, glide, rackStyle, ramp, type WordSpec } from "./moves";
 import { TEMPLATES, type TemplateId } from "./templates";
 import { C, F } from "./tokens";
 
@@ -473,5 +476,95 @@ export const PromptDoc: React.FC<{
         )}
       </div>
     </>
+  );
+};
+
+// ---------------------------------------------------------------- StairSentence
+
+export type StairLine = { n: number; big?: boolean };
+
+/**
+ * A sentence laid out as a staircase (the Type Staircase idea, in this series' type): each line
+ * starts lower and further right than the one before; big lines in the sans, the small connecting
+ * lines in the serif. Words arrive on their spoken frames. The camera glides to keep the newest
+ * line in view (`view` 0) or pulls back to frame the whole flight (`view` 1). `stair` draws a blue
+ * stepped guide down the line starts; `dimSmall` sends the small lines soft so only the big ones read.
+ * Line widths are estimated from character counts (no DOM measuring), which is enough to place the
+ * steps and aim the camera.
+ */
+export const StairSentence: React.FC<{
+  words: WordSpec[];
+  lines: StairLine[];
+  big?: number;
+  small?: number;
+  view?: number;
+  stair?: number;
+  dimSmall?: number;
+  anchor?: [number, number];
+}> = ({ words, lines, big = 132, small = 62, view = 0, stair = 0, dimSmall = 0, anchor = [1060, 560] }) => {
+  const frame = useCurrentFrame();
+  let k = 0;
+  let x = 0;
+  let y = 0;
+  const rows = lines.map((l) => {
+    const ws = words.slice(k, k + l.n);
+    k += l.n;
+    const size = l.big ? big : small;
+    const w = ws.map((s) => s.text).join(" ").length * size * (l.big ? 0.5 : 0.44);
+    const h = size * (l.big ? 1.04 : 1.3);
+    const row = { x, y, w, h, size, ws, big: !!l.big, at: ws[0]?.at ?? 0 };
+    x += w * 0.55;
+    y += h;
+    return row;
+  });
+  const W = Math.max(...rows.map((r) => r.x + r.w));
+  const H = y;
+  // follow: glide from line to line as each one starts
+  const fx = glide(frame, rows.map((r, i) => ({ at: i === 0 ? 0 : r.at - 2, v: anchor[0] - (r.x + r.w * 0.5), dur: 26 })));
+  const fy = glide(frame, rows.map((r, i) => ({ at: i === 0 ? 0 : r.at - 2, v: anchor[1] - (r.y + r.h * 0.5), dur: 26 })));
+  // whole: the flight framed in the middle
+  const sw = Math.min(1640 / W, 840 / H);
+  const s = 1 + (sw - 1) * view;
+  const tx = fx + (960 - (sw * W) / 2 - fx) * view;
+  const ty = fy + (540 - (sw * H) / 2 - fy) * view;
+  const g = small * 0.5;
+  const path = rows.map((r, i) => (i === 0 ? `M ${r.x - g} ${r.y + r.h * 0.2}` : `V ${r.y + r.h * 0.2} H ${r.x - g}`)).join(" ") + ` V ${H}`;
+  return (
+    <div style={{ position: "absolute", left: 0, top: 0, transformOrigin: "0 0", transform: `translate(${tx}px, ${ty}px) scale(${s})`, color: C.white }}>
+      {stair > 0.001 && (
+        <svg width={W} height={H} style={{ position: "absolute", left: 0, top: 0, overflow: "visible" }}>
+          <path d={path} pathLength={1} fill="none" stroke={C.blue} strokeWidth={7 / s} strokeLinecap="round" strokeLinejoin="round" strokeDasharray="1 1" strokeDashoffset={1 - stair} />
+        </svg>
+      )}
+      {rows.map((r, i) => (
+        <div
+          key={i}
+          style={{
+            position: "absolute",
+            left: r.x,
+            top: r.y,
+            height: r.h,
+            display: "flex",
+            alignItems: "flex-end",
+            whiteSpace: "nowrap",
+            columnGap: r.size * 0.24,
+            ...(r.big ? F.caps : F.serif),
+            lineHeight: 1,
+            fontSize: r.size,
+            opacity: r.big ? 1 : 1 - 0.72 * dimSmall,
+            filter: !r.big && dimSmall > 0.02 ? `blur(${dimSmall * 3}px)` : undefined,
+          }}
+        >
+          {r.ws.map((w, j) => {
+            const e = enter(frame, w.at, { from: { y: r.size * 0.45, blur: 12 }, frames: 13 });
+            return (
+              <span key={j} style={{ display: "inline-block", transform: `translateY(${e.y}px)`, filter: e.blur > 0.3 ? `blur(${e.blur}px)` : undefined, opacity: e.visible ? e.opacity : 0 }}>
+                {w.text}
+              </span>
+            );
+          })}
+        </div>
+      ))}
+    </div>
   );
 };

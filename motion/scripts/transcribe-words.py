@@ -8,15 +8,22 @@ once to ~/.cache/huggingface). Ported from codemotion's scripts/transcribe.py.
 """
 
 import json
+import subprocess
 import sys
 
+import numpy as np
 from faster_whisper import WhisperModel
 
 audio, out = sys.argv[1], sys.argv[2]
 model_name = sys.argv[3] if len(sys.argv) > 3 else "small.en"
 
+# Decode with ffmpeg (16 kHz mono float) instead of faster-whisper's PyAV path: a newer `av`
+# release dropped the `metadata_errors` argument faster-whisper passes, which broke the cloud runner.
+pcm = subprocess.run(["ffmpeg", "-v", "error", "-i", audio, "-f", "s16le", "-ac", "1", "-ar", "16000", "-"], check=True, capture_output=True).stdout
+samples = np.frombuffer(pcm, np.int16).astype(np.float32) / 32768.0
+
 model = WhisperModel(model_name, device="cpu", compute_type="int8")
-segments, info = model.transcribe(audio, word_timestamps=True, beam_size=5, condition_on_previous_text=False)
+segments, info = model.transcribe(samples, word_timestamps=True, beam_size=5, condition_on_previous_text=False)
 
 words = []
 for seg in segments:

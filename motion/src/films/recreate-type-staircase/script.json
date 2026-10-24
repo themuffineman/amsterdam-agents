@@ -1,0 +1,105 @@
+{
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "segments": [
+    {
+      "id": "hook1",
+      "text": "I found this one on Sycamore Motion a few days ago. It's called Type Staircase, and I keep going back to it.",
+      "pause": 0.35
+    },
+    {
+      "id": "hook2",
+      "text": "The whole thing is one sentence. Most people think you need talent to make content that actually works. But all you really need is a simple system.",
+      "pause": 0.35
+    },
+    {
+      "id": "hook3",
+      "text": "And look at how it's laid out. Every new bit drops down a line and moves over to the right, so the sentence walks down the screen like a set of stairs.",
+      "pause": 0.35
+    },
+    {
+      "id": "hook4",
+      "text": "The part I like most is the size difference. Words like content and system are huge, and the words that just hold them together are tiny. So if you only catch the big ones, you still get the message.",
+      "pause": 0.35
+    },
+    {
+      "id": "hook5",
+      "text": "Nothing just pops in, either. Every word slides into place out of a blur, and the camera drifts along with the newest word, so the start of the sentence slowly leaves the frame.",
+      "pause": 0.7
+    },
+    {
+      "id": "segue1",
+      "text": "I didn't animate any of this by hand. It came from one prompt. So in this video, I'll show you how to make this exact style for any sentence you want, with Claude Code and Sycamore.",
+      "pause": 0.7
+    },
+    {
+      "id": "tools1",
+      "text": "One thing first. Claude Code writes the code, but something has to turn that code into a video. Remotion works, HyperFrames works, and you can even have it build a web page and screenshot it frame by frame.",
+      "pause": 0.35
+    },
+    {
+      "id": "tools2",
+      "text": "I use Remotion, because it's already set up on my machine.",
+      "pause": 0.7
+    },
+    {
+      "id": "step1a",
+      "text": "Step one. Head to sycamore dot to slash motion and open Type Staircase.",
+      "pause": 0.35
+    },
+    {
+      "id": "step1b",
+      "text": "Right below the preview there's a button that says copy prompt. Click it, and the full prompt behind this animation is on your clipboard.",
+      "pause": 0.7
+    },
+    {
+      "id": "step1c",
+      "text": "It's worth reading once. It spells out how big the big words are and how small the small ones stay, how far each word slides and how blurry it starts, how every line steps down and to the right, and how the camera keeps the newest word in view. That's the stuff you'd normally spend a whole afternoon tweaking.",
+      "pause": 0.7
+    },
+    {
+      "id": "step2a",
+      "text": "Step two. Open Claude Code, paste the whole prompt in, and send it without changing anything.",
+      "pause": 0.35
+    },
+    {
+      "id": "step2b",
+      "text": "Running it untouched first tells you your setup works. Mine took around ten minutes, and the first version looked really close to the original.",
+      "pause": 0.7
+    },
+    {
+      "id": "step3a",
+      "text": "Then you start remixing, and I'd keep it to one change per message.",
+      "pause": 0.5
+    },
+    {
+      "id": "step3b",
+      "text": "First I asked for a dark background.",
+      "pause": 1.6
+    },
+    {
+      "id": "step3c",
+      "text": "Next, I had it turn the big words orange.",
+      "pause": 1.6
+    },
+    {
+      "id": "step3d",
+      "text": "And last, I swapped in my own sentence.",
+      "pause": 1.6
+    },
+    {
+      "id": "step3e",
+      "text": "When you change one thing at a time, you can see exactly what each message did, and if something breaks, you know which one to undo.",
+      "pause": 0.7
+    },
+    {
+      "id": "result1",
+      "text": "Here's the original on the left and mine on the right. Same stairs, same motion, just my colors and my words.",
+      "pause": 0.7
+    },
+    {
+      "id": "outro1",
+      "text": "That's it for this one. If it helped, like and subscribe, and tell me which template I should rebuild next."
+    }
+  ]
+}
