@@ -20,7 +20,8 @@
     "cloud": "node scripts/cloud.mjs",
     "watch": "node --env-file=.env scripts/watch.mjs",
     "narrate": "node scripts/narrate.mjs",
-    "fonts": "node scripts/local-fonts.mjs"
+    "fonts": "node scripts/local-fonts.mjs",
+    "page": "node scripts/page-capture.mjs"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.520",
