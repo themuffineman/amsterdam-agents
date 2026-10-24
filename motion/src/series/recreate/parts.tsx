@@ -126,7 +126,8 @@ export const ChoiceCards: React.FC<{ items: Choice[]; focus?: { index: number; a
 
 // ---------------------------------------------------------------- VersionRow
 
-export type Version = { label: string; at: number; filter?: string };
+/** One result card: a live node (the real output), or the template with an optional filter. */
+export type Version = { label: string; at: number; filter?: string; node?: React.ReactNode };
 
 export const VersionRow: React.FC<{ id: TemplateId; trim?: number; versions: Version[]; walk?: number[]; width?: number }> = ({ id, trim, versions, walk = [], width = 520 }) => {
   const frame = useCurrentFrame();
@@ -149,7 +150,7 @@ export const VersionRow: React.FC<{ id: TemplateId; trim?: number; versions: Ver
               <TicketShell width={width} focus={active < 0 ? 0 : near}>
                 <div style={{ margin: -width * 0.035, width: width * 0.93, height: width * 0.93 * 0.5625, borderRadius: width * 0.03, overflow: "hidden", position: "relative" }}>
                   <div style={{ position: "absolute", inset: 0, filter: v.filter }}>
-                    <TemplateClip id={id} trim={trim} />
+                    {v.node ?? <TemplateClip id={id} trim={trim} />}
                   </div>
                 </div>
               </TicketShell>

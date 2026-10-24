@@ -15,6 +15,8 @@ import { BANK_DEMO, RecreateBank } from "./series/recreate/bank/Demo";
 import { FONT_TEST, RecreateFontTest } from "./series/recreate/bank/FontTest";
 import { RECREATE_RIGEL, RecreateRigel } from "./compositions/RecreateRigel";
 import { MACBOOK_LAB, MacBookLab } from "./series/recreate/MacBookLab";
+import { Rigel as RigelRun1, calculateRigelMetadata as run1Meta, rigelDefaultProps as run1Props } from "./films/recreate-rigel/builds/Run1";
+import { RUNS } from "./films/recreate-rigel/builds/runs";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -61,6 +63,8 @@ export const RemotionRoot: React.FC = () => {
         durationInFrames={BANK_DEMO.durationInFrames}
         {...LANDSCAPE}
       />
+      <Composition id="RigelRun1" component={RigelRun1} defaultProps={run1Props} calculateMetadata={run1Meta} durationInFrames={300} {...LANDSCAPE} />
+      <Composition id="RigelRun4" component={RigelRun1} defaultProps={RUNS[3].props} calculateMetadata={run1Meta} durationInFrames={300} {...LANDSCAPE} />
       <Composition
         id="MacBookLab"
         component={MacBookLab}

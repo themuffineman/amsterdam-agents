@@ -372,9 +372,10 @@ export type ClaudeTurn = {
   replyAt: number;
   reply: string;
   /** Minutes the working timer shows by the time the reply lands (a time skip). */
+  /** Optional: a working timer that runs to this many minutes. Omit to show just "Working…". */
   minutes?: number;
-  /** The reply's preview: the template, with an optional CSS filter standing in for the change. */
-  preview?: { id: TemplateId; trim?: number; filter?: string };
+  /** The reply's preview: a live node (the real output), or the template with an optional CSS filter. */
+  preview?: { node?: React.ReactNode; id?: TemplateId; trim?: number; filter?: string };
 };
 
 const BUBBLE_H = 92;
@@ -433,10 +434,12 @@ export const ClaudeThread: React.FC<{ width: number; height: number; model?: str
                   <div style={{ flex: 1 }}>
                     {working && (
                       <div style={{ display: "flex", gap: 14, alignItems: "center", height: 36 }}>
-                        <span style={{ fontSize: 23 }}>Working</span>
-                        <span style={{ ...F.mono, fontSize: 20, color: CL.muted, textTransform: "none", letterSpacing: 0 }}>
-                          {Math.floor(elapsed / 60)}m {String(Math.floor(elapsed % 60)).padStart(2, "0")}s
-                        </span>
+                        <span style={{ fontSize: 23 }}>Working…</span>
+                        {t.minutes !== undefined && (
+                          <span style={{ ...F.mono, fontSize: 20, color: CL.muted, textTransform: "none", letterSpacing: 0 }}>
+                            {Math.floor(elapsed / 60)}m {String(Math.floor(elapsed % 60)).padStart(2, "0")}s
+                          </span>
+                        )}
                       </div>
                     )}
                     {frame >= t.replyAt && (
@@ -444,9 +447,11 @@ export const ClaudeThread: React.FC<{ width: number; height: number; model?: str
                         <div style={{ fontSize: 24, lineHeight: 1.4, color: CL.text, minHeight: REPLY_TEXT_H - 16 }}>{t.reply}</div>
                         {t.preview && (
                           <div style={{ marginTop: 16, width: PREVIEW_W, height: PREVIEW_H, borderRadius: 14, overflow: "hidden", position: "relative", border: `1.5px solid ${CL.cardLine}` }}>
-                            <div style={{ position: "absolute", inset: 0, filter: t.preview.filter }}>
-                              <TemplateClip id={t.preview.id} trim={t.preview.trim} />
-                            </div>
+                            {t.preview.node ?? (
+                              <div style={{ position: "absolute", inset: 0, filter: t.preview.filter }}>
+                                {t.preview.id && <TemplateClip id={t.preview.id} trim={t.preview.trim} />}
+                              </div>
+                            )}
                           </div>
                         )}
                       </div>
