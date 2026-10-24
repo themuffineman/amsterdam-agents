@@ -59,7 +59,17 @@ actually built from that prompt. No mockups, no CSS-filter stand-ins.
      two or three things in the prompt that make this template work. Don't dwell on the prompt;
    - step two: paste into Claude Code, send it as is; "give it a while" (never say how long it
      took); then the three changes, one message at a time, in the same conversation;
-   - why one at a time; the original next to the result; outro: like and subscribe (no plug).
+   - why one at a time; the original next to the result;
+   - outro: no Sycamore plug, and NOT the stock "like and subscribe" (viewers filter it out as
+     noise). Break the pattern with something plain and honest, e.g. "the only reason we get to
+     keep making videos like this is because people leave a like, and if you're feeling really
+     generous, hit subscribe too". Show `YouTubeActions` (parts.tsx) with the cursor clicking Like
+     and Subscribe on those words.
+   Write the site as "sycamore dot TO" in the script (plain "dot to" is read as "dot 2").
+   Leave ~2 s of pause after naming Claude Code and Sycamore so both logos sit still for a beat
+   before the cut (the outgoing transition eats about a second of any pause).
+   In the renderer line, name Remotion and the alternatives (HyperFrames, a web page with
+   screenshots) and show all three; Remotion takes focus after they're named.
    Talk like you're telling a friend. No fragment lists, punchline triplets or presenter tone.
 5. **Voice:** `npm run voice -- <slug>`, then `npm run narrate -- <slug>` (joined voice.wav +
    word timings in `transcript.json`). Read the transcript it prints and cue on the words it

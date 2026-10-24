@@ -2,23 +2,94 @@
   "voice": "Achird",
   "model": "google/gemini-3.8-flash-lite-tts",
   "segments": [
-    { "id": "intro1", "text": "In this video we're going to recreate this motion graphic. It's called Type Staircase, and it's one of the templates on Sycamore Motion.", "pause": 0.35 },
-    { "id": "intro2", "text": "It builds one sentence a word at a time. Every new row starts most of the way along the row above it, so the text walks down the screen like a staircase.", "pause": 0.35 },
-    { "id": "intro3", "text": "The rows switch between big and small, so the words that carry the point, like content and system, stand out, and the little words in between stay out of the way.", "pause": 0.35 },
-    { "id": "intro4", "text": "Each word springs up into place with a little overshoot, and the camera stays zoomed in and keeps chasing the newest word, so the older ones slide off to the left. It's a simple idea, but the motion makes it feel alive.", "pause": 0.7 },
-    { "id": "promise", "text": "We're going to make it with one prompt, and all we need is Claude Code and Sycamore.", "pause": 0.7 },
-    { "id": "render", "text": "Claude Code needs something to render the video with. In this video we're using Remotion for that, but you can use other tools too if you prefer.", "pause": 0.7 },
-    { "id": "step1a", "text": "Step one. Go to sycamore dot to slash motion and open Type Staircase.", "pause": 0.35 },
-    { "id": "step1b", "text": "On the right there's a copy prompt button. Click it, and you've got the prompt that made this exact animation.", "pause": 0.35 },
-    { "id": "step1c", "text": "The important parts are all in there, like how far each row steps over, the spring on every word, and how the camera follows along.", "pause": 0.7 },
-    { "id": "step2a", "text": "Step two. Open Claude Code, paste the prompt in, and send it as it is.", "pause": 0.35 },
-    { "id": "step2b", "text": "Give it a while. When it's done, you get back the same staircase you saw on the site.", "pause": 0.7 },
-    { "id": "step3a", "text": "Now let's make it our own. I'd do this one change at a time.", "pause": 0.5 },
-    { "id": "ask1", "text": "First, I asked for a dark background with the big words in orange.", "pause": 1.6 },
-    { "id": "ask2", "text": "Then I asked it to drop each word in from above with a bouncy spring, instead of rising out of a blur.", "pause": 1.6 },
-    { "id": "ask3", "text": "And last, I asked the camera to tilt a little into each new row, and gave it my own sentence.", "pause": 1.6 },
-    { "id": "why", "text": "Doing it one step at a time makes it easy to see what each change did, and if something breaks, you know which message caused it.", "pause": 0.7 },
-    { "id": "result", "text": "So here's the original next to what we ended up with. It's still the same staircase, but with the new colors, the drop-in and the tilting camera, it feels like a different piece.", "pause": 0.7 },
-    { "id": "outro", "text": "And that's it. If you want more videos like this, like and subscribe, and let me know which template you want me to try next." }
+    {
+      "id": "intro1",
+      "text": "In this video we're going to recreate this motion graphic. It's called Type Staircase, and it's one of the templates on Sycamore Motion.",
+      "pause": 0.35
+    },
+    {
+      "id": "intro2",
+      "text": "It builds one sentence a word at a time. Every new row starts most of the way along the row above it, so the text walks down the screen like a staircase.",
+      "pause": 0.35
+    },
+    {
+      "id": "intro3",
+      "text": "The rows switch between big and small, so the words that carry the point, like content and system, stand out, and the little words in between stay out of the way.",
+      "pause": 0.35
+    },
+    {
+      "id": "intro4",
+      "text": "Each word springs up into place with a little overshoot, and the camera stays zoomed in and keeps chasing the newest word, so the older ones slide off to the left. It's a simple idea, but the motion makes it feel alive.",
+      "pause": 0.7
+    },
+    {
+      "id": "promise",
+      "text": "We're going to make it with one prompt, and all we need is Claude Code and Sycamore.",
+      "pause": 2.1
+    },
+    {
+      "id": "render",
+      "text": "Claude Code needs something to render the video with. In this video we're using Remotion, but you could also use HyperFrames, or just have Claude build it as a web page and take screenshots of it.",
+      "pause": 0.7
+    },
+    {
+      "id": "step1a",
+      "text": "Step one. Go to sycamore dot TO slash motion and open Type Staircase.",
+      "pause": 0.35
+    },
+    {
+      "id": "step1b",
+      "text": "On the right there's a copy prompt button. Click it, and you've got the prompt that made this exact animation.",
+      "pause": 0.35
+    },
+    {
+      "id": "step1c",
+      "text": "The important parts are all in there, like how far each row steps over, the spring on every word, and how the camera follows along. And it's only about four hundred words.",
+      "pause": 0.7
+    },
+    {
+      "id": "step2a",
+      "text": "Step two. Open Claude Code, paste the prompt in, and send it as it is.",
+      "pause": 0.35
+    },
+    {
+      "id": "step2b",
+      "text": "Give it a while. When it's done, you get back the same staircase you saw on the site.",
+      "pause": 0.7
+    },
+    {
+      "id": "step3a",
+      "text": "Now let's make it our own. I'd do this one change at a time.",
+      "pause": 0.5
+    },
+    {
+      "id": "ask1",
+      "text": "First, I asked for a dark background with the big words in orange.",
+      "pause": 1.6
+    },
+    {
+      "id": "ask2",
+      "text": "Then I asked it to drop each word in from above with a bouncy spring, instead of rising out of a blur.",
+      "pause": 1.6
+    },
+    {
+      "id": "ask3",
+      "text": "And last, I asked the camera to tilt a little into each new row, and gave it my own sentence.",
+      "pause": 1.6
+    },
+    {
+      "id": "why",
+      "text": "Doing it one step at a time makes it easy to see what each change did, and if something breaks, you know which message caused it.",
+      "pause": 0.7
+    },
+    {
+      "id": "result",
+      "text": "So here's the original next to what we ended up with. It's still the same staircase, but with the new colors, the drop-in and the tilting camera, it feels like a different piece.",
+      "pause": 0.7
+    },
+    {
+      "id": "outro",
+      "text": "And that's it. Honestly, the only reason we get to keep making videos like this is because people leave a like. And if you're feeling really generous, hit subscribe too. Let me know which template you want me to try next."
+    }
   ]
 }

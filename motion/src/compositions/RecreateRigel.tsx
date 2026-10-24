@@ -15,14 +15,14 @@
  *                         -> laptop left, big and small / content / system beside it; "springs"
  *                         -> laptop back. Zooms into it.
  *  2 "we're gonna make"   with one prompt; [Claude] Claude Code and [Sycamore] Sycamore.
- *  3 "claude code needs"  the Remotion card; other renderers work too.
+ *  3 "claude code needs"  Remotion, HyperFrames, a web page + screenshots; Remotion takes focus.
  *  4 "step one"           STEP 01 -> the real page in Safari; cursor clicks Copy prompt.
  *  5 "the important"      the real prompt as a document; three key parts light up.
  *  6 "step two"           STEP 02 -> one Claude Code conversation: prompt file -> run 1, then
  *                         the three asks, each reply with its real render.
  *  7 "doing it one"       the three changes in a row; a highlight walks across them.
  *  8 "so here's"          Reference next to Output.
- *  9 "and that's it"      like and subscribe (no plug).
+ *  9 "and that's it"      a plain, pattern-breaking ask; the YouTube Like / Subscribe bar gets clicked on the words.
  */
 import React from "react";
 import { AbsoluteFill, Audio, Img, Loop, staticFile, useCurrentFrame } from "remotion";
@@ -32,7 +32,7 @@ import { SafariWindow } from "../series/recreate/devices";
 import { TicketShell } from "../series/recreate/kit";
 import { MacBook } from "../series/recreate/macbook";
 import { Float3D, InlineChip, Words, floatUp, glide, rackStyle, ramp } from "../series/recreate/moves";
-import { ChoiceCards, LowerThird, StepTitle, VersionRow } from "../series/recreate/parts";
+import { ChoiceCards, FramesIcon, LowerThird, StepTitle, VersionRow, YT, YouTubeActions } from "../series/recreate/parts";
 import { Scene, TranscriptProvider, Track, lengthOf, useCue, useWords } from "../series/recreate/timing";
 import { C, F } from "../series/recreate/tokens";
 import { ClaudeThread, Cursor, threadSendButton } from "../series/recreate/ui";
@@ -133,7 +133,7 @@ const Intro: React.FC = () => {
 
 const Tools: React.FC = () => {
   const cue = useCue();
-  const kicker = useWords("we're", "it");
+  const kicker = useWords("make", "it");
   const prompt = useWords("with", "prompt");
   const claude = useWords("claude", "code");
   const and = useWords("and", "and", 2);
@@ -161,17 +161,21 @@ const Tools: React.FC = () => {
 
 const Renderer: React.FC = () => {
   const cue = useCue();
-  const line = useWords("in this", "that");
-  const others = useWords("but you", "prefer");
+  const line = useWords("claude code needs", "with");
   return (
     <>
       <div style={{ position: "absolute", top: 130, width: "100%", textAlign: "center", color: C.white }}>
         <Words size={64} base={F.serif} words={line} />
       </div>
-      <ChoiceCards top={290} width={480} items={[{ at: cue("remotion") - 4, name: "Remotion", line: "Claude Code writes the video as React; Remotion renders it.", logo: "recreate/remotion.svg" }]} />
-      <div style={{ position: "absolute", bottom: 120, width: "100%", textAlign: "center", color: C.white }}>
-        <Words size={44} base={F.serif} words={others} />
-      </div>
+      <ChoiceCards
+        top={290}
+        focus={{ index: 0, at: cue("screenshots", { edge: "end" }) + 4 }}
+        items={[
+          { at: cue("remotion") - 4, name: "Remotion", line: "Writes the video as React. What we use here.", logo: "recreate/remotion.svg" },
+          { at: cue("hyperframes") - 4, name: "HyperFrames", line: "HTML compositions rendered to video.", logo: "recreate/hyperframes.png" },
+          { at: cue("build") - 4, name: "A web page", line: "Claude builds it in the browser and takes screenshots.", icon: <FramesIcon size={120} /> },
+        ]}
+      />
     </>
   );
 };
@@ -226,7 +230,7 @@ const ThePrompt: React.FC = () => {
   return (
     <PromptDoc
       file="type-staircase prompt"
-      total={{ value: PROMPT_WORDS, at: cue("follows", { edge: "end" }) + 6, dur: 24 }}
+      total={{ value: PROMPT_WORDS, at: cue("400") - 4, dur: 24 }}
       sections={[
         { title: "Setup", lines: ["React + Remotion, 30 fps, 1920x1080.", "Font: Inter 600. Props: rows, colors."] },
         { title: "Timing", lines: ["First word at frame 8, then one every 6 frames,", "10 frames before each new row."] },
@@ -355,20 +359,37 @@ const SideBySide: React.FC = () => {
 // ---------------------------------------------------------------- 9. outro
 
 const Outro: React.FC = () => {
-  const kicker = useWords("and that's", "it");
-  const caps = useWords("if you want", "this");
-  const serif = useWords("like and", "subscribe");
+  const cue = useCue();
+  const line1 = useWords("honestly", "like", 2).map((w, i) => (i === 0 ? { ...w, text: "Honestly," } : w));
+  const line2 = useWords("and if", "subscribe");
   const ask = useWords("let me", "next");
+  const likeAt = cue("a like", { edge: "end" });
+  const subAt = cue("subscribe", { edge: "end" });
+  const left = 960 - YT.w / 2;
+  const top = 560;
   return (
-    <Column>
-      <div style={{ marginBottom: 20 }}>
-        <Words size={48} base={F.serif} words={kicker} />
+    <>
+      <div style={{ position: "absolute", top: 150, left: 60, right: 60, textAlign: "center", color: C.white }}>
+        <Words size={58} base={F.grotesk} words={line1} />
+        <div style={{ height: 18 }} />
+        <Words size={66} base={F.serif} words={line2} />
       </div>
-      <Words size={120} base={F.caps} words={caps} />
-      <Words size={122} base={{ ...F.italic, lineHeight: 1 }} words={serif} />
-      <div style={{ height: 50 }} />
-      <Words size={48} base={F.serif} words={ask} />
-    </Column>
+      <div style={{ position: "absolute", left, top }}>
+        <YouTubeActions at={cue("honestly")} likeAt={likeAt} subscribeAt={subAt} channel="Sycamore" avatar="recreate/sycamore-logo.png" />
+      </div>
+      <Cursor
+        appear={likeAt - 26}
+        keys={[
+          { at: likeAt - 26, x: left + YT.like[0] + 120, y: top + YT.like[1] + 160 },
+          { at: likeAt - 18, x: left + YT.like[0] - 6, y: top + YT.like[1] - 4 },
+          { at: subAt - 20, x: left + YT.subscribe[0] - 6, y: top + YT.subscribe[1] - 4 },
+        ]}
+        clicks={[likeAt, subAt]}
+      />
+      <div style={{ position: "absolute", bottom: 130, width: "100%", textAlign: "center", color: C.white }}>
+        <Words size={46} base={F.serif} words={ask} />
+      </div>
+    </>
   );
 };
 
@@ -379,7 +400,7 @@ export const RecreateRigel: React.FC = () => (
         <Scene from="in this video" focus={[960, 400]}>
           <Intro />
         </Scene>
-        <Scene from="we're gonna make">
+        <Scene from="make it with one">
           <Tools />
         </Scene>
         <Scene from="claude code needs">
