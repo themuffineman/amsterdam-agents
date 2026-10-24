@@ -335,8 +335,7 @@ async function main() {
   log(`claimed film "${claim.film.title}" (${claim.film.format}${claim.film.redo ? ", redo" : ""}, ${claim.film.id})`);
   // Tells the workflow to start another run when this one ends, so the next queued
   // film begins right away instead of waiting for GitHub's (hours-late) schedule
-  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, "claimed=true
-");
+  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, "claimed=true\n");
   await makeFilm(claim as Required<Claimed>);
 }
 
