@@ -1,0 +1,39 @@
+# Tests watch_video on a GitHub runner (scripts/watch-test.ts), where YouTube and TikTok block
+# data-centre IPs: which way each transcript came, or why none did. Free, writes nothing.
+# Totals show as notes on the run's page. Runs when watch_video changes, or by hand.
+name: watch test
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/tools/watch.ts"
+      - "src/tools/video-sources.ts"
+      - "scripts/transcribe.py"
+      - "scripts/watch-test.ts"
+      - ".github/workflows/watch-test.yml"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install faster-whisper==1.2.1
+      - uses: actions/cache@v4
+        with:
+          path: ~/.cache/huggingface
+          key: whisper-base-v1
+      - name: Watch test
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: node scripts/watch-test.ts

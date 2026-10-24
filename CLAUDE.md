@@ -45,13 +45,13 @@ the Recreate Brief, studio `lib/motion-films/recreate-prompt.ts`, which sends th
   (Bearer `AGENT_API_KEY`) every 5 minutes, which dispatches only when a film is queued and none is running.
   Both need `GITHUB_DISPATCH_TOKEN` in Vercel (fine-grained, this repo only, Actions read/write). A claim gets the **Motion Film Brief** in agent mode (studio `lib/motion-films/prompt.ts`, the
   same brief as the copy-paste flow) and the previous attempt's branch for a redo. The runner: branches
-  `film/<slug>-<id>` (from the previous branch on a redo), installs motion's packages + Claude Code + yt-dlp, runs
+  `film/<slug>-<id>` (from the previous branch on a redo), installs motion's packages + Claude Code + faster-whisper, runs
   `claude -p` (model in `agents/films.json`, default **opus**; the subscription token) in `motion/`, which ends by
   writing `motion/out/film-result.json` (compositionId, YouTube title, description ending with one Sycamore plug
   line, claims + sources, gates, weak, changed). Then the **runner** renders (`npm run cloud`, which uploads the
   normalised mp4 to the public GCS bucket and writes `out/<Id>.json` with its URL), commits + pushes the branch, and
   PATCHes `/api/agent/films/<id>` `review` (or `failed` with the reason; a partial branch is pushed too).
-- **Keys:** Claude Code's environment has only its token and the TTS/Supadata keys; the GCS/Modal keys and the
+- **Keys:** Claude Code's environment has only its token, the TTS key and the optional Gemini key; the GCS/Modal keys and the
   studio key stay in the runner (a web page can't talk the agent into leaking them). Its tools are an allow list
   (`ALLOWED_TOOLS`: file tools, web search/fetch, `npm run`, `npx remotion`, `node`, ffmpeg, plain shell file
   commands); anything else is refused (`--permission-prompts none`). Read-only git is allowed by Claude Code; the
@@ -159,16 +159,30 @@ sycamore.to/ideas/{platform}/{niche}: rendered from idea_pages on first visit, c
   from those two places (`isLogoUrl` in sycamore-mono's `lib/blog-posts.ts` and `lib/idea-pages.ts`); blog posts show
   them inline next to a tool's link, ideas pages next to `tips.tools[].name` (`logo` field).
 - `src/tools/watch.ts`: `watch_video(url)`: a YouTube/TikTok/Instagram/X/Facebook video as text (creator, date, views,
-  caption, transcript with [m:ss]; 7,000 characters max). Ported from sycamore-motion `scripts/watch.mjs` without the
-  frames: yt-dlp metadata and captions first (free; the workflows `pipx install yt-dlp`); no captions → download the
-  video and transcribe it with Whisper (`scripts/transcribe.py`, faster-whisper `base` on the CPU, free; the workflows
-  install it and cache the model in `~/.cache/huggingface`). Instagram videos come from **snapsave.app**
-  (`snapsave-media-downloader`, pinned): it fetches from Instagram on its own servers, because Instagram's bot checks
-  are expected to block logged-out yt-dlp on GitHub's IPs (no login is used anywhere). Other platforms download with
-  yt-dlp. Supadata (`SUPADATA_API_KEY`, free plan 100 credits/month, ran out 2026-10) is the last fallback; a failed
-  Supadata metadata call is a note, not an error. Adds the URL to `seen` (and `found` if it's a post).
-  Tested 2026-10-22 from a home IP: snapsave got all 3 real reels tried, with audio; `btch-downloader` (9k/wk on npm)
-  returned empty links for every reel; `ruhend-scraper` is a 15 MB obfuscated file, not used. Not yet run on GitHub.
+  caption, transcript with [m:ss]; 7,000 characters max). Adds the URL to `seen` (and `found` if it's a post). The
+  fetching lives in `src/tools/video-sources.ts`, shared with the film agent's `motion/scripts/watch.mjs`.
+  **No yt-dlp, no Supadata, no logins** (since 2026-10-24: on GitHub's IPs yt-dlp got YouTube's "Sign in to confirm
+  you're not a bot" and broken TikTok responses, and Supadata ran out of credits). Every platform goes through a
+  service that fetches the video on its own servers:
+  - YouTube: **Invidious** (open-source YouTube front-end with a JSON API). Instances: `INVIDIOUS_URLS` (comma list),
+    else the healthy ones with the API on from `api.invidious.io`, plus `yt.chocolatemoo53.com` (the only public one
+    that answered on 2026-10-24). Metadata from `/api/v1/videos/<id>`; its captions (often empty: the instance can't
+    get them either); else the audio (itag 140, first 7 MB ≈ 7 minutes via a Range request, proxied with
+    `local=true`, retried 3× because instances hand requests to several servers and some 500) through Whisper; else
+    **Gemini** (`GEMINI_API_KEY`, optional, `gemini-flash-latest` with the YouTube URL as `file_data`: Google fetches
+    it itself). The key must come from an AI Studio project **without billing** (free tier); the sycamore-mono
+    backend's key is prepaid and was empty (402) on 2026-10-24, so the Gemini step is untested. No Invidious →
+    YouTube oEmbed for title and channel.
+  - Instagram, TikTok, X, Facebook: **snapsave.app** (`snapsave-media-downloader`, pinned): caption + video file
+    through Whisper. No date/views/likes from it; the creator comes from the link (TikTok, X).
+  - Whisper: `scripts/transcribe.py`, faster-whisper `base` on the CPU (the workflows install it and cache the model
+    in `~/.cache/huggingface`).
+  Step failures go to the Problems panel only when no transcript came back. Test on a GitHub runner:
+  `.github/workflows/watch-test.yml` (`scripts/watch-test.ts`, runs on a push to these files). Tested 2026-10-24 from
+  a home IP on the videos that failed in production: 3 YouTube (incl. a 27-min one) and a TikTok transcribed, a
+  speechless TikTok correctly empty. Snapsave alternatives tried 2026-10-22: `btch-downloader` returned empty links,
+  `ruhend-scraper` is a 15 MB obfuscated file. YouTube transcript sites tried 2026-10-24 (tactiq, kome.ai,
+  youtubetotranscript) are behind bot checks; most public Invidious/Piped instances were down or blocked.
 - `src/tools/screenshot.ts`: `screenshot(url, find?)`: the hero at 1440x900, or the block around some text (at least 60%
   of the screen wide, fixed/sticky headers hidden), JPEG. Ported from sycamore-motion `scripts/brand-capture.mjs`.
   puppeteer-core with the runner's own Chrome (`/usr/bin/google-chrome` on GitHub; `CHROME_PATH` elsewhere). The image
@@ -279,7 +293,7 @@ OpenRouter's live prices and matched the real bill when checked.
 - **Engine**: claude-code (set 2026-10-21). Tested 2026-10-21 on Pi + `nemotron-3-ultra:free`: 6 posts, $0, 1-2 min
   each, but it embellishes: a one-tip thread came back with 5 sections of invented tips (hence the section cap), and it
   adds menu paths and FAQ answers the thread doesn't have. Fine as the fallback, not as the default.
-- Workflow `.github/workflows/tutorials.yml`, hourly at :32, no SearXNG/yt-dlp.
+- Workflow `.github/workflows/tutorials.yml`, hourly at :32, no SearXNG/Whisper.
 
 ## Problems: what went wrong (the /agents "Problems" panel)
 
@@ -290,7 +304,7 @@ SearXNG) would go unnoticed. Added 2026-10-23.
   `searchCost`; `runTopic` resets it), sent after the run report with `POST /api/agent/<campaign>/problems`
   (`{ runId, runUrl, problems: [{ source, message, url, at }] }`). What's noted: every failed tool call
   (`recordingFailures` in agent.ts wraps all tools but submit_page and matches "Couldn't ...", "Search failed",
-  "Screenshots aren't", or a throw), watch_video's Whisper and Supadata steps, SearXNG falling back to paid search, and
+  "Screenshots aren't", or a throw), watch_video's broken steps (when no transcript came back), SearXNG falling back to paid search, and
   a runner crash (`main().catch`, runId null). On claude-code the MCP server writes its list to the state file and
   claude.ts reads it back (`ClaudeOutcome.problems`).
 - **Workflows**: each agent workflow ends with "Report the failure to the studio" (`if: failure()`), a curl with
@@ -364,12 +378,12 @@ the studio can fix itself instead of rejecting saves a round, so prefer auto-fix
 ## Running and operating
 
 - Local run (studio on `npm run dev`, port 4000):
-  `STUDIO_URL=http://localhost:4000 AGENT_API_KEY=... OPENROUTER_API_KEY=... SUPADATA_API_KEY=... TOPICS_PER_RUN=1 node src/run.ts ideas`
+  `STUDIO_URL=http://localhost:4000 AGENT_API_KEY=... OPENROUTER_API_KEY=... TOPICS_PER_RUN=1 node src/run.ts ideas`
   (keys from `amsterdam/sycamore/.env.local`; the OpenRouter one is `OPEN_ROUTER_KEY` there). Local runs write real
   pages to production and count toward the day's pacing.
 - `npm run typecheck`. Node 22.19+ runs the TypeScript directly; imports use `.ts` extensions.
 - GitHub secrets: `STUDIO_URL`, `AGENT_API_KEY` (same as the studio's Vercel env), `OPENROUTER_API_KEY`,
-  `SUPADATA_API_KEY` (watch_video's fallback; same key as sycamore-motion's `.env`), `CLAUDE_CODE_OAUTH_TOKEN`
+  `GEMINI_API_KEY` (optional, watch_video's last YouTube fallback; a free-tier key), `CLAUDE_CODE_OAUTH_TOKEN`
   (the claude-code engine; `claude setup-token`, valid a year).
 - Turn a campaign off, or change its pages per day: the studio's `/agents` screen. Disabling the workflow in GitHub
   also works, but leave the schedule alone otherwise.

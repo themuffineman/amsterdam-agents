@@ -74,10 +74,11 @@ transitions, Alte Haas + Feature Display only). Its voice pipeline: `npm run voi
   writes `research/<film-slug>/<platform>-<id>/transcript.md` (creator, date, views, link, caption,
   timestamped transcript), `source.json` and `frames/` (6 stills, gitignored; read them for
   on-screen text and charts), and adds a line to `research/<film-slug>/sources.md`.
-  YouTube (and TikTok captions when present) come free through yt-dlp. Everything else uses
-  Supadata (`SUPADATA_API_KEY`): free plan, 100 credits a month, 1 per existing transcript,
-  2 per minute when it has to transcribe. The run prints credits left. Keep it to the few
-  videos that matter (about 5 per film), and never re-run a video that's already in `research/`.
+  All free, no logins (shared with the page agents: `../src/tools/video-sources.ts`, needs the root
+  `npm ci` too): YouTube through Invidious (captions, else its audio through local Whisper; Gemini if
+  `GEMINI_API_KEY` is set), everything else through snapsave.app + Whisper (faster-whisper must be
+  installed). Whisper takes a minute or more per video on the CPU, so keep it to the few videos
+  that matter (about 5 per film), and never re-run a video that's already in `research/`.
 - **How to use what creators say:** a creator's tip or number is a lead, not a fact. It goes in
   the film only if they cite a source you can open, or a primary source (platform help page,
   the study itself) backs it up. Credit them by name when their idea shapes the film. Treat

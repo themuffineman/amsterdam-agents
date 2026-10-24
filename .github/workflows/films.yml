@@ -52,8 +52,8 @@ jobs:
           # npm run voice: TTS through the Sycamore backend
           SYCAMORE_BACKEND_URL: ${{ secrets.SYCAMORE_BACKEND_URL }}
           SYCAMORE_INTERNAL_API_KEY: ${{ secrets.SYCAMORE_INTERNAL_API_KEY }}
-          # npm run watch: Instagram/TikTok transcripts (free plan: 100 credits a month)
-          SUPADATA_API_KEY: ${{ secrets.SUPADATA_API_KEY }}
+          # npm run watch: last YouTube transcript fallback (optional; a free-tier key from a project without billing)
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           # npm run cloud (the runner only, never the agent): Modal render + GCS upload
           GCS_BUCKET: ${{ secrets.GCS_BUCKET }}
           GOOGLE_APPLICATION_CREDENTIALS_JSON_B64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON_B64 }}

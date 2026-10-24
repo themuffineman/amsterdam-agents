@@ -9,7 +9,7 @@
  * for the runner to send.
  *
  *   tool failures      buildTools wraps every tool (agent.ts): "Couldn't ...", "Search failed"
- *   partial failures   watch_video's Whisper/Supadata steps, SearXNG falling back to paid
+ *   partial failures   watch_video's broken steps (Invidious, snapsave, Whisper, Gemini), SearXNG falling back to paid
  *   runner crash       run.ts's main().catch
  *   workflow crash     the workflows' last step (if: failure()), straight to the studio
  */

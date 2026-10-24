@@ -15,14 +15,14 @@
  *   6. Report to the studio (PATCH /api/agent/films/<id>): "review" with the video, title,
  *      description, claims and gates, or "failed" with the reason.
  *
- * Claude Code gets only what its tools need (its own token, the TTS and Supadata keys). The
+ * Claude Code gets only what its tools need (its own token, the TTS key, the optional Gemini key). The
  * GCS/Modal keys and the studio key stay in this process: a web page can't talk the agent
  * into leaking them. Its tools are an allow list (file tools, web, npm scripts, remotion,
  * ffmpeg); anything else is refused without asking (--permission-prompts none).
  *
  * Needs STUDIO_URL, AGENT_API_KEY, CLAUDE_CODE_OAUTH_TOKEN, SYCAMORE_BACKEND_URL,
  * SYCAMORE_INTERNAL_API_KEY, GCS_BUCKET, GOOGLE_APPLICATION_CREDENTIALS_JSON (or _B64),
- * MODAL_RENDER_TOKEN; SUPADATA_API_KEY optional.
+ * MODAL_RENDER_TOKEN; GEMINI_API_KEY and INVIDIOUS_URLS optional (npm run watch).
  */
 import { spawn, spawnSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
@@ -103,10 +103,10 @@ const ALLOWED_TOOLS = [
   "Bash(find *)",
 ];
 
-/** Only the keys the agent's own tools need: TTS (npm run voice), Supadata (npm run watch). */
+/** Only the keys the agent's own tools need: TTS (npm run voice), Gemini/Invidious (npm run watch). */
 function agentEnv(): NodeJS.ProcessEnv {
   const keep = ["PATH", "HOME", "USER", "LANG", "TMPDIR", "TEMP", "TMP", "USERPROFILE", "SYSTEMROOT", "APPDATA", "LOCALAPPDATA", "CHROME_PATH",
-    "CLAUDE_CODE_OAUTH_TOKEN", "SYCAMORE_BACKEND_URL", "SYCAMORE_INTERNAL_API_KEY", "SUPADATA_API_KEY"];
+    "CLAUDE_CODE_OAUTH_TOKEN", "SYCAMORE_BACKEND_URL", "SYCAMORE_INTERNAL_API_KEY", "GEMINI_API_KEY", "INVIDIOUS_URLS"];
   const env: NodeJS.ProcessEnv = {};
   for (const k of keep) if (process.env[k]) env[k] = process.env[k];
   return env;
@@ -116,7 +116,7 @@ function agentEnv(): NodeJS.ProcessEnv {
 function writeMotionEnv() {
   const file = join(MOTION, ".env");
   if (existsSync(file)) return; // a local run keeps its own
-  const lines = ["SYCAMORE_BACKEND_URL", "SYCAMORE_INTERNAL_API_KEY", "SUPADATA_API_KEY"]
+  const lines = ["SYCAMORE_BACKEND_URL", "SYCAMORE_INTERNAL_API_KEY", "GEMINI_API_KEY", "INVIDIOUS_URLS"]
     .filter((k) => process.env[k])
     .map((k) => `${k}=${process.env[k]}`);
   writeFileSync(file, `${lines.join("\n")}\n`);
@@ -242,15 +242,14 @@ async function makeFilm(claim: Required<Claimed>) {
     writeMotionEnv();
     // Only now (a film was claimed) install what making it needs; empty polls stay quick.
     if (process.env.GITHUB_ACTIONS) {
-      log("installing ffmpeg, motion's packages, Claude Code, yt-dlp and faster-whisper");
+      log("installing ffmpeg, motion's packages, Claude Code and faster-whisper");
       // GitHub's Ubuntu image has no ffmpeg; music, review and cloud all need the full one.
       sh("sudo", ["apt-get", "update", "-qq"]);
       sh("sudo", ["apt-get", "install", "-y", "-qq", "ffmpeg"]);
       sh("npm", ["ci", "--ignore-scripts", "--no-audit", "--no-fund"], MOTION);
       sh("npm", ["install", "-g", "@anthropic-ai/claude-code", "--no-audit", "--no-fund"]);
-      sh("pipx", ["install", "yt-dlp"]);
-      // npm run narrate (recreate videos): word timings from faster-whisper; the workflow
-      // caches its model in ~/.cache/huggingface.
+      // npm run narrate (recreate videos: word timings) and npm run watch (transcripts) use
+      // faster-whisper; the workflow caches its models in ~/.cache/huggingface.
       sh("python3", ["-m", "pip", "install", "-q", "faster-whisper==1.2.1"]);
     }
 
