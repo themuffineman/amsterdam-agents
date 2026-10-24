@@ -25,7 +25,7 @@
  * MODAL_RENDER_TOKEN; GEMINI_API_KEY and INVIDIOUS_URLS optional (npm run watch).
  */
 import { spawn, spawnSync } from "node:child_process";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { appendFileSync, existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -333,6 +333,10 @@ async function main() {
     return;
   }
   log(`claimed film "${claim.film.title}" (${claim.film.format}${claim.film.redo ? ", redo" : ""}, ${claim.film.id})`);
+  // Tells the workflow to start another run when this one ends, so the next queued
+  // film begins right away instead of waiting for GitHub's (hours-late) schedule
+  if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, "claimed=true
+");
   await makeFilm(claim as Required<Claimed>);
 }
 

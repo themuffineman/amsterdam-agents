@@ -40,10 +40,13 @@ the Recreate Brief, studio `lib/motion-films/recreate-prompt.ts`, which sends th
 - **Start:** studio `/motion-gen` → draw a title → **Make film** (landscape or portrait) → a `motion_films` row
   `queued` (studio `lib/motion-films/`, migration 0032). No schedule yet (the user wants the button first).
 - **Run:** the workflow polls every 10 minutes (`POST /api/agent/films/next`, Bearer `AGENT_API_KEY`); empty polls
-  stop in seconds. **That schedule is unreliable** (2026-10-24: it really fired every 3-5 hours), so the studio
-  starts the workflow itself: "Make film"/Redo dispatch it, and cron-job.org calls `GET /api/agent/films/kick`
-  (Bearer `AGENT_API_KEY`) every 5 minutes, which dispatches only when a film is queued and none is running.
-  Both need `GITHUB_DISPATCH_TOKEN` in Vercel (fine-grained, this repo only, Actions read/write). A claim gets the **Motion Film Brief** in agent mode (studio `lib/motion-films/prompt.ts`, the
+  stop in seconds. **That schedule is unreliable** (2026-10-24: it really fired every 3-5 hours), so two other
+  starts exist: (1) a run that claimed a film starts the next run itself when it ends (last step of films.yml,
+  `gh workflow run` with the built-in token, `actions: write`; a run that finds nothing doesn't chain), so a queue
+  drains film after film; (2) the studio's "Make film"/Redo dispatch the workflow at once, which needs
+  `GITHUB_DISPATCH_TOKEN` in Vercel (fine-grained, this repo only, Actions read/write). Without that token a
+  first film still waits for the schedule. `GET /api/agent/films/kick` (studio, Bearer `AGENT_API_KEY`) is an
+  unused backup trigger for an outside cron (cron-job.org). A claim gets the **Motion Film Brief** in agent mode (studio `lib/motion-films/prompt.ts`, the
   same brief as the copy-paste flow) and the previous attempt's branch for a redo. The runner: branches
   `film/<slug>-<id>` (from the previous branch on a redo), installs motion's packages + Claude Code + faster-whisper, runs
   `claude -p` (model in `agents/films.json`, default **opus**; the subscription token) in `motion/`, which ends by

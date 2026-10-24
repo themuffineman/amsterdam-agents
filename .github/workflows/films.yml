@@ -19,6 +19,7 @@ concurrency:
 
 permissions:
   contents: write # push the film's branch
+  actions: write # start the next run when a film is done (see the last step)
 
 jobs:
   run:
@@ -44,6 +45,7 @@ jobs:
           git config user.name "film agent"
           git config user.email "film-agent@users.noreply.github.com"
       - name: Make a film (if one is queued)
+        id: film
         env:
           STUDIO_URL: ${{ secrets.STUDIO_URL }}
           AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
@@ -70,3 +72,12 @@ jobs:
           run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
           body="{\"runId\":null,\"runUrl\":\"$run_url\",\"problems\":[{\"source\":\"workflow\",\"message\":\"the GitHub workflow failed (a setup step, or the runner crashed): see the run log\",\"at\":\"$(date -u +%FT%TZ)\"}]}"
           curl -sSf -X POST "${STUDIO_URL%/}/api/agent/films/problems" -H "Authorization: Bearer $AGENT_API_KEY" -H "Content-Type: application/json" -d "$body" || echo "::warning::couldn't tell the studio"
+      # This run made (or tried) a film: start another right away for the next queued one.
+      # GitHub's schedule runs hours late, and the studio's instant start needs a token in
+      # Vercel. A run that finds nothing queued doesn't chain, so this stops by itself.
+      # The new run waits in the concurrency group until this one has ended.
+      - name: Start the next run (for the next queued film)
+        if: ${{ !cancelled() && steps.film.outputs.claimed == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run films.yml --ref "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY"
