@@ -180,7 +180,9 @@ sycamore.to/ideas/{platform}/{niche}: rendered from idea_pages on first visit, c
   Step failures go to the Problems panel only when no transcript came back. Test on a GitHub runner:
   `.github/workflows/watch-test.yml` (`scripts/watch-test.ts`, runs on a push to these files). Tested 2026-10-24 from
   a home IP on the videos that failed in production: 3 YouTube (incl. a 27-min one) and a TikTok transcribed, a
-  speechless TikTok correctly empty. Snapsave alternatives tried 2026-10-22: `btch-downloader` returned empty links,
+  speechless TikTok correctly empty; same 4/5 on a GitHub runner (watch test, 34-58 s a YouTube video). **PyAV is
+  pinned to 17.0.0**: faster-whisper 1.2.1 breaks on newer PyAV (`metadata_errors`), which silently broke every
+  Whisper transcript (Instagram too) until 2026-10-24. Snapsave alternatives tried 2026-10-22: `btch-downloader` returned empty links,
   `ruhend-scraper` is a 15 MB obfuscated file. YouTube transcript sites tried 2026-10-24 (tactiq, kome.ai,
   youtubetotranscript) are behind bot checks; most public Invidious/Piped instances were down or blocked.
 - `src/tools/screenshot.ts`: `screenshot(url, find?)`: the hero at 1440x900, or the block around some text (at least 60%
