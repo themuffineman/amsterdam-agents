@@ -43,7 +43,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - run: pip install faster-whisper==1.2.1
+      # av pinned: faster-whisper 1.2.1 passes open(metadata_errors=...), which newer PyAV dropped.
+      - run: pip install faster-whisper==1.2.1 av==17.0.0
       - uses: actions/cache@v4
         with:
           path: ~/.cache/huggingface

@@ -250,7 +250,8 @@ async function makeFilm(claim: Required<Claimed>) {
       sh("npm", ["install", "-g", "@anthropic-ai/claude-code", "--no-audit", "--no-fund"]);
       // npm run narrate (recreate videos: word timings) and npm run watch (transcripts) use
       // faster-whisper; the workflow caches its models in ~/.cache/huggingface.
-      sh("python3", ["-m", "pip", "install", "-q", "faster-whisper==1.2.1"]);
+      // av pinned: faster-whisper 1.2.1 passes open(metadata_errors=...), which newer PyAV dropped.
+      sh("python3", ["-m", "pip", "install", "-q", "faster-whisper==1.2.1", "av==17.0.0"]);
     }
 
     // Licensed fonts that can't be in this public repo (Feature Display) come from the GCS
