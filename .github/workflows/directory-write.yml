@@ -1,0 +1,65 @@
+# Content ideas directory, step 2: the writer (sycamore.to/directory/{niche}/{idea}). Claims one
+# idea that has enough videos (filed by directory-collect.yml) and writes its page from those
+# videos alone (no web research, so no SearXNG or Whisper), and the studio checks and saves it.
+# Run it by hand from the Actions tab ("Run workflow") or let the schedule do it.
+name: directory write agent
+
+on:
+  schedule:
+    # Hourly, at :52 (collect :07, ideas :17, tutorials :32, blog posts :47). Most runs just ask the studio and
+    # stop: how many idea pages a day (and whether at all) is set on the studio's /agents screen.
+    - cron: "52 * * * *"
+  workflow_dispatch:
+    inputs:
+      topics:
+        description: "How many topics this run (default from agents/directory-write.json)"
+        required: false
+      engine:
+        description: "Engine for this run only (default: the campaign's setting on the studio's /agents screen)"
+        required: false
+        type: choice
+        options: ["", "pi", "claude-code"]
+      model:
+        description: "OpenRouter model for this run only, Pi engine (e.g. nvidia/nemotron-3-ultra-550b-a55b:free)"
+        required: false
+
+# One run at a time: a slow run makes the next one wait instead of overlapping.
+concurrency:
+  group: directory-write-agent
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      # The claude-code engine (a campaign switched to it on /agents) runs the Claude Code CLI.
+      - run: npm install -g @anthropic-ai/claude-code --no-audit --no-fund
+      - name: Run agent
+        env:
+          STUDIO_URL: ${{ secrets.STUDIO_URL }}
+          AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # The claude-code engine: a token from `claude setup-token` (Claude subscription, no per-token bill)
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          TOPICS_PER_RUN: ${{ inputs.topics }}
+          ENGINE: ${{ inputs.engine }}
+          MODEL: ${{ inputs.model }}
+        run: node src/run.ts directory-write
+      # Something above failed (a setup step, or the runner crashed): tell the studio, so it
+      # shows in the /agents Problems panel. A runner crash also reports its own error.
+      - name: Report the failure to the studio
+        if: failure()
+        env:
+          STUDIO_URL: ${{ secrets.STUDIO_URL }}
+          AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+        run: |
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          body="{\"runId\":null,\"runUrl\":\"$run_url\",\"problems\":[{\"source\":\"workflow\",\"message\":\"the GitHub workflow failed (a setup step, or the runner crashed): see the run log\",\"at\":\"$(date -u +%FT%TZ)\"}]}"
+          curl -sSf -X POST "${STUDIO_URL%/}/api/agent/directory-write/problems" -H "Authorization: Bearer $AGENT_API_KEY" -H "Content-Type: application/json" -d "$body" || echo "::warning::couldn't tell the studio"

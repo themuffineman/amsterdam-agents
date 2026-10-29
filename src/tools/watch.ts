@@ -36,7 +36,7 @@ import { normalUrl, type Seen } from "./web.ts";
 /** Most of a transcript the agent gets back (everything it reads is resent every turn). */
 const LIMIT = 7_000;
 
-type Meta = {
+export type Meta = {
   url: string;
   title: string | null;
   caption: string | null;
@@ -68,18 +68,27 @@ async function firstTranscript(steps: [string, () => Promise<Transcript | null>]
   return null;
 }
 
-export async function watch(url: string): Promise<{ text: string; transcript: Transcript | null; failures: string[] }> {
+/**
+ * What one watched video is: its details, the transcript as [m:ss] lines, and whether we could
+ * reach the video at all (`exists`): Invidious or oEmbed answered for YouTube, snapsave gave a
+ * video file for the others. A video with no speech still exists.
+ */
+export type Watched = Omit<Meta, "url"> & { exists: boolean; transcript: string | null };
+
+export async function watch(url: string): Promise<{ text: string; transcript: Transcript | null; failures: string[]; watched: Watched }> {
   const notes: string[] = [];
   const failures: string[] = [];
   const platform = platformOf(url);
   let meta: Meta = { url, title: null, caption: null, creator: null, postedAt: null, durationSec: null, views: null, likes: null };
   let tr: Transcript | null = null;
+  let exists = false;
 
   if (platform === "youtube") {
     const id = youtubeId(url);
     if (!id) throw new Error("not a YouTube video link");
     const inv = await invidiousVideo(id, notes);
     if (inv) {
+      exists = true;
       const v = inv.video;
       meta = {
         url,
@@ -93,7 +102,11 @@ export async function watch(url: string): Promise<{ text: string; transcript: Tr
       };
     } else {
       failures.push("no Invidious instance answered");
-      meta = { ...meta, ...(await youtubeOembed(url).catch((e) => (notes.push((e as Error).message), {}))) };
+      const oembed = await youtubeOembed(url).catch((e) => (notes.push((e as Error).message), null));
+      if (oembed) {
+        exists = true;
+        meta = { ...meta, ...oembed };
+      }
     }
     tr = await firstTranscript([
       ["captions", async () => (inv ? invidiousCaptions(inv.base, inv.video) : null)],
@@ -108,6 +121,7 @@ export async function watch(url: string): Promise<{ text: string; transcript: Tr
       failures.push(post.problem ?? "snapsave: no video");
       notes.push(post.problem ?? "snapsave: no video");
     } else {
+      exists = true;
       const videoUrl = post.videoUrl;
       tr = await firstTranscript([["Whisper", () => whisper((dir) => download(videoUrl, join(dir, "video.mp4"), "snapsave"), "snapsave")]], notes, failures);
     }
@@ -134,10 +148,15 @@ export async function watch(url: string): Promise<{ text: string; transcript: Tr
     ...(notes.length && !tr ? ["", `Notes: ${notes.join("; ")}`] : []),
   ].join("\n");
   if (text.length > LIMIT) text = `${text.slice(0, LIMIT)}\n\n[cut at ${LIMIT} characters]`;
-  return { text, transcript: tr, failures };
+  const { url: _, ...details } = meta;
+  const transcript = lines.length ? lines.map((l) => `[${mmss(l.at)}] ${l.text}`).join("\n") : null;
+  return { text, transcript: tr, failures, watched: { ...details, exists, transcript } };
 }
 
-export const watchVideoTool = (found: Set<string>, seen: Seen) =>
+/** Videos watched in this topic, by URL as the agent passed it (submit_page's attachWatched). */
+export type WatchedMap = Map<string, Watched>;
+
+export const watchVideoTool = (found: Set<string>, seen: Seen, watchedMap?: WatchedMap) =>
   defineTool({
     name: "watch_video",
     label: "Watch video",
@@ -146,7 +165,8 @@ export const watchVideoTool = (found: Set<string>, seen: Seen) =>
     parameters: Type.Object({ url: Type.String({ description: "The video's full URL" }) }),
     execute: async (_id, { url }) => {
       try {
-        const { text, transcript, failures } = await watch(url);
+        const { text, transcript, failures, watched } = await watch(url);
+        watchedMap?.set(url, watched);
         // A step that broke is worth knowing about (/agents Problems) when no transcript came
         // back; a video that simply has no speech isn't.
         if (!transcript) for (const f of failures) noteProblem("watch_video", f, url);

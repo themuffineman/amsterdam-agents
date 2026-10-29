@@ -7,8 +7,9 @@ This repo runs cloud agents that write pages for sycamore.to on a schedule. Thre
 | `ideas` | programmatic-SEO pages, sycamore.to/ideas/{platform}/{niche} | `idea_topics`, loaded by script | `lib/idea-pages/` | `lib/idea-pages.ts`, `app/ideas/` |
 | `blog-posts` | traditional articles (X vs Y, alternatives, best-of, reviews, how-tos, guides), sycamore.to/blog/{slug} | `blog_post_topics`, typed in by hand on `/agents` or `/agents/add` (phone) | `lib/blog-posts/` | `lib/blog-posts.ts`, `app/blog/[slug]` |
 | `tutorials` | how to do or fix one thing in an editor, sycamore.to/blog/tutorial/{slug}, from one Reddit help thread each | `tutorial_topics`, filled by the studio's `/tutorial-gen` harvest | `lib/tutorial-posts/` | `lib/tutorial-posts.ts`, `app/blog/tutorial/[slug]` |
+| `directory-collect` + `directory-write` | the content ideas directory, sycamore.to/directory/{niche}/{idea}: one page per video idea, with real videos as examples | `directory_searches` (niche x platform x round, refilled by the studio) and `directory_ideas` (filled by the collector) | `lib/directory/` | `lib/directory.ts`, `app/directory/` |
 
-The ideas campaign is the worked example in most of this file; the blog posts campaign is described in its own section. It is one of **three repos**
+The ideas campaign is the worked example in most of this file; the blog posts and directory campaigns are described in their own sections. It is one of **three repos**
 that work together. Read this before changing anything here or adding a new campaign.
 
 ## The three repos
@@ -299,6 +300,26 @@ OpenRouter's live prices and matched the real bill when checked.
   each, but it embellishes: a one-tip thread came back with 5 sections of invented tips (hence the section cap), and it
   adds menu paths and FAQ answers the thread doesn't have. Fine as the fallback, not as the default.
 - Workflow `.github/workflows/tutorials.yml`, hourly at :32, no SearXNG/Whisper.
+
+## The directory campaigns (`directory-collect`, `directory-write`)
+
+The content ideas directory: sycamore.to/directory/{niche}/{idea}, one page per idea (a repeatable video format in a
+niche, e.g. "Guess the price property tours"), with an honest verdict and real videos as examples. Video platforms
+only: YouTube, TikTok, Instagram, Facebook. Two agents, one after the other (started 2026-10-29, not run end to end yet):
+
+- **Collector** (`agents/directory-collect.json`, Pi on the free model; workflow `directory-collect.yml`, hourly at
+  :07, SearXNG + Whisper, 180-minute cap). A topic is one search round: a niche on one platform. It searches with
+  `find_examples` (later rounds add Google's `after:`), watches candidates with `watch_video`, and files the good ones
+  under an existing or new idea in page.json (`{ newIdeas, posts }`). Nothing is published. With `attachWatched`,
+  submit_page refuses (without spending a submission) any post the agent didn't watch or that watch_video couldn't
+  reach (`Watched.exists`: Invidious/oEmbed answered, or snapsave gave a video file; a video with no speech still
+  exists), and sends each post with what watch_video read (`video`: creator, date, views, caption, transcript) plus
+  `research` (searches, videos watched). That is the existence check, Instagram and Facebook included.
+- **Writer** (`agents/directory-write.json`, `noResearchTools`, `claudeModel` sonnet: switch the campaign to
+  claude-code on /agents; workflow `directory-write.yml`, hourly at :52, no SearXNG/Whisper). A topic is an idea with
+  3+ videos; it writes the page from those videos alone. Rewritten each time the idea gains 3 more videos (up to 12).
+- The studio side (queues, prompts, checks, the refill that keeps adding search rounds) is in the studio's
+  CLAUDE.md under "Content ideas directory". Niches: `lib/directory/niches.json` there.
 
 ## Problems: what went wrong (the /agents "Problems" panel)
 

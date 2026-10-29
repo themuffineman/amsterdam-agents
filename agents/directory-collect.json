@@ -1,0 +1,18 @@
+{
+  "campaign": "directory-collect",
+  "model": "nvidia/nemotron-3-ultra-550b-a55b:free",
+  "thinking": "low",
+  "tools": [
+    "find_examples",
+    "write",
+    "edit",
+    "read",
+    "submit_page"
+  ],
+  "topicsPerRun": 4,
+  "maxTurns": 80,
+  "maxCostUsd": 0.5,
+  "timeoutMinutes": 40,
+  "maxSubmissions": 4,
+  "attachWatched": true
+}

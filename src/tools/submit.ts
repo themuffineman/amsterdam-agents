@@ -6,6 +6,8 @@ import { jsonrepair } from "jsonrepair";
 import { Type } from "typebox";
 
 import { submitWork } from "../studio.ts";
+import { searchCost } from "./search.ts";
+import type { WatchedMap } from "./watch.ts";
 import { normalUrl, type Seen } from "./web.ts";
 
 /**
@@ -28,6 +30,12 @@ import { normalUrl, type Seen } from "./web.ts";
  * than as one JSON string; it's sent as the page's `body`. With `checkLinks`, every link in
  * the body and every source must be a URL the agent saw (a search result or a page it read),
  * or the submission goes back unsent, without using up one of its submissions.
+ *
+ * The directory collector (`watched`, config attachWatched) sends `posts`, each a video it
+ * filed under an idea. A post it didn't watch, or one watch_video couldn't reach, goes back
+ * unsent the same way; the rest get what watch_video read (`video`: creator, date, views,
+ * caption, transcript), which is the studio's proof the video exists and the writer's evidence.
+ * `research` says how many searches and videos the agent went through.
  */
 
 export type SubmitState = { submissions: number; savedUrl: string | null; lastProblems: string[] };
@@ -75,6 +83,8 @@ export function submitPageTool(opts: {
   bodyFile?: string;
   /** Refuse links the agent never saw (see the top of this file). */
   checkLinks?: boolean;
+  /** The videos watch_video read this topic: posts must be among them (see the top of this file). */
+  watched?: WatchedMap;
 }) {
   const { state } = opts;
   const reply = (t: string) => ({ content: [{ type: "text" as const, text: t }], details: {} });
@@ -121,6 +131,26 @@ export function submitPageTool(opts: {
             `Not sent (this didn't use a submission). These links weren't in any search result or page you read, so they may not exist. Replace each with the exact URL of a page you found, or read_page it first if it's a real page (then it counts), or remove it:\n- ${unseen.join("\n- ")}`,
           );
         }
+      }
+
+      if (opts.watched && content && typeof content === "object") {
+        const page = content as Record<string, unknown>;
+        const posts = Array.isArray(page.posts) ? (page.posts as Record<string, unknown>[]) : [];
+        const unwatched: string[] = [];
+        const missing: string[] = [];
+        for (const p of posts) {
+          const url = typeof p?.url === "string" ? p.url : "";
+          const w = opts.watched.get(url) ?? [...opts.watched].find(([k]) => normalUrl(k) === normalUrl(url))?.[1];
+          if (!w) unwatched.push(url || "(a post with no url)");
+          else if (!w.exists) missing.push(url);
+          else p.video = w;
+        }
+        if (unwatched.length || missing.length) {
+          return reply(
+            `Not sent (this didn't use a submission).${unwatched.length ? `\nYou didn't watch these with watch_video (use the URL exactly as you watched it), so they can't be filed. Watch them first, or remove them:\n- ${unwatched.join("\n- ")}` : ""}${missing.length ? `\nwatch_video couldn't reach these videos, so they may be gone or private. Remove them:\n- ${missing.join("\n- ")}` : ""}`,
+          );
+        }
+        page.research = { searches: searchCost.count, watched: opts.watched.size };
       }
 
       const dropped = dropUnfound(content, opts.found);

@@ -41,11 +41,16 @@ function parseVtt(vtt: string): Chunk[] {
     return Math.round(((h * 60 + m) * 60 + s) * 1000);
   };
   const out: Chunk[] = [];
+  // YouTube's auto captions roll: each cue repeats the line(s) of the cue before it. Only the
+  // lines a cue adds are kept, or every sentence comes out two or three times.
+  let prev = new Set<string>();
   for (const block of vtt.replace(/\r/g, "").split(/\n\n+/)) {
     const lines = block.split("\n");
     const i = lines.findIndex((l) => l.includes("-->"));
     if (i < 0) continue;
-    const text = lines.slice(i + 1).join(" ").replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim();
+    const cue = lines.slice(i + 1).map((l) => l.replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim()).filter(Boolean);
+    const text = cue.filter((l) => !prev.has(l)).join(" ");
+    prev = new Set(cue);
     if (text && text !== out.at(-1)?.text) out.push({ text, offset: toMs(lines[i].split("-->")[0]) });
   }
   return out;

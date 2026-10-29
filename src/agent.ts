@@ -12,7 +12,7 @@ import { findExamplesTool } from "./tools/examples.ts";
 import { findLogoTool } from "./tools/logo.ts";
 import { screenshotTool } from "./tools/screenshot.ts";
 import { submitPageTool, type SubmitState } from "./tools/submit.ts";
-import { watchVideoTool } from "./tools/watch.ts";
+import { watchVideoTool, type WatchedMap } from "./tools/watch.ts";
 import { readPageTool, webSearchTool, type Seen } from "./tools/web.ts";
 
 /**
@@ -45,6 +45,11 @@ export type AgentConfig = {
    * that write only from what the prompt gives them (tutorials, from one help thread).
    */
   noResearchTools?: boolean;
+  /**
+   * The directory collector: submit_page refuses posts the agent didn't watch, and sends what
+   * watch_video read about each one (details, transcript) with it, as proof it exists.
+   */
+  attachWatched?: boolean;
 };
 
 export function loadConfig(name: string): AgentConfig {
@@ -76,11 +81,12 @@ export const FILE_TOOLS = new Set(["read", "write", "edit"]);
 export const toolNamesFor = (config: AgentConfig) => [...new Set([...(config.noResearchTools ? [] : STANDARD_TOOLS), ...config.tools])];
 
 /** What one topic's tools remember: links seen and found, and how submitting went. */
-export type TopicState = { found: Set<string>; seen: Seen; submit: SubmitState };
+export type TopicState = { found: Set<string>; seen: Seen; watched: WatchedMap; submit: SubmitState };
 
 export const newTopicState = (): TopicState => ({
   found: new Set<string>(),
   seen: new Set<string>(),
+  watched: new Map(),
   submit: { submissions: 0, savedUrl: null, lastProblems: [] },
 });
 
@@ -99,7 +105,7 @@ export function buildTools(
     web_search: webSearchTool(s.found, s.seen),
     read_page: readPageTool(s.seen),
     find_examples: findExamplesTool(s.found),
-    watch_video: watchVideoTool(s.found, s.seen),
+    watch_video: watchVideoTool(s.found, s.seen, s.watched),
     screenshot: screenshotTool({ campaign: config.campaign, topicId, seen: s.seen }),
     find_logo: findLogoTool({ campaign: config.campaign, topicId, seen: s.seen }),
     submit_page: submitPageTool({
@@ -113,6 +119,7 @@ export function buildTools(
       seen: s.seen,
       bodyFile: config.bodyFile,
       checkLinks: config.checkLinks,
+      watched: config.attachWatched ? s.watched : undefined,
     }),
   } as Record<string, ToolDefinition>;
   return toolNamesFor(config)
