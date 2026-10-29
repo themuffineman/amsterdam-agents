@@ -1,0 +1,169 @@
+{
+  "film": "news-genie-4",
+  "title": "Genie 4: Google's world model you steer with words",
+  "sources": [
+    "https://deepmind.google/blog/genie-4-a-new-generation-of-world-simulation/ (DeepMind post and its demo videos, captured 2026-10-29)",
+    "https://x.com/Google/status/2115114426827501782 (Google's announcement post, 1M views when captured 2026-10-29)",
+    "https://techcrunch.com/2026/10/27/googles-genie-4-world-model-adds-audio-more-realistic-worlds-and-real-time-steering/ (TechCrunch, captured 2026-10-29)"
+  ],
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "segments": [
+    {
+      "id": "s01",
+      "text": "Google DeepMind just announced Genie 4, a world model that builds a scene from a prompt, then lets you walk around in it and steer it in real time.",
+      "shot": {
+        "type": "clip",
+        "page": "deepmind",
+        "video": 1
+      }
+    },
+    {
+      "id": "s02",
+      "text": "",
+      "seconds": 5,
+      "shot": {
+        "type": "clip",
+        "page": "deepmind",
+        "video": 1,
+        "full": true,
+        "from": 3,
+        "sound": true
+      }
+    },
+    {
+      "id": "s03",
+      "text": "Google's post about it already has over a million views.",
+      "shot": {
+        "type": "scroll",
+        "page": "x",
+        "to": 420,
+        "zoom": 1.4
+      }
+    },
+    {
+      "id": "s04",
+      "text": "The big idea is that you can use plain language to change the simulation while it's running, like changing the weather, moving the camera, or adding a new person.",
+      "shot": {
+        "type": "highlight",
+        "page": "deepmind",
+        "highlight": "use natural language to modify a simulation in real-time"
+      }
+    },
+    {
+      "id": "s05",
+      "text": "So here's a man playing saxophone on a platform in a lake, and the text prompts steer the scene as it goes.",
+      "shot": {
+        "type": "clip",
+        "page": "deepmind",
+        "video": 4
+      }
+    },
+    {
+      "id": "s06",
+      "text": "",
+      "seconds": 4.5,
+      "shot": {
+        "type": "clip",
+        "page": "deepmind",
+        "video": 4,
+        "full": true,
+        "from": 18,
+        "sound": true
+      }
+    },
+    {
+      "id": "s07",
+      "text": "It's also much better at physics, things like collisions and aerodynamics.",
+      "shot": {
+        "type": "clip",
+        "page": "deepmind",
+        "video": 6,
+        "full": true
+      }
+    },
+    {
+      "id": "s08",
+      "text": "Like this maple seed falling from the tree into the grass.",
+      "shot": {
+        "type": "clip",
+        "page": "deepmind",
+        "video": 7,
+        "full": true,
+        "from": 2
+      }
+    },
+    {
+      "id": "s09",
+      "text": "And here's Genie 3 next to Genie 4. The new one is far more photorealistic.",
+      "shot": {
+        "type": "clip",
+        "page": "deepmind",
+        "video": 3,
+        "from": 4,
+        "full": true
+      }
+    },
+    {
+      "id": "s10",
+      "text": "TechCrunch reports it can keep a scene consistent for up to two minutes, double what Genie 3 could do.",
+      "shot": {
+        "type": "highlight",
+        "page": "techcrunch",
+        "highlight": "It can maintain a consistent scene for up to two minutes, double its predecessor’s limit"
+      }
+    },
+    {
+      "id": "s11",
+      "text": "It's also their first real-time world model to generate audio natively: ambient sound, music, and even characters talking back.",
+      "shot": {
+        "type": "highlight",
+        "page": "deepmind",
+        "highlight": "Genie 4 is our first real-time world model to generate audio natively"
+      }
+    },
+    {
+      "id": "s12",
+      "text": "",
+      "seconds": 5,
+      "shot": {
+        "type": "clip",
+        "page": "deepmind",
+        "video": 8,
+        "full": true,
+        "from": 6,
+        "sound": true
+      }
+    },
+    {
+      "id": "s13",
+      "text": "Under the hood, Gemini acts as the director, planning the steps and checking frames while Genie makes the visuals.",
+      "shot": {
+        "type": "highlight",
+        "page": "techcrunch",
+        "highlight": "acting as the director that plans steps and checks frames while Genie creates the visuals"
+      }
+    },
+    {
+      "id": "s14",
+      "text": "For now it's a research preview for trusted testers, and it's coming to Google AI Ultra subscribers and the Gemini API next.",
+      "shot": {
+        "type": "highlight",
+        "page": "deepmind",
+        "highlight": "We have started rolling Genie 4 out as a research preview for trusted testers"
+      }
+    },
+    {
+      "id": "s15",
+      "text": "",
+      "seconds": 3.5,
+      "shot": {
+        "type": "clip",
+        "page": "deepmind",
+        "video": 2,
+        "full": true,
+        "from": 4
+      }
+    }
+  ]
+}

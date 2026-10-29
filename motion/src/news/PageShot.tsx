@@ -52,7 +52,7 @@ export const PageShot: React.FC<{ page: PageData; plan: SegPlan }> = ({ page, pl
 
   // Full-screen clip: the video's own rectangle grows from where it sits on the page to fill the
   // frame (the carried object of that cut), over a black ground that comes up with it.
-  const grow = clip?.full ? tween(f, clip.expandAt, 14, 0, 1, "softLand") : 0;
+  const grow = clip?.full ? (clip.cut ? 1 : tween(f, clip.expandAt, 14, 0, 1, "softLand")) : 0;
   const vBox = clip ? clip.video : null;
   let full: { x: number; y: number; w: number; h: number } | null = null;
   if (clip?.full && vBox && f >= clip.expandAt) {
@@ -89,7 +89,7 @@ export const PageShot: React.FC<{ page: PageData; plan: SegPlan }> = ({ page, pl
   }
   if (full && grow > 0.05) cursor = null;
   // A click on the clip before it plays full screen.
-  const press = clip?.full ? 1 - 0.18 * Math.max(0, 1 - Math.abs(f - (clip.expandAt - 2)) / 3) : 1;
+  const press = clip?.full && !clip.cut ? 1 - 0.18 * Math.max(0, 1 - Math.abs(f - (clip.expandAt - 2)) / 3) : 1;
 
   const outline = plan.outline;
   const draw = outline ? tween(f, outline.at, 16, 0, 1, "softLand") : 0;

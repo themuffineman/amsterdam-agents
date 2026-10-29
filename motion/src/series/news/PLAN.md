@@ -99,6 +99,22 @@ serif maths and diagrams) only where a concept needs one. Our own name and voice
   - github.com pages: curl through the cloud session's git proxy gets 403, but Chrome got the
     page (2026-10-29).
 
+- **Genie 4 story** (2026-10-29, cloud session): `src/films/news-genie-4/`, 89.3 s, 15 segments.
+  Picked for popularity and pictures, after checking HF trending, X, YouTube roundups and news
+  search: Google's X post had 1M views in two days, and TechCrunch and the Google blog covered it.
+  Pages: DeepMind post (8 demo clips with their own sound),
+  Google's X post, TechCrunch. Capture:
+  `npm run news-page -- https://deepmind.google/blog/genie-4-a-new-generation-of-world-simulation/ news-genie-4 deepmind --max-mb=80 "--highlight=use natural language to modify a simulation in real-time|Genie 4 is our first real-time world model to generate audio natively|We have started rolling Genie 4 out as a research preview for trusted testers"`,
+  `npm run news-page -- https://x.com/Google/status/2115114426827501782 news-genie-4 x --max-mb=80`,
+  `npm run news-page -- https://techcrunch.com/2026/10/27/googles-genie-4-world-model-adds-audio-more-realistic-worlds-and-real-time-steering/ news-genie-4 techcrunch --no-videos "--highlight=It can maintain a consistent scene for up to two minutes, double its predecessor’s limit|acting as the director that plans steps and checks frames while Genie creates the visuals"`.
+  Review (2nd pass): G0 pass (2677/2677, 42% moving), G2 pass, G3 pass (end hold 0 s, final shot
+  13.2%). By eye: G1 pass on the highlights and the full-screen demos; the X post's "1M Views"
+  is small. Its text.md stops partway down the DeepMind page, past the audio section.
+  TechCrunch's infinite scroll swaps the page title for the next article (the text and top of
+  page.png are the right one). Three of the four voiceless clips play with their own sound.
+  - Renderer: a full-screen clip right after another full-screen clip now hard-cuts in at full
+    size (`clip.cut`), instead of dropping back to the page and growing again.
+
 ## Next
 
 - **Re-capture Hy-Nomas before rendering it on another machine.** Its pages are gitignored. The capture commands are under Done.

@@ -1,0 +1,63 @@
+{
+  "film": "news-genie-4",
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "createdAt": "2026-10-29T20:44:49.846Z",
+  "segments": {
+    "s01": {
+      "file": "films/news-genie-4/audio/s01.wav",
+      "durationSec": 8.84,
+      "marks": {}
+    },
+    "s03": {
+      "file": "films/news-genie-4/audio/s03.wav",
+      "durationSec": 3.063,
+      "marks": {}
+    },
+    "s04": {
+      "file": "films/news-genie-4/audio/s04.wav",
+      "durationSec": 8.292,
+      "marks": {}
+    },
+    "s05": {
+      "file": "films/news-genie-4/audio/s05.wav",
+      "durationSec": 5.811,
+      "marks": {}
+    },
+    "s07": {
+      "file": "films/news-genie-4/audio/s07.wav",
+      "durationSec": 4.432,
+      "marks": {}
+    },
+    "s08": {
+      "file": "films/news-genie-4/audio/s08.wav",
+      "durationSec": 3.809,
+      "marks": {}
+    },
+    "s09": {
+      "file": "films/news-genie-4/audio/s09.wav",
+      "durationSec": 5.34,
+      "marks": {}
+    },
+    "s10": {
+      "file": "films/news-genie-4/audio/s10.wav",
+      "durationSec": 5.204,
+      "marks": {}
+    },
+    "s11": {
+      "file": "films/news-genie-4/audio/s11.wav",
+      "durationSec": 7.991,
+      "marks": {}
+    },
+    "s13": {
+      "file": "films/news-genie-4/audio/s13.wav",
+      "durationSec": 6.683,
+      "marks": {}
+    },
+    "s14": {
+      "file": "films/news-genie-4/audio/s14.wav",
+      "durationSec": 7.932,
+      "marks": {}
+    }
+  }
+}

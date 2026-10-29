@@ -90,7 +90,9 @@ export interface SegPlan {
   cursorAt: number;
   sweep: { at: number; frames: number; rects: Box[] } | null;
   outline: { at: number; box: Box } | null;
-  clip: { video: PageData["videos"][number]; full: boolean; expandAt: number; fromSec: number; sound: boolean } | null;
+  /** `cut`: a full-screen clip right after another one starts full size (a hard cut between
+   *  clips), instead of dropping back to the page and growing out of it again. */
+  clip: { video: PageData["videos"][number]; full: boolean; expandAt: number; fromSec: number; sound: boolean; cut: boolean } | null;
 }
 
 /** Where the cursor sits when it is just reading along (screen px). */
@@ -193,7 +195,8 @@ export const planStory = (segments: Segment[], pages: Record<string, PageData>, 
     }
     if (shot.type === "clip") {
       const v = p.videos[shot.video - 1];
-      clip = { video: v, full: !!shot.full, expandAt: samePage ? Math.min(move + 2, 20) : 6, fromSec: shot.from ?? 0, sound: shot.sound ?? !seg.text };
+      const cut = !!shot.full && !!out[out.length - 1]?.clip?.full;
+      clip = { video: v, full: !!shot.full, expandAt: cut ? 0 : samePage ? Math.min(move + 2, 20) : 6, fromSec: shot.from ?? 0, sound: shot.sound ?? !seg.text, cut };
     }
 
     // Cursor: travels in screen space from where it was to the thing the sentence is about.
