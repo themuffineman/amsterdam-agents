@@ -74,16 +74,34 @@ serif maths and diagrams) only where a concept needs one. Our own name and voice
     highlight and table shots (type ~43-46 px), G4 one hero per frame, G5 no chrome except the
     stand-in captions.
 
+- **Hy-Nomas story** (2026-10-29, cloud session): `src/films/news-hy-nomas/` (story.json, voice.json,
+  voice clips in `public/films/news-hy-nomas/audio/`), 117.6 s, 19 segments over 3 pages. Facts only from
+  the three text.md files. Capture (pages stay local, re-run to get them):
+  `npm run news-page -- https://hy-nomas.hy.tencent.com/ news-hy-nomas project "--highlight=Generate up to 60 seconds of continuous video|carries objects, environmental details, and spatial context through a changing viewpoint"`
+  (default --max-mb: the promo is v01 and over 100 MB),
+  `npm run news-page -- https://huggingface.co/papers/2610.36729 news-hy-nomas paper --no-videos "--highlight=an 8B diffusion backbone that supports free-form text instructions and continuous camera control across multiple interaction turns|We release model weights, code and benchmarks|Our model supports the exactly same features as Genie4"`,
+  `npm run news-page -- https://github.com/Tencent-Hunyuan/Hy-Nomas news-hy-nomas github --no-videos "--highlight=It runs on a single RTX 4090 with low-memory inference|real-time 720p generation on a v6e-4 slice (4 chips)"`.
+  Review (2nd pass, draft at 0.5): G0 pass (3526/3526 frames, 38% moving), G2 pass (no flat
+  frames), G3 pass (end hold 0 s, final shot 7.8%). By eye: G1 pass on the highlight shots; the
+  scroll shots (specs block, paper abstract at 1.4x, GitHub contributions at 1.35x, gallery) are
+  smaller than 43 px type. G4 one hero per frame. G5 no chrome (no captions now there is voice).
+  Weak: the Genie4 and TPU highlights crop the line's left edge (the column-edge rule loses to
+  the zoom); the specs shot is a zoom-1 page; the backend TTS failed (502) every run, so the clips
+  came from the OpenRouter fallback below.
+  - `voice.mjs`: when `/internal/tts` fails and `OPENROUTER_API_KEY` is in `.env`, it calls the same
+    model on OpenRouter directly (`/api/v1/audio/speech`), one request per sentence, one at a time
+    (parallel requests hit 402 "in_flight_budget_exhausted" on a low balance), and trims silence
+    with ffmpeg. In a cloud container Node needs `NODE_USE_ENV_PROXY=1
+    NODE_EXTRA_CA_CERTS=/root/.ccr/ca-bundle.crt` for fetch to use the proxy.
+  - `newsMetadata` no longer throws for a story whose pages aren't captured. It used to stop
+    every composition from listing (review/render of any film). That story now throws when it is
+    rendered.
+  - github.com pages: curl through the cloud session's git proxy gets 403, but Chrome got the
+    page (2026-10-29).
+
 ## Next
 
-- **Hy-Nomas, still to do.** The 2026-10-29 cloud session couldn't capture it: the container's
-  network policy denied `hy-nomas.hy.tencent.com`, `huggingface.co` and `github.com` pages, and
-  there was no `motion/.env`, so no TTS either. Capture the three pages locally (or where those
-  hosts are allowed), write `src/films/news-hy-nomas/story.json` from the text.md files only
-  (the fixture's story.json shows the shape), `npm run review -- news-hy-nomas`, then
-  `npm run voice -- news-hy-nomas` for real timing.
-  https://hy-nomas.hy.tencent.com/ , https://github.com/Tencent-Hunyuan/Hy-Nomas ,
-  https://huggingface.co/papers/2610.36729
+- **Re-capture Hy-Nomas before rendering it on another machine.** Its pages are gitignored. The capture commands are under Done.
 - Renderer: G3's "final shot" heuristic counts camera travel as one shot; real stories cut
   between pages, so check it on Hy-Nomas. Captions sit over the bottom of the page (a stand-in
   until there's voice). Word timings (`npm run narrate`) to land a sweep on its word instead of

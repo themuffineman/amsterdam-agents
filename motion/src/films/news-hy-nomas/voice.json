@@ -1,0 +1,83 @@
+{
+  "film": "news-hy-nomas",
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "createdAt": "2026-10-29T19:02:42.460Z",
+  "segments": {
+    "s01": {
+      "file": "films/news-hy-nomas/audio/s01.wav",
+      "durationSec": 8.879,
+      "marks": {}
+    },
+    "s02": {
+      "file": "films/news-hy-nomas/audio/s02.wav",
+      "durationSec": 8.374,
+      "marks": {}
+    },
+    "s04": {
+      "file": "films/news-hy-nomas/audio/s04.wav",
+      "durationSec": 7.02,
+      "marks": {}
+    },
+    "s06": {
+      "file": "films/news-hy-nomas/audio/s06.wav",
+      "durationSec": 4.25,
+      "marks": {}
+    },
+    "s07": {
+      "file": "films/news-hy-nomas/audio/s07.wav",
+      "durationSec": 7.346,
+      "marks": {}
+    },
+    "s09": {
+      "file": "films/news-hy-nomas/audio/s09.wav",
+      "durationSec": 7.299,
+      "marks": {}
+    },
+    "s10": {
+      "file": "films/news-hy-nomas/audio/s10.wav",
+      "durationSec": 6.213,
+      "marks": {}
+    },
+    "s11": {
+      "file": "films/news-hy-nomas/audio/s11.wav",
+      "durationSec": 4.126,
+      "marks": {}
+    },
+    "s12": {
+      "file": "films/news-hy-nomas/audio/s12.wav",
+      "durationSec": 8.473,
+      "marks": {}
+    },
+    "s13": {
+      "file": "films/news-hy-nomas/audio/s13.wav",
+      "durationSec": 3.303,
+      "marks": {}
+    },
+    "s14": {
+      "file": "films/news-hy-nomas/audio/s14.wav",
+      "durationSec": 5.874,
+      "marks": {}
+    },
+    "s15": {
+      "file": "films/news-hy-nomas/audio/s15.wav",
+      "durationSec": 7.686,
+      "marks": {}
+    },
+    "s16": {
+      "file": "films/news-hy-nomas/audio/s16.wav",
+      "durationSec": 5.873,
+      "marks": {}
+    },
+    "s17": {
+      "file": "films/news-hy-nomas/audio/s17.wav",
+      "durationSec": 6.179,
+      "marks": {}
+    },
+    "s18": {
+      "file": "films/news-hy-nomas/audio/s18.wav",
+      "durationSec": 5.866,
+      "marks": {}
+    }
+  }
+}

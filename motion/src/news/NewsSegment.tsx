@@ -33,7 +33,7 @@ import { planStory } from "./plan";
 import { STORIES, timeline } from "./stories";
 import type { PageData } from "./types";
 
-export type NewsProps = { film: string; pages: Record<string, PageData> };
+export type NewsProps = { film: string; pages: Record<string, PageData>; missing?: string[] };
 
 const entryOf = (film: string) => {
   const e = STORIES.find((s) => s.id === film);
@@ -41,19 +41,22 @@ const entryOf = (film: string) => {
   return e;
 };
 
-/** Loads every page.json the story uses (captured pages live in public/, gitignored). */
+/** Loads every page.json the story uses (captured pages live in public/, gitignored). A page
+ *  that isn't captured on this machine doesn't throw here, or one story would stop every other
+ *  composition from listing (review, render); the story throws when it is rendered instead. */
 export const newsMetadata: CalculateMetadataFunction<NewsProps> = async ({ props }) => {
   const e = entryOf(props.film);
   const names = [...new Set(e.story.segments.map((s) => s.shot.page))];
   const pages: Record<string, PageData> = {};
+  const missing: string[] = [];
   for (const n of names) {
     const r = await fetch(staticFile(`films/${props.film}/pages/${n}/page.json`));
-    if (!r.ok) throw new Error(`page "${n}" not captured: npm run news-page -- <url> ${props.film} ${n}`);
-    pages[n] = (await r.json()) as PageData;
+    if (r.ok) pages[n] = (await r.json()) as PageData;
+    else missing.push(n);
   }
   const t = timeline(e);
   const last = t[t.length - 1];
-  return { durationInFrames: last.start + last.frames, props: { ...props, pages } };
+  return { durationInFrames: last.start + last.frames, props: { ...props, pages, missing } };
 };
 
 const Caption: React.FC<{ text: string }> = ({ text }) => {
@@ -82,7 +85,8 @@ const Caption: React.FC<{ text: string }> = ({ text }) => {
   );
 };
 
-export const NewsSegment: React.FC<NewsProps> = ({ film, pages }) => {
+export const NewsSegment: React.FC<NewsProps> = ({ film, pages, missing }) => {
+  if (missing?.length) throw new Error(`page "${missing[0]}" not captured: npm run news-page -- <url> ${film} ${missing[0]}`);
   const e = entryOf(film);
   const times = timeline(e);
   const plans = planStory(e.story.segments, pages, times);

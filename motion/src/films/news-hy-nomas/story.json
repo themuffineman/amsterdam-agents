@@ -1,0 +1,201 @@
+{
+  "film": "news-hy-nomas",
+  "title": "Hy-Nomas: Tencent's open interactive world model",
+  "sources": [
+    "https://hy-nomas.hy.tencent.com/ (project page, captured 2026-10-29)",
+    "https://huggingface.co/papers/2610.36729 (paper page and the author's comment, captured 2026-10-29)",
+    "https://github.com/Tencent-Hunyuan/Hy-Nomas (README, captured 2026-10-29)"
+  ],
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "segments": [
+    {
+      "id": "s01",
+      "text": "Tencent Hunyuan just released Hy-Nomas, an interactive world model you steer one turn at a time, with text and with the camera.",
+      "shot": {
+        "type": "clip",
+        "page": "project",
+        "video": 1,
+        "from": 1
+      }
+    },
+    {
+      "id": "s02",
+      "text": "So here's an example. A panda climbs the stone pillars, and each new instruction changes what happens next in the same scene.",
+      "shot": {
+        "type": "clip",
+        "page": "project",
+        "video": 2
+      }
+    },
+    {
+      "id": "s03",
+      "text": "",
+      "seconds": 4.5,
+      "shot": {
+        "type": "clip",
+        "page": "project",
+        "video": 2,
+        "full": true,
+        "from": 6
+      }
+    },
+    {
+      "id": "s04",
+      "text": "You can also mix the two. Describe the next moment in words, then choose how the camera sees it, like in this moon base.",
+      "shot": {
+        "type": "clip",
+        "page": "project",
+        "video": 3
+      }
+    },
+    {
+      "id": "s05",
+      "text": "",
+      "seconds": 4,
+      "shot": {
+        "type": "clip",
+        "page": "project",
+        "video": 3,
+        "full": true,
+        "from": 8
+      }
+    },
+    {
+      "id": "s06",
+      "text": "A single world can keep going for up to sixty seconds of continuous video.",
+      "shot": {
+        "type": "highlight",
+        "page": "project",
+        "highlight": "Generate up to 60 seconds of continuous video"
+      }
+    },
+    {
+      "id": "s07",
+      "text": "It's an 8 billion parameter model, it outputs 720p, and it has a 360 thousand token context.",
+      "shot": {
+        "type": "scroll",
+        "page": "project",
+        "to": "Model Specifications"
+      }
+    },
+    {
+      "id": "s08",
+      "text": "",
+      "seconds": 4,
+      "shot": {
+        "type": "clip",
+        "page": "project",
+        "video": 4,
+        "full": true,
+        "from": 20
+      }
+    },
+    {
+      "id": "s09",
+      "text": "And it's built to remember. Look away, move on and come back, and the model carries objects and spatial context through the changing viewpoint.",
+      "shot": {
+        "type": "highlight",
+        "page": "project",
+        "highlight": "carries objects, environmental details, and spatial context through a changing viewpoint"
+      }
+    },
+    {
+      "id": "s10",
+      "text": "Here a large camera move returns to the original view, and the complex background is still there.",
+      "shot": {
+        "type": "clip",
+        "page": "project",
+        "video": 5,
+        "full": true,
+        "from": 4
+      }
+    },
+    {
+      "id": "s11",
+      "text": "The technical report is out on arXiv, and it's on Hugging Face's papers page.",
+      "shot": {
+        "type": "scroll",
+        "page": "paper",
+        "to": "Hy-Nomas: Towards Free-form Interactive World Generation",
+        "zoom": 1.4
+      }
+    },
+    {
+      "id": "s12",
+      "text": "Under the hood it's an 8B diffusion backbone that takes free-form text instructions and continuous camera control across multiple turns.",
+      "shot": {
+        "type": "highlight",
+        "page": "paper",
+        "highlight": "an 8B diffusion backbone that supports free-form text instructions and continuous camera control across multiple interaction turns"
+      }
+    },
+    {
+      "id": "s13",
+      "text": "And they're releasing the model weights, the code and the benchmarks.",
+      "shot": {
+        "type": "highlight",
+        "page": "paper",
+        "highlight": "We release model weights, code and benchmarks"
+      }
+    },
+    {
+      "id": "s14",
+      "text": "In the comments, one of the authors says it supports the exact same features as Genie 4, but fully open source.",
+      "shot": {
+        "type": "highlight",
+        "page": "paper",
+        "highlight": "Our model supports the exactly same features as Genie4"
+      }
+    },
+    {
+      "id": "s15",
+      "text": "Over on GitHub, they say it runs on a single RTX 4090 with low-memory inference, and you can fine-tune it with LoRA.",
+      "shot": {
+        "type": "highlight",
+        "page": "github",
+        "highlight": "It runs on a single RTX 4090 with low-memory inference"
+      }
+    },
+    {
+      "id": "s16",
+      "text": "People are already building on it, with integrations for ComfyUI, SGLang and WanGP.",
+      "shot": {
+        "type": "scroll",
+        "page": "github",
+        "to": "Community Contributions",
+        "zoom": 1.35
+      }
+    },
+    {
+      "id": "s17",
+      "text": "One demo reports real-time 720p generation on a Google TPU slice with just four chips.",
+      "shot": {
+        "type": "highlight",
+        "page": "github",
+        "highlight": "real-time 720p generation on a v6e-4 slice (4 chips)"
+      }
+    },
+    {
+      "id": "s18",
+      "text": "There's a free demo you can try right now, and the official gallery has 83 generated worlds to browse.",
+      "shot": {
+        "type": "scroll",
+        "page": "project",
+        "to": "Official Gallery"
+      }
+    },
+    {
+      "id": "s19",
+      "text": "",
+      "seconds": 3,
+      "shot": {
+        "type": "clip",
+        "page": "project",
+        "video": 6,
+        "full": true,
+        "from": 2
+      }
+    }
+  ]
+}
