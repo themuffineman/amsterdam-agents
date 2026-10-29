@@ -17,3 +17,6 @@ public/fonts/experiment/*
 # Licensed / trial fonts used by the series but not redistributable (public repo).
 # Copy them here locally; renders fall back when missing (src/series/recreate/fonts.ts).
 public/fonts/local/
+
+# AI news series: captured pages (other sites' screenshots, videos). Re-run npm run news-page.
+public/films/news-*/pages/
