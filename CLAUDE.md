@@ -7,7 +7,7 @@ This repo runs cloud agents that write pages for sycamore.to on a schedule. Thre
 | `ideas` | programmatic-SEO pages, sycamore.to/ideas/{platform}/{niche} | `idea_topics`, loaded by script | `lib/idea-pages/` | `lib/idea-pages.ts`, `app/ideas/` |
 | `blog-posts` | traditional articles (X vs Y, alternatives, best-of, reviews, how-tos, guides), sycamore.to/blog/{slug} | `blog_post_topics`, typed in by hand on `/agents` or `/agents/add` (phone) | `lib/blog-posts/` | `lib/blog-posts.ts`, `app/blog/[slug]` |
 | `tutorials` | how to do or fix one thing in an editor, sycamore.to/blog/tutorial/{slug}, from one Reddit help thread each | `tutorial_topics`, filled by the studio's `/tutorial-gen` harvest | `lib/tutorial-posts/` | `lib/tutorial-posts.ts`, `app/blog/tutorial/[slug]` |
-| `directory-collect` + `directory-write` | the content ideas directory, sycamore.to/directory/{niche}/{idea}: one page per video idea, with real videos as examples | `directory_searches` (niche x platform x round, refilled by the studio) and `directory_ideas` (filled by the collector) | `lib/directory/` | `lib/directory.ts`, `app/directory/` |
+| `directory-collect` + `directory-write` | the content ideas directory, sycamore.to/content-ideas-directory/{niche}/{idea}: one page per video idea, with real videos as examples | `directory_searches` (niche x platform x round, refilled by the studio) and `directory_ideas` (filled by the collector) | `lib/directory/` | `lib/directory.ts`, `app/directory/` |
 
 The ideas campaign is the worked example in most of this file; the blog posts and directory campaigns are described in their own sections. It is one of **three repos**
 that work together. Read this before changing anything here or adding a new campaign.
@@ -303,7 +303,7 @@ OpenRouter's live prices and matched the real bill when checked.
 
 ## The directory campaigns (`directory-collect`, `directory-write`)
 
-The content ideas directory: sycamore.to/directory/{niche}/{idea}, one page per idea (a repeatable video format in a
+The content ideas directory: sycamore.to/content-ideas-directory/{niche}/{idea}, one page per idea (a repeatable video format in a
 niche, e.g. "Guess the price property tours"), with an honest verdict and real videos as examples. Video platforms
 only: YouTube, TikTok, Instagram, Facebook. Two agents, one after the other (started 2026-10-29, not run end to end yet):
 
@@ -373,7 +373,7 @@ How they interact:
 | Platform | Found by | Existence check (studio, `examples.ts`) | Embed |
 | --- | --- | --- | --- |
 | YouTube | Parallel | oEmbed (400 if missing) | youtube-nocookie iframe |
-| TikTok | Parallel | oEmbed (rate-limits; retried once) | `tiktok.com/embed/v2/<id>` |
+| TikTok | Parallel | oEmbed (rate-limits; retried once) | `tiktok.com/player/v1/<id>` (`/embed/v2/` answers 503 since 2026-10) |
 | X | Parallel | `publish.twitter.com/oembed` with a twitter.com URL | `platform.twitter.com/embed/Tweet.html` |
 | LinkedIn | **Exa** (Parallel finds none) | embed page 200 vs 404 | `linkedin.com/embed/feed/update/urn:li:activity:<id>` |
 | Pinterest | Parallel (mostly boards; only `/pin/` kept) | `widgets.pinterest.com/v3/pidgets/pins/info` | `assets.pinterest.com/ext/embed.html` |

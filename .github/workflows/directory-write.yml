@@ -1,4 +1,4 @@
-# Content ideas directory, step 2: the writer (sycamore.to/directory/{niche}/{idea}). Claims one
+# Content ideas directory, step 2: the writer (sycamore.to/content-ideas-directory/{niche}/{idea}). Claims one
 # idea that has enough videos (filed by directory-collect.yml) and writes its page from those
 # videos alone (no web research, so no SearXNG or Whisper), and the studio checks and saves it.
 # Run it by hand from the Actions tab ("Run workflow") or let the schedule do it.
