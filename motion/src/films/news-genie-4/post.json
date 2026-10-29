@@ -1,0 +1,7 @@
+{
+  "title": "Google's Genie 4: Steer an AI World With Words",
+  "description": "Google DeepMind just announced Genie 4, a world model that builds a scene from a prompt, then lets you walk around in it and steer it in real time with plain language: change the weather, move the camera, add a person. It also generates the sound as it goes, from ambient noise and music to characters talking.\n\nIn this video:\n- Steering a scene with text prompts\n- Better physics: collisions and aerodynamics\n- Genie 3 and Genie 4 side by side\n- Scenes that stay consistent for up to two minutes, double Genie 3 (per TechCrunch)\n- Native audio, and Gemini as the director\n- Who can use it: a research preview for trusted testers now, Google AI Ultra subscribers and the Gemini API next\n\nAll demo footage and its sound are from Google DeepMind's Genie 4 announcement.\n\nSources:\nGoogle DeepMind: https://deepmind.google/blog/genie-4-a-new-generation-of-world-simulation/\nGoogle on X: https://x.com/Google/status/2115114426827501782\nTechCrunch: https://techcrunch.com/2026/10/27/googles-genie-4-world-model-adds-audio-more-realistic-worlds-and-real-time-steering/\n\nSycamore edits your raw talking-head footage into a short-form video, with the cuts, zooms and captions done for you: https://sycamore.to",
+  "videoUrl": "https://storage.googleapis.com/androme/renders-marketing/films/news-genie-4-202610292129.mp4",
+  "thumbnailUrl": "https://storage.googleapis.com/androme/renders-marketing/films/news-genie-4-thumb-202610292129.jpg",
+  "categoryId": "28"
+}

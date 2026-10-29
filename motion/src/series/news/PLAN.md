@@ -115,6 +115,15 @@ serif maths and diagrams) only where a concept needs one. Our own name and voice
   - Renderer: a full-screen clip right after another full-screen clip now hard-cuts in at full
     size (`clip.cut`), instead of dropping back to the page and growing again.
 
+- **Posting** (2026-10-29): final = local `npx remotion render` at 1080p + ffmpeg `loudnorm` to -14
+  LUFS. The mp4 and thumbnail go in `gs://androme/renders-marketing/films/`, and their URLs plus the
+  title and description are in `src/films/<film>/post.json`. Buffer can't post it: it rejects a custom
+  thumbnail for YouTube ("social networks do not accept custom video thumbnail images"), and
+  Zernio's YouTube account is another channel (sycamore-to, not @sycamore-app). Upload directly
+  with `node scripts/youtube-upload.mjs <film>`, which needs GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET
+  and YOUTUBE_REFRESH_TOKEN (the studio's). Genie 4 is waiting on those.
+  Its thumbnail is a real frame from the saxophone demo, with "GENIE 4 / Steer a world with words".
+
 ## Next
 
 - **Re-capture Hy-Nomas before rendering it on another machine.** Its pages are gitignored. The capture commands are under Done.
