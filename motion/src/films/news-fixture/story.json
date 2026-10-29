@@ -1,0 +1,17 @@
+{
+  "film": "news-fixture",
+  "title": "Test: the news renderer on a fixture page",
+  "sources": ["scripts/fixtures/news-test-page.html (local test page, placeholder content)"],
+  "voice": "Achird",
+  "model": "google/gemini-3.8-flash-lite-tts",
+  "segments": [
+    { "id": "s01", "text": "This is a test story for the news renderer, playing on a placeholder page.", "shot": { "type": "scroll", "page": "project", "to": "Fixture Model" } },
+    { "id": "s02", "text": "Here's the demo clip on that page, playing in place.", "shot": { "type": "clip", "page": "project", "video": 1 } },
+    { "id": "s03", "text": "", "seconds": 4, "shot": { "type": "clip", "page": "project", "video": 1, "full": true, "from": 2 } },
+    { "id": "s04", "text": "Then the page scrolls down to the overview section.", "shot": { "type": "scroll", "page": "project", "to": "Overview" } },
+    { "id": "s05", "text": "And if you look at this sentence, the blue selection sweeps over the phrase.", "shot": { "type": "highlight", "page": "project", "highlight": "this sentence is the highlighted phrase" } },
+    { "id": "s06", "text": "A longer phrase wraps onto a second line, and the sweep carries on from the left edge.", "shot": { "type": "highlight", "page": "project", "highlight": "a second line, so the sweep has to cross a line break and carry on from the left edge" } },
+    { "id": "s07", "text": "In this table, the outline goes around column B.", "shot": { "type": "column", "page": "project", "column": "Column B" } },
+    { "id": "s08", "text": "And the second clip plays full screen with the voice still going.", "shot": { "type": "clip", "page": "project", "video": 2, "full": true } }
+  ]
+}

@@ -45,16 +45,52 @@ serif maths and diagrams) only where a concept needs one. Our own name and voice
   and `<audio>` elements (files downloaded with curl), iframes and big images.
   Tested on huggingface.co/papers and hy-nomas.hy.tencent.com (8 demo clips placed on the page).
 
+- `src/news/` (2026-10-29, cloud session): the generic renderer, tested on a local fixture page
+  only (see Next: the Hy-Nomas pages couldn't be reached from the cloud container).
+  - `types.ts` (page.json + story.json shapes), `stories.ts` (every `src/films/news-*/story.json`
+    found by `require.context`, Root registers one composition per story with the folder name as
+    its id; `timeline`: voice clip length, else ~2.6 words/s, + pause), `plan.ts` (pure camera /
+    cursor / sweep / outline / clip numbers per segment; a segment starts where the last ended),
+    `PageShot.tsx` (one camera group: page.png + in-place videos + selection + outline; bar.png
+    on top unzoomed; arrow cursor in screen space, kept across cuts; full-screen clips grow out of
+    their place on the page over black), `NewsSegment.tsx` (plays the edit list; voice clips when
+    `voice.json` exists, else timed captions; series plan comment at the top).
+  - Shot types in story.json: `scroll` (`to`/`from`: heading or highlight text, or a y; `zoom`),
+    `highlight` (zooms so type is ~46 px, keeps the column's left edge, sweeps line by line),
+    `column` / `row` (frames the table, red outline draws in 16 f), `clip` (`video` n, `full`,
+    `from` s, `sound`; a segment with `"text": ""` and `seconds` is the voice pausing for the clip).
+    Same page = the camera travels (length by distance); another page = hard cut, entering
+    already moving. Not built yet: `still`, `explainer`, `callout`, audio samples, grids.
+  - `npm run voice -- <film>` now reads story.json when there's no script.json (skips empty text).
+  - `news-page.mjs` fixes: highlight boxes were offset by the scroll `window.find` makes (every
+    highlight landed at the wrong y; now read per box); `--no-sandbox` as root and Chrome on
+    `HTTPS_PROXY` (cloud containers). `remotion.config.ts`: `CHROME_PATH` also sets Remotion's
+    browser (the cloud container's headless shell doesn't trust the proxy's CA; full Chromium does).
+  - Fixture: `scripts/fixtures/news-test-page.html` + `src/films/news-fixture/` (placeholder
+    copy; its README says how to serve and capture it). Review of `news-fixture` (40.7 s draft):
+    G0 pass (1220/1220 frames, 46% moving), G2 pass (no flat frames), G3 FAIL by the script
+    (final shot 64.8%: the fixture is one page, so the camera never hard-cuts and the review
+    sees one long shot; the last planned shot is 4 s; end hold 0 s). By eye: G1 pass on the
+    highlight and table shots (type ~43-46 px), G4 one hero per frame, G5 no chrome except the
+    stand-in captions.
+
 ## Next
 
-- First story: **Hy-Nomas** (Tencent, interactive world generation, 2026-10-26):
+- **Hy-Nomas, still to do.** The 2026-10-29 cloud session couldn't capture it: the container's
+  network policy denied `hy-nomas.hy.tencent.com`, `huggingface.co` and `github.com` pages, and
+  there was no `motion/.env`, so no TTS either. Capture the three pages locally (or where those
+  hosts are allowed), write `src/films/news-hy-nomas/story.json` from the text.md files only
+  (the fixture's story.json shows the shape), `npm run review -- news-hy-nomas`, then
+  `npm run voice -- news-hy-nomas` for real timing.
   https://hy-nomas.hy.tencent.com/ , https://github.com/Tencent-Hunyuan/Hy-Nomas ,
-  https://huggingface.co/papers/2610.36729 . Write the script from the captured `text.md` files.
-- `src/news/PageShot.tsx` + `NewsSegment` composition reading `src/films/news-<slug>/story.json`.
-- Notes: Chrome needs network outside the Claude Code sandbox; the promo video on Hy-Nomas is
-  over 80 MB. Videos cost bandwidth: use `--no-videos` when only the page is needed. Captured
-  pages (`public/films/news-*/pages/`) are other sites' material and stay local (gitignored);
-  re-run the capture to get them.
+  https://huggingface.co/papers/2610.36729
+- Renderer: G3's "final shot" heuristic counts camera travel as one shot; real stories cut
+  between pages, so check it on Hy-Nomas. Captions sit over the bottom of the page (a stand-in
+  until there's voice). Word timings (`npm run narrate`) to land a sweep on its word instead of
+  `at` seconds. Shot types not built: still, explainer, callout, audio sample, clip grid.
+- Notes: the promo video on Hy-Nomas is over 80 MB (`--max-mb`). Videos cost bandwidth: use
+  `--no-videos` when only the page is needed. Captured pages (`public/films/news-*/pages/`) are
+  other sites' material and stay local (gitignored); re-run the capture to get them.
 
 ## Open questions for the user
 

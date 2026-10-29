@@ -1,0 +1,43 @@
+<!doctype html>
+<!-- Test fixture for src/news (PageShot / NewsSegment). Neutral placeholder content, not news:
+     serve this folder on localhost (a clip.mp4 next to it, see src/films/news-fixture/README.md)
+     and capture it with npm run news-page. -->
+<html><head><meta charset="utf-8"><title>Fixture: a project page</title>
+<style>
+  body { margin: 0; font: 17px/1.6 system-ui, sans-serif; color: #1d1d1f; background: #fafafa; }
+  header { position: fixed; top: 0; left: 0; right: 0; height: 56px; background: #fff; border-bottom: 1px solid #ddd;
+           display: flex; align-items: center; padding: 0 32px; font-weight: 600; z-index: 2; }
+  main { max-width: 880px; margin: 0 auto; padding: 96px 24px 200px; }
+  h1 { font-size: 44px; line-height: 1.15; margin: 24px 0 12px; }
+  h2 { font-size: 28px; margin: 72px 0 12px; }
+  video { width: 100%; border-radius: 10px; display: block; background: #000; }
+  table { border-collapse: collapse; width: 100%; margin-top: 16px; font-size: 16px; }
+  th, td { border-bottom: 1px solid #ddd; padding: 10px 12px; text-align: left; }
+  th { background: #f0f0f0; }
+  .fig { margin: 24px 0; }
+  p { margin: 12px 0; }
+</style></head>
+<body>
+<header>Fixture Lab</header>
+<main>
+  <h1>Fixture Model: a placeholder page for testing the news renderer</h1>
+  <p>This page exists only to test the renderer. Its text is placeholder copy with no claims in it. It has headings to scroll between, a phrase to select, a table with a column to outline and a video to play.</p>
+  <div class="fig"><video src="clip.mp4" muted playsinline poster=""></video></div>
+  <h2>Overview</h2>
+  <p>The renderer pans this page between its headings. A cursor moves to whatever the narration points at, and the blue selection sweeps over a phrase the way a person drags across text in a browser.</p>
+  <p>Here is the phrase the test selects: <b>this sentence is the highlighted phrase</b>, and the text after it stays unselected. Longer phrases wrap onto a second line, so the sweep has to cross a line break and carry on from the left edge of the next line without a jump.</p>
+  <h2>Results</h2>
+  <p>The table below has placeholder numbers. The test outlines the column called Column B.</p>
+  <table>
+    <tr><th>Row</th><th>Column A</th><th>Column B</th><th>Column C</th></tr>
+    <tr><td>First row</td><td>10.0</td><td>20.0</td><td>30.0</td></tr>
+    <tr><td>Second row</td><td>11.0</td><td>21.0</td><td>31.0</td></tr>
+    <tr><td>Third row</td><td>12.0</td><td>22.0</td><td>32.0</td></tr>
+    <tr><td>Fourth row</td><td>13.0</td><td>23.0</td><td>33.0</td></tr>
+  </table>
+  <h2>Second clip</h2>
+  <div class="fig"><video src="clip2.mp4" muted playsinline></video></div>
+  <h2>Links</h2>
+  <p>Placeholder footer text so the page is taller than one screen at the bottom.</p>
+</main>
+</body></html>

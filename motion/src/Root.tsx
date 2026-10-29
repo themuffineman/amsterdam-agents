@@ -17,6 +17,8 @@ import { RECREATE_RIGEL, RecreateRigel } from "./compositions/RecreateRigel";
 import { MACBOOK_LAB, MacBookLab } from "./series/recreate/MacBookLab";
 import { Rigel as RigelRun1, calculateRigelMetadata as run1Meta, rigelDefaultProps as run1Props } from "./films/recreate-rigel/builds/Run1";
 import { RUNS } from "./films/recreate-rigel/builds/runs";
+import { NewsSegment, newsMetadata } from "./news/NewsSegment";
+import { STORIES } from "./news/stories";
 
 export const RemotionRoot: React.FC = () => {
   return (
@@ -84,6 +86,10 @@ export const RemotionRoot: React.FC = () => {
         defaultProps={{ sans: "alteHaas", serif: "featureDisplay" }}
         {...LANDSCAPE}
       />
+      {/* AI news series: one composition per story.json in src/films/news-<slug>/, id = the folder name */}
+      {STORIES.map((s) => (
+        <Composition key={s.id} id={s.id} component={NewsSegment} defaultProps={{ film: s.id, pages: {} }} calculateMetadata={newsMetadata} durationInFrames={300} {...LANDSCAPE} />
+      ))}
     </>
   );
 };

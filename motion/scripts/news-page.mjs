@@ -141,8 +141,8 @@ function pageHideBars() {
 
 /** Everything the film needs to point at, as boxes in page CSS px. */
 function pageMap({ highlights, columns, rows }) {
-  const sy = scrollY;
-  const box = (r) => ({ x: Math.round(r.left), y: Math.round(r.top + sy), w: Math.round(r.width), h: Math.round(r.height) });
+  // Read scrollY per box: window.find() below scrolls the page to each match.
+  const box = (r) => ({ x: Math.round(r.left + scrollX), y: Math.round(r.top + scrollY), w: Math.round(r.width), h: Math.round(r.height) });
   const vis = (e) => {
     const r = e.getBoundingClientRect();
     return r.width > 8 && r.height > 8 && getComputedStyle(e).visibility !== "hidden";
@@ -246,7 +246,13 @@ const browser = await puppeteer.launch({
   headless: true,
   executablePath,
   defaultViewport: VIEWPORT,
-  args: ["--autoplay-policy=no-user-gesture-required", "--hide-scrollbars"],
+  args: [
+    "--autoplay-policy=no-user-gesture-required",
+    "--hide-scrollbars",
+    // Cloud containers run as root (Chrome refuses its sandbox there) and behind HTTPS_PROXY.
+    ...(process.getuid?.() === 0 ? ["--no-sandbox"] : []),
+    ...(process.env.HTTPS_PROXY ? [`--proxy-server=${process.env.HTTPS_PROXY}`] : []),
+  ],
 });
 const warnings = [];
 const warn = (m) => {

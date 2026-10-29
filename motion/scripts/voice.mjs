@@ -4,6 +4,7 @@
 // Usage:  npm run voice -- <film>          e.g. npm run voice -- best-times
 //
 // Reads  src/films/<film>/script.json   { voice, model, prompt, segments: [{ id, text }] }
+//        (or story.json, a news story: same fields, plus a shot per segment)
 // Writes public/films/<film>/audio/<id>.wav   (downloaded clips)
 //        src/films/<film>/voice.json          { segments: { <id>: { file, durationSec, marks } } }
 //
@@ -34,7 +35,12 @@ if (!base || !key) {
 const srcDir = path.resolve("src", "films", film);
 const audioDir = path.resolve("public", "films", film, "audio");
 fs.mkdirSync(audioDir, { recursive: true });
-const script = JSON.parse(fs.readFileSync(path.join(srcDir, "script.json"), "utf8"));
+// A news story's story.json is a script too (its segments have a shot each); segments with no
+// text (a clip playing with the voice paused) get no clip.
+const scriptFile = ["script.json", "story.json"].map((f) => path.join(srcDir, f)).find((f) => fs.existsSync(f));
+if (!scriptFile) throw new Error(`no script.json or story.json in src/films/${film}`);
+const script = JSON.parse(fs.readFileSync(scriptFile, "utf8"));
+script.segments = script.segments.filter((s) => s.text && s.text.trim());
 
 const MARK = /\{([a-z0-9_-]+)\}/gi;
 
