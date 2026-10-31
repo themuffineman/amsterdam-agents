@@ -45,16 +45,21 @@ type Item = {
   note: string | null;
   needs: { text: boolean; thumbnail: boolean; stats: boolean };
 };
-type Fix = { title?: string; summary?: string; thumbnail?: string; views?: number; likes?: number; postedAt?: string; durationSec?: number; creator?: string; model?: string };
+type Fix = { title?: string; summary?: string; thumbnail?: string; views?: number; likes?: number; postedAt?: string; durationSec?: number; creator?: string; model?: string; textOnly?: boolean };
 
 const auth = { authorization: `Bearer ${KEY}` };
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const b64 = (b: Uint8Array) => Buffer.from(b).toString("base64");
 
+/** How entries must sound: the studio's rules (lib/directory/checks.ts ENTRY_VOICE), sent with the list. */
+let voice = "";
+
 async function queue(): Promise<Item[]> {
   const r = await fetch(`${STUDIO}/api/agent/directory-videos?limit=50`, { headers: auth });
   if (!r.ok) throw new Error(`studio list HTTP ${r.status}`);
-  return ((await r.json()) as { videos: Item[] }).videos;
+  const body = (await r.json()) as { videos: Item[]; voice?: string };
+  voice = body.voice ?? voice;
+  return body.videos;
 }
 
 async function send(id: string, fix: Fix): Promise<{ problems: string[]; published: boolean }> {
@@ -79,11 +84,11 @@ Caption: ${(v.caption ?? "(none)").slice(0, 1200)}
 Transcript (start): ${(v.transcript ?? "(none: no speech)").slice(0, 2500)}
 An editor's note on it: ${v.note ?? "(none)"}
 
+${voice}
+
 Return only JSON: {"title": "...", "summary": "..."}
-- title: 15 to 75 characters, what THIS video is. Specific and plain, e.g. "Guess the price: a 4-bedroom Palm Beach home" or "Grooming a matted Bernedoodle, start to finish".
-- summary: 40 to 260 characters, 1 or 2 plain sentences on what happens in the video.
-- Only facts from the material above. No number, price, place or name it doesn't contain.
-- No hype words, emojis, hashtags, or "In this video".${problems.length ? `\n\nYour last answer was refused: ${problems.join("; ")}. Fix that.` : ""}`;
+- title: 15 to 75 characters. summary: 40 to 260 characters.
+- Only facts from the material above. No number, price, place or name it doesn't contain.${problems.length ? `\n\nYour last answer was refused: ${problems.join("; ")}. Fix that.` : ""}`;
 
   const r = await fetch("https://openrouter.ai/api/v1/chat/completions", {
     method: "POST",
@@ -146,14 +151,14 @@ async function main() {
       if (done >= LIMIT) break;
       seen.add(v.id);
       done++;
-      const fix: Fix = { model: MODEL };
+      const fix: Fix = { model: MODEL, textOnly: process.env.TEXT_ONLY ? true : undefined };
       try {
         if (!process.env.TEXT_ONLY) await media(v, fix);
         let text = v.needs.text ? await writeText(v).catch((e) => (console.log(`  model: ${(e as Error).message}`), null)) : null;
         let result = await send(v.id, { ...fix, ...text });
         if (text && result.problems.length) {
           text = await writeText(v, result.problems).catch(() => null);
-          if (text) result = await send(v.id, { ...text, model: MODEL });
+          if (text) result = await send(v.id, { ...text, model: MODEL, textOnly: fix.textOnly });
         }
         if (result.published) published++;
         console.log(`${done}. ${v.platform} ${v.url}: ${result.published ? "published" : "not yet"}${fix.thumbnail ? ", thumbnail" : ""}${fix.views != null ? `, ${fix.views} views` : ""}${result.problems.length ? ` (refused: ${result.problems.join("; ")})` : ""}`);
