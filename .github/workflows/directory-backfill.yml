@@ -1,0 +1,46 @@
+# Content ideas directory: fixes up entries missing a title and summary, a thumbnail or (TikTok)
+# their numbers (scripts/directory-backfill.ts). Free: a free OpenRouter model, snapsave, TikTok's
+# own page. Run by hand from the Actions tab; the daily run catches any video the collector
+# couldn't get a thumbnail for. Videos are downloaded here, on GitHub's machine, never locally.
+name: directory backfill
+
+on:
+  schedule:
+    - cron: "40 4 * * *"
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Most videos this run (default 400)"
+        required: false
+      model:
+        description: "OpenRouter model for titles and summaries (default nvidia/nemotron-3-ultra-550b-a55b:free)"
+        required: false
+
+concurrency:
+  group: directory-backfill
+  cancel-in-progress: false
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      # PyAV grabs the thumbnail frame (scripts/frame.py); pinned like the collector's.
+      - run: pip install av==17.0.0
+      - name: Backfill
+        env:
+          STUDIO_URL: ${{ secrets.STUDIO_URL }}
+          AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          LIMIT: ${{ inputs.limit }}
+          MODEL: ${{ inputs.model }}
+        run: node scripts/directory-backfill.ts

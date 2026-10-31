@@ -5,7 +5,8 @@ import { defineTool } from "@earendil-works/pi-coding-agent";
 import { jsonrepair } from "jsonrepair";
 import { Type } from "typebox";
 
-import { submitWork } from "../studio.ts";
+import { noteProblem } from "../problems.ts";
+import { submitWork, uploadImage } from "../studio.ts";
 import { searchCost } from "./search.ts";
 import type { WatchedMap } from "./watch.ts";
 import { normalUrl, type Seen } from "./web.ts";
@@ -34,7 +35,9 @@ import { normalUrl, type Seen } from "./web.ts";
  * The directory collector (`watched`, config attachWatched) sends `posts`, each a video it
  * filed under an idea. A post it didn't watch, or one watch_video couldn't reach, goes back
  * unsent the same way; the rest get what watch_video read (`video`: creator, date, views,
- * caption, transcript), which is the studio's proof the video exists and the writer's evidence.
+ * caption, transcript), which is the studio's proof the video exists and what the entry is
+ * checked against. A post's thumbnail (watch_video's frame or cover image) is uploaded to the
+ * studio here, only for posts the agent files, once each, and goes as `video.thumbnail` (a URL).
  * `research` says how many searches and videos the agent went through.
  */
 
@@ -87,6 +90,8 @@ export function submitPageTool(opts: {
   watched?: WatchedMap;
 }) {
   const { state } = opts;
+  /** Thumbnails already uploaded this topic, by post URL (a resubmission doesn't upload again). */
+  const thumbs = new Map<string, string | null>();
   const reply = (t: string) => ({ content: [{ type: "text" as const, text: t }], details: {} });
 
   return defineTool({
@@ -143,7 +148,16 @@ export function submitPageTool(opts: {
           const w = opts.watched.get(url) ?? [...opts.watched].find(([k]) => normalUrl(k) === normalUrl(url))?.[1];
           if (!w) unwatched.push(url || "(a post with no url)");
           else if (!w.exists) missing.push(url);
-          else p.video = w;
+          else {
+            const { thumbnail, ...video } = w;
+            if (thumbnail && !thumbs.has(url)) {
+              thumbs.set(url, await uploadImage(opts.campaign, opts.topicId, thumbnail.bytes, thumbnail.type, "thumbnail").catch((e) => {
+                noteProblem("thumbnail", (e as Error).message, url);
+                return null;
+              }));
+            }
+            p.video = { ...video, thumbnail: thumbs.get(url) ?? null };
+          }
         }
         if (unwatched.length || missing.length) {
           return reply(

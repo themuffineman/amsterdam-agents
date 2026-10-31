@@ -1,3 +1,5 @@
+import { mkdtempSync, rmSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { defineTool } from "@earendil-works/pi-coding-agent";
@@ -7,13 +9,16 @@ import { noteProblem } from "../problems.ts";
 import { isPostUrl } from "./examples.ts";
 import {
   download,
+  frameOf,
   geminiTranscript,
+  imageBytes,
   invidiousCaptions,
   invidiousVideo,
   invidiousWhisper,
   platformOf,
   snapsavePost,
-  whisper,
+  tiktokPage,
+  whisperFile,
   youtubeId,
   youtubeOembed,
   type Transcript,
@@ -30,7 +35,12 @@ import { normalUrl, type Seen } from "./web.ts";
  *   YouTube: Invidious metadata, then its captions, else its audio track through Whisper, else
  *     Gemini when GEMINI_API_KEY is set. YouTube's oEmbed for title and channel if no
  *     Invidious instance answers.
- *   Instagram, TikTok, X, Facebook: snapsave's caption and video file through Whisper.
+ *   Instagram, TikTok, X, Facebook: snapsave's caption and video file through Whisper. TikTok's
+ *     own page for views, likes, date and length.
+ *
+ * Thumbnails (for the directory): a frame of the video file it downloads for Whisper anyway,
+ * else the post's cover/preview image (TikTok's page, snapsave). Kept as bytes in `thumbnail`:
+ * submit_page uploads only the ones of videos the agent files. YouTube needs none (i.ytimg.com).
  */
 
 /** Most of a transcript the agent gets back (everything it reads is resent every turn). */
@@ -73,7 +83,12 @@ async function firstTranscript(steps: [string, () => Promise<Transcript | null>]
  * reach the video at all (`exists`): Invidious or oEmbed answered for YouTube, snapsave gave a
  * video file for the others. A video with no speech still exists.
  */
-export type Watched = Omit<Meta, "url"> & { exists: boolean; transcript: string | null };
+export type Thumbnail = { bytes: Uint8Array; type: "image/jpeg" | "image/png" | "image/webp" };
+export type Watched = Omit<Meta, "url"> & { exists: boolean; transcript: string | null; thumbnail?: Thumbnail };
+
+/** What kind of image some bytes are (cover images come as JPEG or WebP whatever their URL says). */
+const imageType = (b: Uint8Array): Thumbnail["type"] =>
+  b[0] === 0x89 && b[1] === 0x50 ? "image/png" : b[8] === 0x57 && b[9] === 0x45 && b[10] === 0x42 && b[11] === 0x50 ? "image/webp" : "image/jpeg";
 
 export async function watch(url: string): Promise<{ text: string; transcript: Transcript | null; failures: string[]; watched: Watched }> {
   const notes: string[] = [];
@@ -82,6 +97,7 @@ export async function watch(url: string): Promise<{ text: string; transcript: Tr
   let meta: Meta = { url, title: null, caption: null, creator: null, postedAt: null, durationSec: null, views: null, likes: null };
   let tr: Transcript | null = null;
   let exists = false;
+  let thumbnail: Thumbnail | undefined;
 
   if (platform === "youtube") {
     const id = youtubeId(url);
@@ -114,16 +130,37 @@ export async function watch(url: string): Promise<{ text: string; transcript: Tr
       ["Gemini", async () => (process.env.GEMINI_API_KEY ? geminiTranscript(url) : null)],
     ], notes, failures);
   } else {
-    const post = await snapsavePost(url);
-    meta.caption = post.caption;
-    meta.creator = post.creator;
+    const [post, page] = await Promise.all([
+      snapsavePost(url),
+      platform === "tiktok" ? tiktokPage(url).catch((e) => (notes.push((e as Error).message), null)) : Promise.resolve(null),
+    ]);
+    meta.caption = post.caption ?? page?.caption ?? null;
+    meta.creator = post.creator ?? page?.creator ?? null;
+    if (page) meta = { ...meta, postedAt: page.postedAt, durationSec: page.durationSec, views: page.views, likes: page.likes };
     if (post.problem || !post.videoUrl) {
       failures.push(post.problem ?? "snapsave: no video");
       notes.push(post.problem ?? "snapsave: no video");
     } else {
       exists = true;
       const videoUrl = post.videoUrl;
-      tr = await firstTranscript([["Whisper", () => whisper((dir) => download(videoUrl, join(dir, "video.mp4"), "snapsave"), "snapsave")]], notes, failures);
+      const dir = mkdtempSync(join(tmpdir(), "watch-"));
+      try {
+        const file = join(dir, "video.mp4");
+        tr = await firstTranscript([["Whisper", async () => whisperFile(await download(videoUrl, file, "snapsave"), "snapsave")]], notes, failures);
+        try {
+          const bytes = frameOf(file);
+          thumbnail = { bytes, type: "image/jpeg" };
+        } catch (e) {
+          notes.push((e as Error).message);
+        }
+      } finally {
+        rmSync(dir, { recursive: true, force: true });
+      }
+    }
+    if (!thumbnail) {
+      const cover = page?.cover ?? post.thumbnail;
+      const bytes = cover ? await imageBytes(cover) : null;
+      if (bytes) thumbnail = { bytes, type: imageType(bytes) };
     }
   }
 
@@ -150,7 +187,7 @@ export async function watch(url: string): Promise<{ text: string; transcript: Tr
   if (text.length > LIMIT) text = `${text.slice(0, LIMIT)}\n\n[cut at ${LIMIT} characters]`;
   const { url: _, ...details } = meta;
   const transcript = lines.length ? lines.map((l) => `[${mmss(l.at)}] ${l.text}`).join("\n") : null;
-  return { text, transcript: tr, failures, watched: { ...details, exists, transcript } };
+  return { text, transcript: tr, failures, watched: { ...details, exists, transcript, thumbnail } };
 }
 
 /** Videos watched in this topic, by URL as the agent passed it (submit_page's attachWatched). */

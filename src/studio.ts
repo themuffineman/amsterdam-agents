@@ -124,15 +124,15 @@ export async function failTopic(campaign: string, id: string, error: string): Pr
 }
 
 /**
- * Stores an image for a claimed topic in the studio's bucket (a screenshot, or a logo the
- * site doesn't have elsewhere); returns its public URL.
+ * Stores an image for a claimed topic in the studio's bucket (a screenshot, a logo the site
+ * doesn't have elsewhere, or a directory video's thumbnail); returns its public URL.
  */
 export async function uploadImage(
   campaign: string,
   id: string,
   image: Uint8Array,
-  type: "image/jpeg" | "image/png" = "image/jpeg",
-  kind: "screenshot" | "logo" = "screenshot",
+  type: "image/jpeg" | "image/png" | "image/webp" = "image/jpeg",
+  kind: "screenshot" | "logo" | "thumbnail" = "screenshot",
 ): Promise<string> {
   const res = await fetch(`${base()}/api/agent/${campaign}/${id}/screenshot?kind=${kind}`, {
     method: "POST",

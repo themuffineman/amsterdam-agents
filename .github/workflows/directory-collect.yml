@@ -1,6 +1,7 @@
-# Content ideas directory, step 1: the collector (sycamore.to/content-ideas-directory/...). Claims one search
-# round (a niche on one platform), finds and watches real videos with Pi on a free model, and
-# the studio files the good ones under ideas. Nothing is published here: see directory-write.yml.
+# The content ideas directory (sycamore.to/content-ideas-directory/...). Claims one search round (a
+# niche on one platform), finds and watches real videos with Pi on a free model, and writes each
+# good one up as an entry (title, hook, summary; watch_video grabs its thumbnail). The studio
+# checks the entries against the videos and publishes them at once.
 # Run it by hand from the Actions tab ("Run workflow") or let the schedule do it.
 name: directory collect agent
 

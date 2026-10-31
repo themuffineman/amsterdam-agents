@@ -7,7 +7,7 @@ This repo runs cloud agents that write pages for sycamore.to on a schedule. Thre
 | `ideas` | programmatic-SEO pages, sycamore.to/ideas/{platform}/{niche} | `idea_topics`, loaded by script | `lib/idea-pages/` | `lib/idea-pages.ts`, `app/ideas/` |
 | `blog-posts` | traditional articles (X vs Y, alternatives, best-of, reviews, how-tos, guides), sycamore.to/blog/{slug} | `blog_post_topics`, typed in by hand on `/agents` or `/agents/add` (phone) | `lib/blog-posts/` | `lib/blog-posts.ts`, `app/blog/[slug]` |
 | `tutorials` | how to do or fix one thing in an editor, sycamore.to/blog/tutorial/{slug}, from one Reddit help thread each | `tutorial_topics`, filled by the studio's `/tutorial-gen` harvest | `lib/tutorial-posts/` | `lib/tutorial-posts.ts`, `app/blog/tutorial/[slug]` |
-| `directory-collect` + `directory-write` | the content ideas directory, sycamore.to/content-ideas-directory/{niche}/{idea}: one page per video idea, with real videos as examples | `directory_searches` (niche x platform x round, refilled by the studio) and `directory_ideas` (filled by the collector) | `lib/directory/` | `lib/directory.ts`, `app/directory/` |
+| `directory-collect` | the content ideas directory, sycamore.to/content-ideas-directory/{niche}/{idea}/{video}: a directory of real videos as data (one entry per video: thumbnail, platform, title, hook, summary, views), sorted into ideas | `directory_searches` (niche x platform x round, refilled by the studio) | `lib/directory/` | `lib/directory.ts`, `app/content-ideas-directory/` |
 
 The ideas campaign is the worked example in most of this file; the blog posts and directory campaigns are described in their own sections. It is one of **three repos**
 that work together. Read this before changing anything here or adding a new campaign.
@@ -301,25 +301,47 @@ OpenRouter's live prices and matched the real bill when checked.
   adds menu paths and FAQ answers the thread doesn't have. Fine as the fallback, not as the default.
 - Workflow `.github/workflows/tutorials.yml`, hourly at :32, no SearXNG/Whisper.
 
-## The directory campaigns (`directory-collect`, `directory-write`)
+## The directory campaign (`directory-collect`)
 
-The content ideas directory: sycamore.to/content-ideas-directory/{niche}/{idea}, one page per idea (a repeatable video format in a
-niche, e.g. "Guess the price property tours"), with an honest verdict and real videos as examples. Video platforms
-only: YouTube, TikTok, Instagram, Facebook. Two agents, one after the other (started 2026-10-29, not run end to end yet):
+The content ideas directory: sycamore.to/content-ideas-directory, a directory of real videos people in a niche post, as
+data, like Canva's template gallery: one entry per video (thumbnail, platform logo, title, hook, 1-2 sentence summary,
+views, creator, date), sorted into ideas (repeatable formats, e.g. "Guess the price property tour") that are its
+categories. A niche page is a paginated grid; a card opens the video in a modal; every video also has its own page.
+**No long-form writing anywhere, and no Claude**: a free model fills the fields. Video platforms only: YouTube,
+TikTok, Instagram, Facebook. Rebuilt 2026-10-31 (it was idea pages written by Claude Sonnet; that writer agent,
+`directory-write`, is gone). The plan: 100+ entries a day at $0, later turned into blog posts ("trending real estate
+video ideas, October 2026") by filtering the data.
 
 - **Collector** (`agents/directory-collect.json`, Pi on the free model; workflow `directory-collect.yml`, hourly at
   :07, SearXNG + Whisper, 180-minute cap). A topic is one search round: a niche on one platform. It searches with
   `find_examples` (later rounds add Google's `after:`), watches candidates with `watch_video`, and files the good ones
-  under an existing or new idea in page.json (`{ newIdeas, posts }`). Nothing is published. With `attachWatched`,
-  submit_page refuses (without spending a submission) any post the agent didn't watch or that watch_video couldn't
-  reach (`Watched.exists`: Invidious/oEmbed answered, or snapsave gave a video file; a video with no speech still
-  exists), and sends each post with what watch_video read (`video`: creator, date, views, caption, transcript) plus
-  `research` (searches, videos watched). That is the existence check, Instagram and Facebook included.
-- **Writer** (`agents/directory-write.json`, `noResearchTools`, `claudeModel` sonnet: switch the campaign to
-  claude-code on /agents; workflow `directory-write.yml`, hourly at :52, no SearXNG/Whisper). A topic is an idea with
-  3+ videos; it writes the page from those videos alone. Rewritten each time the idea gains 3 more videos (up to 12).
-- The studio side (queues, prompts, checks, the refill that keeps adding search rounds) is in the studio's
-  CLAUDE.md under "Content ideas directory". Niches: `lib/directory/niches.json` there.
+  in page.json (`{ newIdeas, posts }`), each post with `title`, `hook`, `summary`, `idea`, `audiences`. The studio
+  checks them against the video and **publishes each entry at once**. With `attachWatched`, submit_page refuses
+  (without spending a submission) any post the agent didn't watch or that watch_video couldn't reach
+  (`Watched.exists`), and sends each post with what watch_video read (`video`: creator, date, views, likes, caption,
+  transcript, thumbnail URL) plus `research`. That is the existence check, Instagram and Facebook included.
+- **Thumbnails**: watch_video already downloads TikTok/Instagram/Facebook videos for Whisper; it grabs a frame ~1 s in
+  before deleting the file (`scripts/frame.py`, PyAV, which the Whisper install brings; GitHub's runners have no
+  ffmpeg), else the post's cover image (TikTok's page, snapsave's preview). The bytes stay in the `Watched` entry;
+  submit_page uploads them (`uploadImage(..., "thumbnail")` → studio bucket `agent-thumbs/`) only for posts the agent
+  files, once each. YouTube uses `i.ytimg.com`. The site shows only those two kinds (`isThumbnailUrl`).
+- **TikTok numbers**: watch_video reads the video's own page (`tiktokPage` in video-sources.ts: the
+  `__UNIVERSAL_DATA_FOR_REHYDRATION__` JSON): views, likes, date, length, caption, cover. Checked 2026-10-31 from a
+  home IP; **not yet checked from GitHub's IPs** (if TikTok blocks them, views stay empty and the cover falls back to
+  the video frame).
+- **Guardrails without a second model** (studio `lib/directory/checks.ts`): the hook must be the video's own words
+  (else the studio swaps in its real opening line), every number in a title/summary must be in the transcript,
+  caption or title (else sent back, quoted), dashes/emojis/"In this video" are tidied, an over-long summary is cut at a
+  sentence.
+- **Backfill** (`scripts/directory-backfill.ts`, workflow `directory-backfill.yml`, daily 04:40 UTC + by hand): asks
+  the studio (`GET /api/agent/directory-videos`) for videos missing a title/summary, a thumbnail or TikTok numbers,
+  fixes them (TikTok page, snapsave preview, else a video frame; one free-model call for the text, one retry with
+  the studio's objections) and sends each (`PATCH /api/agent/directory-videos/<id>`), which republishes the entry.
+  It downloads videos, so **run it on GitHub, never locally** (the user is on mobile data). `TEXT_ONLY=1` skips all
+  media, for trying the prompt locally against the studio dev server. Tested 2026-10-31 text-only on 6 real videos
+  with the free Nemotron: 5 published first try, the 6th refused for length.
+- The studio side (queues, prompts, checks, publishing, the refill that keeps adding search rounds) is in the
+  studio's CLAUDE.md under "Content ideas directory". Niches: `lib/directory/niches.json` there.
 
 ## Problems: what went wrong (the /agents "Problems" panel)
 

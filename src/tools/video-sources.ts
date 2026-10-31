@@ -1,5 +1,5 @@
 import { spawnSync } from "node:child_process";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -238,4 +238,65 @@ export async function snapsavePost(url: string): Promise<SnapPost> {
     thumbnail: r.data?.preview ?? video?.thumbnail ?? null,
     problem: r.success && video ? null : `snapsave: ${r.message ?? "no video in the post"}`,
   };
+}
+
+// ------------------------------------------------------------------ TikTok's own page
+
+export type TikTokPage = {
+  caption: string | null;
+  creator: string | null;
+  postedAt: string | null;
+  durationSec: number | null;
+  views: number | null;
+  likes: number | null;
+  /** The cover image's URL (signed: it expires within days, so fetch it now). */
+  cover: string | null;
+};
+
+/**
+ * A TikTok video's details from its own page (the JSON in __UNIVERSAL_DATA_FOR_REHYDRATION__):
+ * views, likes, date, length, caption, cover. Free, no login. Checked 2026-10-31 from a home
+ * IP; null when TikTok answers with a bot check or a page without the data.
+ */
+export async function tiktokPage(url: string): Promise<TikTokPage | null> {
+  const r = await fetch(url, {
+    headers: { "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36", "accept-language": "en-US,en;q=0.9" },
+    signal: AbortSignal.timeout(20_000),
+  });
+  if (!r.ok) throw new Error(`TikTok page HTTP ${r.status}`);
+  const json = (await r.text()).match(/<script id="__UNIVERSAL_DATA_FOR_REHYDRATION__"[^>]*>([\s\S]*?)<\/script>/)?.[1];
+  if (!json) return null;
+  type Item = { desc?: string; createTime?: string | number; author?: { uniqueId?: string }; video?: { duration?: number; cover?: string; originCover?: string }; stats?: { playCount?: number; diggCount?: number } };
+  const item = (JSON.parse(json) as { __DEFAULT_SCOPE__?: { "webapp.video-detail"?: { itemInfo?: { itemStruct?: Item } } } }).__DEFAULT_SCOPE__?.["webapp.video-detail"]?.itemInfo?.itemStruct;
+  if (!item) return null;
+  const created = Number(item.createTime);
+  return {
+    caption: item.desc?.trim() || null,
+    creator: item.author?.uniqueId ?? null,
+    postedAt: created ? new Date(created * 1000).toISOString().slice(0, 10) : null,
+    durationSec: item.video?.duration ?? null,
+    views: item.stats?.playCount ?? null,
+    likes: item.stats?.diggCount ?? null,
+    cover: item.video?.cover || item.video?.originCover || null,
+  };
+}
+
+// ------------------------------------------------------------------ thumbnails
+
+const FRAME = fileURLToPath(new URL("../../scripts/frame.py", import.meta.url));
+
+/** A JPEG of the video file's frame about 1 second in (scripts/frame.py, PyAV). */
+export function frameOf(file: string): Uint8Array {
+  const out = `${file}.jpg`;
+  const r = spawnSync(PYTHON, [FRAME, file, out], { encoding: "utf8", timeout: 60_000 });
+  if (r.status !== 0) throw new Error(`frame grab failed: ${(r.stderr || r.error?.message || "").trim().split("\n").pop()}`);
+  return new Uint8Array(readFileSync(out));
+}
+
+/** An image URL's bytes (a cover or preview image that will expire), or null. */
+export async function imageBytes(url: string): Promise<Uint8Array | null> {
+  const r = await fetch(url, { signal: AbortSignal.timeout(20_000) }).catch(() => null);
+  if (!r?.ok || !(r.headers.get("content-type") ?? "").startsWith("image/")) return null;
+  const bytes = new Uint8Array(await r.arrayBuffer());
+  return bytes.length > 1000 && bytes.length < 3_000_000 ? bytes : null;
 }
