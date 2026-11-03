@@ -1,7 +1,8 @@
 import React from "react";
 import { Composition, Folder } from "remotion";
 import { LANDSCAPE } from "../lib/presets";
-import { FULL_VIDEO, FullVideo, TypingPromptSection, ZoomAndSendSection } from "./FullVideo";
+import { ALL_IN_ONE_PLACE } from "./AllInOnePlace";
+import { AllInOnePlaceSection, FULL_VIDEO, FullVideo, TypingPromptSection, ZoomAndSendSection } from "./FullVideo";
 import { GLOW_TEXT, GlowTextReveal, glowTextDefaults, glowTextSchema } from "./GlowTextReveal";
 import { NEED_BETTER_STYLE, NeedBetterStyle, needBetterStyleDefaults, needBetterStyleSchema } from "./NeedBetterStyle";
 import { TYPING_PROMPT } from "./TypingPrompt";
@@ -34,6 +35,7 @@ export const LabRoot: React.FC = () => {
         />
         <Composition id="Section3-TypingPrompt" component={TypingPromptSection} {...PREVIEW} {...TYPING_PROMPT} />
         <Composition id="Section4-ZoomAndSend" component={ZoomAndSendSection} {...PREVIEW} {...ZOOM_AND_SEND} />
+        <Composition id="Section5-AllInOnePlace" component={AllInOnePlaceSection} {...PREVIEW} {...ALL_IN_ONE_PLACE} />
       </Folder>
     </>
   );

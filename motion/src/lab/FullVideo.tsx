@@ -4,9 +4,10 @@ import React from "react";
 import { AbsoluteFill, Sequence, useVideoConfig } from "remotion";
 import { NeedBetterStyle, needBetterStyleDefaults, SECTION_TWO_LAST_FRAME } from "./NeedBetterStyle";
 import { FIRST_FRAME as SECTION_THREE_FIRST, TYPING_PROMPT, TypingPrompt, typingPromptDefaults } from "./TypingPrompt";
-import { FIRST_FRAME as SECTION_FOUR_FIRST, LAST_FRAME as SECTION_FOUR_LAST, ZoomAndSend } from "./ZoomAndSend";
+import { FIRST_FRAME as SECTION_FOUR_FIRST, ZOOM_AND_SEND, ZoomAndSend } from "./ZoomAndSend";
+import { AllInOnePlace, FIRST_FRAME as SECTION_FIVE_FIRST, LAST_FRAME as SECTION_FIVE_LAST } from "./AllInOnePlace";
 
-export const FULL_VIDEO = { durationInFrames: SECTION_FOUR_LAST, fps: 60 };
+export const FULL_VIDEO = { durationInFrames: SECTION_FIVE_LAST, fps: 60 };
 
 // The sections are laid out at 1920x1080; this fits them to the composition's size.
 export const Stage: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -29,9 +30,14 @@ export const FullVideo: React.FC = () => {
           <TypingPrompt {...typingPromptDefaults} />
         </Stage>
       </Sequence>
-      <Sequence from={SECTION_FOUR_FIRST - 1}>
+      <Sequence from={SECTION_FOUR_FIRST - 1} durationInFrames={ZOOM_AND_SEND.durationInFrames}>
         <Stage>
           <ZoomAndSend />
+        </Stage>
+      </Sequence>
+      <Sequence from={SECTION_FIVE_FIRST - 1}>
+        <Stage>
+          <AllInOnePlace />
         </Stage>
       </Sequence>
     </AbsoluteFill>
@@ -47,5 +53,11 @@ export const TypingPromptSection: React.FC = () => (
 export const ZoomAndSendSection: React.FC = () => (
   <Stage>
     <ZoomAndSend />
+  </Stage>
+);
+
+export const AllInOnePlaceSection: React.FC = () => (
+  <Stage>
+    <AllInOnePlace />
   </Stage>
 );
