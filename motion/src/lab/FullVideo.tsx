@@ -5,9 +5,12 @@ import { AbsoluteFill, Sequence, useVideoConfig } from "remotion";
 import { NeedBetterStyle, needBetterStyleDefaults, SECTION_TWO_LAST_FRAME } from "./NeedBetterStyle";
 import { FIRST_FRAME as SECTION_THREE_FIRST, TYPING_PROMPT, TypingPrompt, typingPromptDefaults } from "./TypingPrompt";
 import { FIRST_FRAME as SECTION_FOUR_FIRST, ZOOM_AND_SEND, ZoomAndSend } from "./ZoomAndSend";
-import { AllInOnePlace, FIRST_FRAME as SECTION_FIVE_FIRST, LAST_FRAME as SECTION_FIVE_LAST } from "./AllInOnePlace";
+import { ALL_IN_ONE_PLACE, AllInOnePlace, FIRST_FRAME as SECTION_FIVE_FIRST } from "./AllInOnePlace";
+import { BAIXO_WORDMARK, BaixoWordmark, baixoWordmarkDefaults, FIRST_FRAME as SECTION_SIX_FIRST } from "./BaixoWordmark";
+import { FIRST_FRAME as SECTION_SEVEN_FIRST, ICY_END_CARD, IcyEndCard, icyEndCardDefaults } from "./IcyEndCard";
 
-export const FULL_VIDEO = { durationInFrames: SECTION_FIVE_LAST, fps: 60 };
+// The clip's last frame, f738, is plain black.
+export const FULL_VIDEO = { durationInFrames: 738, fps: 60 };
 
 // The sections are laid out at 1920x1080; this fits them to the composition's size.
 export const Stage: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -35,9 +38,19 @@ export const FullVideo: React.FC = () => {
           <ZoomAndSend />
         </Stage>
       </Sequence>
-      <Sequence from={SECTION_FIVE_FIRST - 1}>
+      <Sequence from={SECTION_FIVE_FIRST - 1} durationInFrames={ALL_IN_ONE_PLACE.durationInFrames}>
         <Stage>
           <AllInOnePlace />
+        </Stage>
+      </Sequence>
+      <Sequence from={SECTION_SIX_FIRST - 1} durationInFrames={BAIXO_WORDMARK.durationInFrames}>
+        <Stage>
+          <BaixoWordmark {...baixoWordmarkDefaults} />
+        </Stage>
+      </Sequence>
+      <Sequence from={SECTION_SEVEN_FIRST - 1} durationInFrames={ICY_END_CARD.durationInFrames}>
+        <Stage>
+          <IcyEndCard {...icyEndCardDefaults} />
         </Stage>
       </Sequence>
     </AbsoluteFill>
@@ -59,5 +72,17 @@ export const ZoomAndSendSection: React.FC = () => (
 export const AllInOnePlaceSection: React.FC = () => (
   <Stage>
     <AllInOnePlace />
+  </Stage>
+);
+
+export const BaixoWordmarkSection: React.FC = () => (
+  <Stage>
+    <BaixoWordmark {...baixoWordmarkDefaults} />
+  </Stage>
+);
+
+export const IcyEndCardSection: React.FC = () => (
+  <Stage>
+    <IcyEndCard {...icyEndCardDefaults} />
   </Stage>
 );
