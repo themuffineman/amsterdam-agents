@@ -9,6 +9,7 @@
   },
   "scripts": {
     "dev": "remotion studio",
+    "lab": "remotion studio src/lab/index.ts --port=3100 --no-open",
     "render": "remotion render",
     "still": "remotion still",
     "review": "node scripts/review.mjs",
