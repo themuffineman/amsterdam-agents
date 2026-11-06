@@ -1,0 +1,60 @@
+# Task agent: Claude's half of the studio's task board (/tasks). Muse is the other worker and
+# calls the same API itself.
+# Every 30 minutes it asks the studio for the top To do card set to Claude; most runs find none
+# and stop in seconds. A claimed card: Claude Code (on the Claude subscription) does it in a
+# clone of the card's repo, then the runner pushes a task/<slug> branch, opens a pull request
+# and sends it to the studio for review. Nothing is merged or posted from here.
+name: task agent
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+# One task at a time (they share the subscription's usage window).
+concurrency:
+  group: task-agent
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: write # start the next run when a task is done (see the last step)
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Do a task (if one is waiting)
+        id: task
+        env:
+          STUDIO_URL: ${{ secrets.STUDIO_URL }}
+          AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+          # Claude Code on the subscription (`claude setup-token`)
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Fine-grained token for the repos cards target: Contents + Pull requests read/write.
+          # The runner only; Claude Code never sees it.
+          TASKS_GITHUB_TOKEN: ${{ secrets.TASKS_GITHUB_TOKEN }}
+        run: node src/task.ts
+      - name: Report the failure to the studio
+        if: failure()
+        env:
+          STUDIO_URL: ${{ secrets.STUDIO_URL }}
+          AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+        run: |
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          body="{\"runId\":null,\"runUrl\":\"$run_url\",\"problems\":[{\"source\":\"workflow\",\"message\":\"the task workflow failed (a setup step, or the runner crashed): see the run log\",\"at\":\"$(date -u +%FT%TZ)\"}]}"
+          curl -sSf -X POST "${STUDIO_URL%/}/api/agent/tasks/problems" -H "Authorization: Bearer $AGENT_API_KEY" -H "Content-Type: application/json" -d "$body" || echo "::warning::couldn't tell the studio"
+      # This run did (or tried) a task: start another right away for the next card. A run that
+      # finds nothing doesn't chain, so this stops by itself.
+      - name: Start the next run (for the next card)
+        if: ${{ !cancelled() && steps.task.outputs.claimed == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run tasks.yml --ref "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY"

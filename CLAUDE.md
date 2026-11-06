@@ -73,6 +73,26 @@ the Recreate Brief, studio `lib/motion-films/recreate-prompt.ts`, which sends th
 - **Not tested end to end yet** (2026-10-17): claim → prompt → review report → review card → thumbnail were tested
   against the real studio API with a fake result; a real film run on GitHub hasn't happened.
 
+## The task agent (`src/task.ts`, `.github/workflows/tasks.yml`)
+
+Claude's half of the studio's task board (`/tasks`, studio CLAUDE.md "Task board"); Muse is the other worker
+and calls the same API itself. Added 2026-11-06, **not run end to end yet**.
+
+- **Run:** every 30 minutes (plus the studio dispatching `tasks.yml` when a card is added or sent back, with
+  `GITHUB_DISPATCH_TOKEN`), `POST /api/agent/tasks/next` with `AGENT_API_KEY` claims the top To do card set to
+  Claude. A run that claimed one starts the next run when it ends (like films), so the column drains.
+- **One task:** clone the card's repo (`TASKS_GITHUB_TOKEN`, passed to git as a one-off header so it's never in
+  the clone's config), check out `task/<slug>-<id>` (a sent-back card continues on its branch), run `claude -p`
+  (model in `agents/tasks.json`, default opus, the subscription token) in the clone with the studio's brief.
+  Claude ends by writing `.task-result.json` (`summary`, `needsYou`, `prTitle`); the runner removes it, commits,
+  pushes, opens the pull request (or comments on the open one) and PATCHes the card `review` / `needs_you` /
+  `failed`. Unfinished work is pushed too.
+- **Keys:** Claude Code's environment has only `CLAUDE_CODE_OAUTH_TOKEN`. Tools are an allow list
+  (`ALLOWED_TOOLS`: file tools, web, `npm`, `npx tsc/eslint/prettier/vitest/jest`, `node`, read-only git, plain
+  file commands). Nothing here merges or posts.
+- **Secrets:** `STUDIO_URL`, `AGENT_API_KEY`, `CLAUDE_CODE_OAUTH_TOKEN` (already set) and `TASKS_GITHUB_TOKEN`
+  (fine-grained: the repos cards can target, Contents + Pull requests read/write).
+
 ## One run, end to end
 
 ```
