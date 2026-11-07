@@ -73,25 +73,30 @@ the Recreate Brief, studio `lib/motion-films/recreate-prompt.ts`, which sends th
 - **Not tested end to end yet** (2026-10-17): claim → prompt → review report → review card → thumbnail were tested
   against the real studio API with a fake result; a real film run on GitHub hasn't happened.
 
-## The task agent (`src/task.ts`, `.github/workflows/tasks.yml`)
+## The task agent (`src/task.ts`, `tasks.yml` + `tasks-pi.yml`)
 
-Claude's half of the studio's task board (`/tasks`, studio CLAUDE.md "Task board"); Muse is the other worker
-and calls the same API itself. Added 2026-11-06, **not run end to end yet**.
+The studio's task board (`/tasks`, studio CLAUDE.md "Task board"): each card is for one of two workers, both
+this runner. `node src/task.ts claude` (tasks.yml) runs **Claude Code** on the subscription (`agents/tasks.json`,
+default opus); `node src/task.ts pi` (tasks-pi.yml) runs **Pi** on an OpenRouter model (`agents/tasks-pi.json`,
+default `anthropic/claude-haiku-5.5`, capped by `maxCostUsd` per task; meant for small, clear tasks). Pi
+replaced Muse on 2026-11-07. Claude's side ran a real card end to end on 2026-11-07 (studio PR #2); Pi's hasn't yet.
 
-- **Run:** every 30 minutes (plus the studio dispatching `tasks.yml` when a card is added or sent back, with
-  `GITHUB_DISPATCH_TOKEN`), `POST /api/agent/tasks/next` with `AGENT_API_KEY` claims the top To do card set to
-  Claude. A run that claimed one starts the next run when it ends (like films), so the column drains.
+- **Run:** every 30 minutes each (Pi at :15/:45), plus the studio dispatching the card's workflow when it's
+  added or sent back (`GITHUB_DISPATCH_TOKEN`). `POST /api/agent/tasks/next { worker }` with `AGENT_API_KEY` claims
+  the top To do card for that worker. A run that claimed one starts the next run when it ends (like films). The two
+  have separate concurrency groups, so Claude and Pi work at the same time.
 - **One task:** clone the card's repo (`TASKS_GITHUB_TOKEN`, passed to git as a one-off header so it's never in
-  the clone's config), check out `task/<slug>-<id>` (a sent-back card continues on its branch), run `claude -p`
-  (model in `agents/tasks.json`, default opus, the subscription token) in the clone with the studio's brief.
-  Claude ends by writing `.task-result.json` (`summary`, `needsYou`, `prTitle`); the runner removes it, commits,
-  pushes, opens the pull request (or comments on the open one) and PATCHes the card `review` / `needs_you` /
-  `failed`. Unfinished work is pushed too.
-- **Keys:** Claude Code's environment has only `CLAUDE_CODE_OAUTH_TOKEN`. Tools are an allow list
-  (`ALLOWED_TOOLS`: file tools, web, `npm`, `npx tsc/eslint/prettier/vitest/jest`, `node`, read-only git, plain
-  file commands). Nothing here merges or posts.
-- **Secrets:** `STUDIO_URL`, `AGENT_API_KEY`, `CLAUDE_CODE_OAUTH_TOKEN` (already set) and `TASKS_GITHUB_TOKEN`
-  (fine-grained: the repos cards can target, Contents + Pull requests read/write).
+  the clone's config), check out `task/<slug>-<id>` (a sent-back card continues on its branch), run the agent in
+  the clone with the studio's brief. It ends by writing `.task-result.json` (`summary`, `needsYou`, `prTitle`);
+  the runner removes it, commits, pushes, opens the pull request (or comments on the open one) and PATCHes the
+  card `review` / `needs_you` / `failed`. Unfinished work is pushed too.
+- **Keys:** task.ts reads its keys once and deletes them (and `GITHUB_TOKEN`, `GH_TOKEN`, `ACTIONS_*`) from
+  `process.env` before the agent starts; both workflows check out with `persist-credentials: false`. Claude Code
+  gets only `CLAUDE_CODE_OAUTH_TOKEN` and an allow list of tools (`ALLOWED_TOOLS`). Pi gets read/write/edit/bash/
+  grep/find/ls with no discovery (own system prompt, no machine AGENTS.md or extensions); its shell has none of
+  the keys. Nothing here merges or posts.
+- **Secrets:** `STUDIO_URL`, `AGENT_API_KEY`, `CLAUDE_CODE_OAUTH_TOKEN`, `OPENROUTER_API_KEY` (already set) and
+  `TASKS_GITHUB_TOKEN` (fine-grained: the repos cards can target, Contents + Pull requests read/write).
 
 ## One run, end to end
 

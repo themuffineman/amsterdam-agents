@@ -1,0 +1,59 @@
+# Task agent, Pi: the studio task board's second worker (/tasks, cards set to "Pi").
+# Same runner as tasks.yml (src/task.ts), but the agent is Pi on a cheap OpenRouter model
+# (agents/tasks-pi.json) instead of Claude Code, so it doesn't use the Claude subscription and
+# can run at the same time as Claude. Meant for small, clear tasks.
+# Every 30 minutes it asks the studio for the top To do card set to Pi; most runs find none and
+# stop in seconds. Nothing is merged or posted from here.
+name: task agent (pi)
+
+on:
+  schedule:
+    - cron: "15,45 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: task-agent-pi
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  actions: write # start the next run when a task is done (see the last step)
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Don't leave this repo's token in .git/config, where the agent's shell could read it.
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Do a task (if one is waiting)
+        id: task
+        env:
+          STUDIO_URL: ${{ secrets.STUDIO_URL }}
+          AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+          # Fine-grained token for the repos cards target: Contents + Pull requests read/write.
+          # task.ts removes all of these from the environment before Pi starts.
+          TASKS_GITHUB_TOKEN: ${{ secrets.TASKS_GITHUB_TOKEN }}
+        run: node src/task.ts pi
+      - name: Report the failure to the studio
+        if: failure()
+        env:
+          STUDIO_URL: ${{ secrets.STUDIO_URL }}
+          AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+        run: |
+          run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          body="{\"runId\":null,\"runUrl\":\"$run_url\",\"problems\":[{\"source\":\"workflow\",\"message\":\"the Pi task workflow failed (a setup step, or the runner crashed): see the run log\",\"at\":\"$(date -u +%FT%TZ)\"}]}"
+          curl -sSf -X POST "${STUDIO_URL%/}/api/agent/tasks/problems" -H "Authorization: Bearer $AGENT_API_KEY" -H "Content-Type: application/json" -d "$body" || echo "::warning::couldn't tell the studio"
+      - name: Start the next run (for the next card)
+        if: ${{ !cancelled() && steps.task.outputs.claimed == 'true' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run tasks-pi.yml --ref "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY"

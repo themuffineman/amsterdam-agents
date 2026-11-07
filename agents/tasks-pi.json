@@ -1,0 +1,7 @@
+{
+  "model": "anthropic/claude-haiku-5.5",
+  "thinking": "low",
+  "maxTurns": 120,
+  "maxCostUsd": 0.75,
+  "timeoutMinutes": 60
+}

@@ -1,5 +1,5 @@
-# Task agent: Claude's half of the studio's task board (/tasks). Muse is the other worker and
-# calls the same API itself.
+# Task agent, Claude: the studio task board's Claude worker (/tasks). Pi is the other worker
+# (tasks-pi.yml, same runner).
 # Every 30 minutes it asks the studio for the top To do card set to Claude; most runs find none
 # and stop in seconds. A claimed card: Claude Code (on the Claude subscription) does it in a
 # clone of the card's repo, then the runner pushes a task/<slug> branch, opens a pull request
@@ -26,6 +26,9 @@ jobs:
     timeout-minutes: 180
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Don't leave this repo's token in .git/config, where the agent could read it.
+          persist-credentials: false
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
@@ -41,7 +44,7 @@ jobs:
           # Fine-grained token for the repos cards target: Contents + Pull requests read/write.
           # The runner only; Claude Code never sees it.
           TASKS_GITHUB_TOKEN: ${{ secrets.TASKS_GITHUB_TOKEN }}
-        run: node src/task.ts
+        run: node src/task.ts claude
       - name: Report the failure to the studio
         if: failure()
         env:
