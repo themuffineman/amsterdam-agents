@@ -73,18 +73,20 @@ the Recreate Brief, studio `lib/motion-films/recreate-prompt.ts`, which sends th
 - **Not tested end to end yet** (2026-10-17): claim → prompt → review report → review card → thumbnail were tested
   against the real studio API with a fake result; a real film run on GitHub hasn't happened.
 
-## The task agent (`src/task.ts`, `tasks.yml` + `tasks-pi.yml`)
+## The task agent (`src/task.ts`, `tasks.yml` + `tasks-haiku.yml`)
 
 The studio's task board (`/tasks`, studio CLAUDE.md "Task board"): each card is for one of two workers, both
-this runner. `node src/task.ts claude` (tasks.yml) runs **Claude Code** on the subscription (`agents/tasks.json`,
-default opus); `node src/task.ts pi` (tasks-pi.yml) runs **Pi** on an OpenRouter model (`agents/tasks-pi.json`,
-default `anthropic/claude-haiku-5.5`, capped by `maxCostUsd` per task; meant for small, clear tasks). Pi
-replaced Muse on 2026-11-07. Claude's side ran a real card end to end on 2026-11-07 (studio PR #2); Pi's hasn't yet.
+this runner and both on the Claude subscription. `node src/task.ts claude` (tasks.yml, `agents/tasks.json`) runs
+Claude Code on **Opus**; `node src/task.ts haiku` (tasks-haiku.yml, `agents/tasks-haiku.json`) runs Claude Code on
+**Haiku**, which uses far less of the subscription's limits (for small, clear tasks). A config's `engine` picks
+the agent: `"claude-code"` (default, `claudeModel`) or `"pi"` (Pi with the OpenRouter `model`, capped by
+`maxCostUsd`). The second worker was Muse, then Pi on OpenRouter, then Haiku (2026-11-07). The Opus side ran a
+real card end to end on 2026-11-07 (studio PR #2); Haiku's hasn't yet.
 
-- **Run:** every 30 minutes each (Pi at :15/:45), plus the studio dispatching the card's workflow when it's
+- **Run:** every 30 minutes each (Haiku at :15/:45), plus the studio dispatching the card's workflow when it's
   added or sent back (`GITHUB_DISPATCH_TOKEN`). `POST /api/agent/tasks/next { worker }` with `AGENT_API_KEY` claims
   the top To do card for that worker. A run that claimed one starts the next run when it ends (like films). The two
-  have separate concurrency groups, so Claude and Pi work at the same time.
+  have separate concurrency groups, so they work at the same time (sharing the subscription's limits).
 - **One task:** clone the card's repo (`TASKS_GITHUB_TOKEN`, passed to git as a one-off header so it's never in
   the clone's config), check out `task/<slug>-<id>` (a sent-back card continues on its branch), run the agent in
   the clone with the studio's brief. It ends by writing `.task-result.json` (`summary`, `needsYou`, `prTitle`);

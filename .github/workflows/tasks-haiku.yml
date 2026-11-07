@@ -1,10 +1,11 @@
-# Task agent, Pi: the studio task board's second worker (/tasks, cards set to "Pi").
-# Same runner as tasks.yml (src/task.ts), but the agent is Pi on a cheap OpenRouter model
-# (agents/tasks-pi.json) instead of Claude Code, so it doesn't use the Claude subscription and
-# can run at the same time as Claude. Meant for small, clear tasks.
-# Every 30 minutes it asks the studio for the top To do card set to Pi; most runs find none and
-# stop in seconds. Nothing is merged or posted from here.
-name: task agent (pi)
+# Task agent, Haiku: the studio task board's second worker (/tasks, cards set to "Haiku").
+# Same runner as tasks.yml (src/task.ts), with agents/tasks-haiku.json: Claude Code on Haiku, on
+# the Claude subscription like Opus but using far less of its limits. Meant for small, clear
+# tasks; runs alongside the Opus worker. (Set "engine": "pi" in that file to run Pi on an
+# OpenRouter model instead; OPENROUTER_API_KEY is passed for that.)
+# Every 30 minutes it asks the studio for the top To do card set to Haiku; most runs find none
+# and stop in seconds. Nothing is merged or posted from here.
+name: task agent (haiku)
 
 on:
   schedule:
@@ -12,7 +13,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: task-agent-pi
+  group: task-agent-haiku
   cancel-in-progress: false
 
 permissions:
@@ -22,11 +23,11 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
         with:
-          # Don't leave this repo's token in .git/config, where the agent's shell could read it.
+          # Don't leave this repo's token in .git/config, where the agent could read it.
           persist-credentials: false
       - uses: actions/setup-node@v4
         with:
@@ -38,11 +39,14 @@ jobs:
         env:
           STUDIO_URL: ${{ secrets.STUDIO_URL }}
           AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
+          # Claude Code on the subscription (`claude setup-token`)
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          # Only used when tasks-haiku.json says "engine": "pi"
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
           # Fine-grained token for the repos cards target: Contents + Pull requests read/write.
-          # task.ts removes all of these from the environment before Pi starts.
+          # task.ts removes the runner's keys from the environment before the agent starts.
           TASKS_GITHUB_TOKEN: ${{ secrets.TASKS_GITHUB_TOKEN }}
-        run: node src/task.ts pi
+        run: node src/task.ts haiku
       - name: Report the failure to the studio
         if: failure()
         env:
@@ -50,10 +54,10 @@ jobs:
           AGENT_API_KEY: ${{ secrets.AGENT_API_KEY }}
         run: |
           run_url="$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
-          body="{\"runId\":null,\"runUrl\":\"$run_url\",\"problems\":[{\"source\":\"workflow\",\"message\":\"the Pi task workflow failed (a setup step, or the runner crashed): see the run log\",\"at\":\"$(date -u +%FT%TZ)\"}]}"
+          body="{\"runId\":null,\"runUrl\":\"$run_url\",\"problems\":[{\"source\":\"workflow\",\"message\":\"the Haiku task workflow failed (a setup step, or the runner crashed): see the run log\",\"at\":\"$(date -u +%FT%TZ)\"}]}"
           curl -sSf -X POST "${STUDIO_URL%/}/api/agent/tasks/problems" -H "Authorization: Bearer $AGENT_API_KEY" -H "Content-Type: application/json" -d "$body" || echo "::warning::couldn't tell the studio"
       - name: Start the next run (for the next card)
         if: ${{ !cancelled() && steps.task.outputs.claimed == 'true' }}
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh workflow run tasks-pi.yml --ref "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY"
+        run: gh workflow run tasks-haiku.yml --ref "$GITHUB_REF_NAME" --repo "$GITHUB_REPOSITORY"

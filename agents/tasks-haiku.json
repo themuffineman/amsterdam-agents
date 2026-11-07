@@ -1,0 +1,9 @@
+{
+  "engine": "claude-code",
+  "claudeModel": "haiku",
+  "maxTurns": 200,
+  "timeoutMinutes": 90,
+  "model": "anthropic/claude-haiku-5.5",
+  "thinking": "low",
+  "maxCostUsd": 0.75
+}

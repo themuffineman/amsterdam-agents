@@ -1,14 +1,14 @@
 /**
- * The task worker: `node src/task.ts <claude|pi>`, run by tasks.yml (Claude) and tasks-pi.yml
- * (Pi). The studio's task board (/tasks) gives each card to one of the two.
+ * The task worker: `node src/task.ts <claude|haiku>`, run by tasks.yml (Claude on Opus) and tasks-haiku.yml
+ * (Claude on Haiku). The studio's task board (/tasks) gives each card to one of the two.
  *
  *   1. Claim the top To do card for this worker (POST /api/agent/tasks/next { worker }).
  *   2. Clone the card's repo, check out its branch (task/<slug>-<id>; a sent-back card
  *      continues on the branch it already has).
  *   3. The agent does the task in the clone and ends by writing .task-result.json
  *      (summary, needsYou, prTitle):
- *        claude  Claude Code on the subscription (CLAUDE_CODE_OAUTH_TOKEN), config agents/tasks.json
- *        pi      Pi on an OpenRouter model (OPENROUTER_API_KEY), config agents/tasks-pi.json
+ *        engine "claude-code" (default)  Claude Code on the subscription (CLAUDE_CODE_OAUTH_TOKEN)
+ *        engine "pi"  Pi on an OpenRouter model (OPENROUTER_API_KEY); config: agents/tasks[-haiku].json
  *   4. This runner commits, pushes and opens the pull request (or finds the open one).
  *   5. Report to the studio (PATCH /api/agent/tasks/<id>): "review" with the pull request,
  *      "needs_you" with the agent's question, or "failed" with the reason.
@@ -18,8 +18,8 @@
  * TASKS_GITHUB_TOKEN goes to git as a one-off header, never into the clone's config. Nothing
  * here merges: the owner merges on /tasks.
  *
- * Needs STUDIO_URL, AGENT_API_KEY, TASKS_GITHUB_TOKEN, and CLAUDE_CODE_OAUTH_TOKEN (claude) or
- * OPENROUTER_API_KEY (pi).
+ * Needs STUDIO_URL, AGENT_API_KEY, TASKS_GITHUB_TOKEN, and CLAUDE_CODE_OAUTH_TOKEN (engine claude-code)
+ * or OPENROUTER_API_KEY (engine pi).
  */
 import { spawn, spawnSync } from "node:child_process";
 import { appendFileSync, existsSync, mkdtempSync, readFileSync, rmSync } from "node:fs";
@@ -37,18 +37,31 @@ import {
 
 import { RUN_URL, log, short } from "./agent.ts";
 
-type Worker = "claude" | "pi";
+type Worker = "claude" | "haiku";
 const worker = (process.argv[2] ?? "claude") as Worker;
-if (worker !== "claude" && worker !== "pi") {
-  console.error("Usage: node src/task.ts <claude|pi>");
+if (worker !== "claude" && worker !== "haiku") {
+  console.error("Usage: node src/task.ts <claude|haiku>");
   process.exit(1);
 }
 
-type ClaudeConfig = { claudeModel: string; maxTurns: number; timeoutMinutes: number };
-type PiConfig = { model: string; thinking: "off" | "minimal" | "low" | "medium" | "high"; maxTurns: number; maxCostUsd: number; timeoutMinutes: number };
-const configFile = worker === "claude" ? "tasks.json" : "tasks-pi.json";
-const config = JSON.parse(readFileSync(new URL(`../agents/${configFile}`, import.meta.url), "utf8")) as ClaudeConfig & PiConfig;
-const MODEL = worker === "claude" ? config.claudeModel : config.model;
+/**
+ * agents/tasks.json (claude) or agents/tasks-haiku.json (haiku). `engine` picks the agent:
+ * "claude-code" (default; Claude Code on the subscription with `claudeModel`) or "pi" (Pi with the
+ * OpenRouter `model`, capped by `maxCostUsd`; needs OPENROUTER_API_KEY in the workflow).
+ */
+type TaskConfig = {
+  engine?: "claude-code" | "pi";
+  claudeModel: string;
+  model: string;
+  thinking: "off" | "minimal" | "low" | "medium" | "high";
+  maxTurns: number;
+  maxCostUsd: number;
+  timeoutMinutes: number;
+};
+const configFile = worker === "claude" ? "tasks.json" : `tasks-${worker}.json`;
+const config = JSON.parse(readFileSync(new URL(`../agents/${configFile}`, import.meta.url), "utf8")) as TaskConfig;
+const ENGINE = config.engine ?? "claude-code";
+const MODEL = ENGINE === "claude-code" ? config.claudeModel : config.model;
 
 // ---------------------------------------------------------------- keys
 
@@ -65,7 +78,7 @@ for (const k of Object.keys(process.env)) {
   }
 }
 // Pi's own shell must not see Claude's token either.
-if (worker === "pi") delete process.env.CLAUDE_CODE_OAUTH_TOKEN;
+if (ENGINE === "pi") delete process.env.CLAUDE_CODE_OAUTH_TOKEN;
 
 // ---------------------------------------------------------------- studio + GitHub
 
@@ -363,7 +376,7 @@ async function doTask(claim: Required<Claim>) {
   const dir = mkdtempSync(join(tmpdir(), "task-"));
   const repoDir = join(dir, "repo");
   let pushed = false;
-  const who = `${worker === "claude" ? "Claude Code" : "Pi"} (${MODEL})`;
+  const who = `${ENGINE === "claude-code" ? "Claude Code" : "Pi"} (${MODEL})`;
 
   const commitAndPush = (message: string): boolean => {
     sh("git", ["add", "-A"], repoDir);
@@ -391,14 +404,14 @@ async function doTask(claim: Required<Claim>) {
       sh("git", ["checkout", "-q", "-b", task.branch], repoDir);
       log(`new branch ${task.branch}`);
     }
-    if (worker === "claude" && process.env.GITHUB_ACTIONS && spawnSync("claude", ["--version"]).status !== 0) {
+    if (ENGINE === "claude-code" && process.env.GITHUB_ACTIONS && spawnSync("claude", ["--version"]).status !== 0) {
       log("installing Claude Code");
       sh("npm", ["install", "-g", "@anthropic-ai/claude-code", "--no-audit", "--no-fund"], dir);
     }
 
     // 3. the agent does the task
     const resultPath = join(repoDir, claim.resultFile);
-    const run = worker === "claude" ? await runClaude(claim.prompt, repoDir) : await runPi(claim.prompt, repoDir);
+    const run = ENGINE === "claude-code" ? await runClaude(claim.prompt, repoDir) : await runPi(claim.prompt, repoDir);
     if (run.why && LIMIT_ERROR.test(run.why)) throw new Error(`Model limit: ${run.why}. It goes back to To do and is tried again later.`);
     let result: TaskResult | null = null;
     try {
