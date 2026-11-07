@@ -44,7 +44,7 @@ actually built from that prompt. No mockups, no CSS-filter stand-ins.
    or layout change, new colours, the viewer's own text. Not just a colour swap. Keep them as
    optional props of one component plus a `runs.ts` list (label, ask, reply, props), like
    recreate-rigel. Register one run as a composition and check stills.
-4. **Script** in `src/films/<slug>/script.json` (same `voice` / `model` as recreate-rigel, NO
+4. **Script** (read `.claude/skills/tutorial-writing/SKILL.md` first and check every line against it) in `src/films/<slug>/script.json` (same `voice` / `model` as recreate-rigel, NO
    `prompt` field: Gemini TTS reads it aloud). Optional `pause` per segment (~0.35 inside a
    beat, ~0.7 between beats, ~1.6 between asks to Claude). The shape:
    - straight in: "In this video we're going to recreate this motion graphic. It's called X, and

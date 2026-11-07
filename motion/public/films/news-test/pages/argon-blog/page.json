@@ -1,0 +1,43 @@
+{
+  "url": "https://blog.google/technology/google-deepmind/gemini-4-argon/",
+  "title": "blog.google",
+  "capturedAt": "2026-10-29T17:43:33.977Z",
+  "width": 1280,
+  "viewportHeight": 720,
+  "height": 720,
+  "scale": 1.5,
+  "page": "films/news-test/pages/argon-blog/page.png",
+  "bar": null,
+  "headings": [
+    {
+      "tag": "h1",
+      "text": "Press space to play",
+      "x": 340,
+      "y": 206,
+      "w": 600,
+      "h": 30
+    }
+  ],
+  "highlights": [
+    {
+      "text": "1M tokens",
+      "rects": []
+    }
+  ],
+  "columns": [
+    {
+      "text": "Gemini 4 Argon",
+      "rects": []
+    }
+  ],
+  "rows": [],
+  "videos": [],
+  "audios": [],
+  "embeds": [],
+  "images": [],
+  "warnings": [
+    "load: net::ERR_NAME_NOT_RESOLVED at https://blog.google/technology/google-deepmind/gemini-4-argon/ (captured what loaded)",
+    "--highlight \"1M tokens\" not found on the page",
+    "--column \"Gemini 4 Argon\" not found on the page"
+  ]
+}

@@ -257,18 +257,25 @@ OpenRouter's live prices and matched the real bill when checked.
   the title when not picked, `guessPostType`), optional `notes` (a brief for the agent, put in the prompt). Added through
   `POST /api/agents/blog-posts/topics` (`lib/blog-posts/topics.ts`): one title per line, bullets/numbers stripped,
   duplicates and slugs the site already uses (`format/reserved-slugs.json`, synced) skipped with a reason.
-- **Prompt** (`lib/blog-posts/prompt.ts`): a brief per post type, the honesty rules (Sycamore gets a warm, full write-up;
-  other tools are never put down; limits stated as sourced facts; say when another tool is the better pick), research
-  rules (each tool's own pricing page wins), the list of sycamore.to pages it may link to (key pages + published posts),
-  house voice. **What it may say about Sycamore is `lib/blog-posts/sycamore-facts.ts`**: keep it true to the product.
+- **Prompt** (`lib/blog-posts/prompt.ts`): a brief per post type, the honesty rules (other tools are never put down;
+  limits stated as sourced facts; no claims of hands-on use), research rules (each tool's own pricing page wins), a wider
+  tool list (`lib/blog-posts/tools.ts`), the list of sycamore.to pages it may link to, house voice. **Posts lead with value
+  and aren't ads for Sycamore** (the user's rule, 2026-11-02; the first 75 posts all plugged it): `sycamoreBrief` decides by
+  post type. Guides and comparisons of other tools never mention it and don't even get the facts; how-tos get a sentence or
+  two if it does that exact job; reviews one line if it's a close alternative; best/alternatives only if it truly fits,
+  never first; posts about Sycamore cover it in full. Any mention says we make it, and the site's sidebar and end band do the
+  selling. **What it may say about Sycamore is `lib/blog-posts/sycamore-facts.ts`**: keep it true to the product.
 - **Files**: the agent writes the article to `post.md` and metaDescription/excerpt/faq/sources to `page.json`
   (`agents/blog-posts.json` sets `bodyFile: "post.md"`; submit_page sends it as `body`). With `checkLinks`, submit_page
   refuses (without spending a submission) any link or source that wasn't a search result or a page the agent read
   (`seen` in run.ts, compared with `normalUrl`).
 - **Checks** (`lib/blog-posts/save.ts`): autoFix (em dashes, a leading `# title`, trailing FAQ/Sources sections), the
   format (`blogPostProblems`: lengths, 4-14 `##` sections, no H1/HTML/images, a table for comparison types), then
-  1,200+ words, banned phrases, put-down words ("clunky", "overpriced"... quoted in context), Sycamore mentioned, own-site
-  links only to listed pages, ≤20% shared 5-word phrases with posts of the same type. Saved to sycamore-mono's
+  words (1,200+; how-tos 600+, guides 500+: a length floor is what padded short answers with tool lists), banned phrases,
+  put-down words ("clunky", "overpriced"... quoted in context), no ad lines or the fact sheet's feature list, a cap on Sycamore
+  mentions per type, Sycamore not first or longer than the others in a list, at most 3 of the usual five tools in a list,
+  no hands-on claims, own-site links only to listed pages, ≤20% shared 5-word phrases with posts of the same type. Test
+  without publishing: the studio's `scripts/blog-dry-run.ts` stands in for its API and writes posts to files. Saved to sycamore-mono's
   `blog_posts` (migration 0033); `content_posts` gets `content_type 'article'` ("Agent blog posts" on /analytics).
 - **Site**: `app/blog/[slug]/page.tsx` serves an MDX file from `content/blog/edu-blogs` if one has the slug, else the
   database post (ISR 1h) via `components/blog-posts/BlogPostArticle.tsx` (Markdown rendered by `renderMarkdown` in

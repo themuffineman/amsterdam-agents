@@ -1,0 +1,200 @@
+{
+  "url": "https://huggingface.co/papers",
+  "title": "Daily Papers - Hugging Face",
+  "capturedAt": "2026-10-29T17:52:23.486Z",
+  "width": 1280,
+  "viewportHeight": 720,
+  "height": 2206,
+  "scale": 1.5,
+  "page": "films/news-test/pages/hf-papers/page.png",
+  "bar": {
+    "file": "films/news-test/pages/hf-papers/bar.png",
+    "h": 1
+  },
+  "headings": [
+    {
+      "tag": "h1",
+      "text": "Daily Papers",
+      "x": 16,
+      "y": 156,
+      "w": 164,
+      "h": 36
+    },
+    {
+      "tag": "h2",
+      "text": "byAK and the research community",
+      "x": 16,
+      "y": 192,
+      "w": 400,
+      "h": 28
+    },
+    {
+      "tag": "h3",
+      "text": "Efficient Streaming Audio-Visual Target Speaker Extraction for Real-World Acoustic Scenes",
+      "x": 113,
+      "y": 549,
+      "w": 276,
+      "h": 72
+    },
+    {
+      "tag": "h3",
+      "text": "OmniShowcase: Omnidirectional Subject-Consistent Video Generation from Multi-View Images",
+      "x": 531,
+      "y": 549,
+      "w": 276,
+      "h": 72
+    },
+    {
+      "tag": "h3",
+      "text": "Sensorimotor Alignment: A Platonic Proxy for Embodied Policy Success",
+      "x": 948,
+      "y": 549,
+      "w": 276,
+      "h": 48
+    },
+    {
+      "tag": "h3",
+      "text": "RealCLI: Toward a Unified Evaluation of Human-Agent Collaboration for CLI Agents",
+      "x": 113,
+      "y": 981,
+      "w": 276,
+      "h": 72
+    },
+    {
+      "tag": "h3",
+      "text": "TAO: Tool-Aware Joint Scheduling for LLM-Based Agentic Serving",
+      "x": 531,
+      "y": 981,
+      "w": 276,
+      "h": 48
+    },
+    {
+      "tag": "h3",
+      "text": "TauIndianBankBench: Procedure-Aware, Action-Oriented Evaluation of Tool-Using Conversational Agents",
+      "x": 948,
+      "y": 981,
+      "w": 276,
+      "h": 72
+    },
+    {
+      "tag": "h3",
+      "text": "Amortizing Sequential Experimental Design in Reasoning LLMs",
+      "x": 113,
+      "y": 1413,
+      "w": 276,
+      "h": 72
+    },
+    {
+      "tag": "h3",
+      "text": "LongZero: Enhancing Long-Context Reasoning in LLMs from Zero Data",
+      "x": 531,
+      "y": 1413,
+      "w": 276,
+      "h": 48
+    },
+    {
+      "tag": "h3",
+      "text": "CausGround: Causal Interaction Grounding for Adaptive Embodied Planning",
+      "x": 948,
+      "y": 1413,
+      "w": 276,
+      "h": 72
+    },
+    {
+      "tag": "h3",
+      "text": "Evaluating DeepSeek V4.1 Flash-1017 for loss of control and harmful manipulation risks",
+      "x": 113,
+      "y": 1845,
+      "w": 276,
+      "h": 72
+    },
+    {
+      "tag": "h3",
+      "text": "HuGe: Scaling Humanoid Generalist Vision-Language-Action Models with Egocentric Experience",
+      "x": 531,
+      "y": 1845,
+      "w": 276,
+      "h": 72
+    },
+    {
+      "tag": "h3",
+      "text": "OmniSpectra: A Unified Foundation Model for Universal Spectra Representation Learning",
+      "x": 948,
+      "y": 1845,
+      "w": 276,
+      "h": 72
+    }
+  ],
+  "highlights": [],
+  "columns": [],
+  "rows": [],
+  "videos": [],
+  "audios": [],
+  "embeds": [],
+  "images": [
+    {
+      "src": "https://cdn-thumbnails.huggingface.co/social-thumbnails/papers/2610.22507.png",
+      "alt": "",
+      "x": 17,
+      "y": 701,
+      "w": 396,
+      "h": 256
+    },
+    {
+      "src": "https://cdn-thumbnails.huggingface.co/social-thumbnails/papers/2610.37230.png",
+      "alt": "",
+      "x": 435,
+      "y": 701,
+      "w": 396,
+      "h": 256
+    },
+    {
+      "src": "https://cdn-thumbnails.huggingface.co/social-thumbnails/papers/2610.20832.png",
+      "alt": "",
+      "x": 17,
+      "y": 1133,
+      "w": 396,
+      "h": 256
+    },
+    {
+      "src": "https://cdn-thumbnails.huggingface.co/social-thumbnails/papers/2610.30132.png",
+      "alt": "",
+      "x": 435,
+      "y": 1133,
+      "w": 396,
+      "h": 256
+    },
+    {
+      "src": "https://cdn-thumbnails.huggingface.co/social-thumbnails/papers/2610.35671.png",
+      "alt": "",
+      "x": 17,
+      "y": 1565,
+      "w": 396,
+      "h": 256
+    },
+    {
+      "src": "https://cdn-thumbnails.huggingface.co/social-thumbnails/papers/2610.34186.png",
+      "alt": "",
+      "x": 435,
+      "y": 1565,
+      "w": 396,
+      "h": 256
+    },
+    {
+      "src": "https://cdn-thumbnails.huggingface.co/social-thumbnails/papers/2601.15351.png",
+      "alt": "",
+      "x": 852,
+      "y": 1565,
+      "w": 396,
+      "h": 256
+    }
+  ],
+  "warnings": [
+    "load: Navigation timeout of 90000 ms exceeded (captured what loaded)",
+    "video https://cdn-uploads.huggingface.co/production/uploads/6387676c23da90491eb9fb16/fyfAlyMRka4HqWEFfbAoN.mp4: terminated",
+    "video https://cdn-uploads.huggingface.co/production/uploads/632872d5ed473b0259e482fa/eEUbC0NeLSc1fr70XJZGw.mp4: fetch failed",
+    "video https://cdn-uploads.huggingface.co/production/uploads/65f6afa36ea40b9a29dd45ca/XSpr8GDMKI7TKNxxE1l2e.mp4: fetch failed",
+    "video https://cdn-uploads.huggingface.co/production/uploads/68ad42bca1f07af43fcfcead/T_p17-4yRuTCbj9m_lBVp.mp4: fetch failed",
+    "video https://cdn-uploads.huggingface.co/production/uploads/674d339d937bbd33958bb004/dF1PupdQO6AusnVxQto1e.mp4: fetch failed"
+  ]
+}

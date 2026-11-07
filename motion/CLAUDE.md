@@ -10,6 +10,8 @@ AI-made. Work from this folder (`cd motion`): it has its own `package.json`, `no
 
 1. **Read the motion-craft skill first** (`.claude/skills/motion-craft/SKILL.md`, then the
    reference files it names for the job: always `director.md`, `rules.md`, `slop.md`).
+   **Before writing any script, read the tutorial-writing skill too** (`.claude/skills/tutorial-writing/SKILL.md`):
+   be helpful, talk like a human presenter, with real examples of what to avoid.
 2. **Plan as events, not states.** For each beat write what moves, what it causes, and what
    carries across the cut. Name the one screenshot-worthy frame (frame number + beat) before
    building. Put the plan in a comment at the top of the composition file.
