@@ -92,13 +92,22 @@ real card end to end on 2026-11-07 (studio PR #2); Haiku's hasn't yet.
   the clone with the studio's brief. It ends by writing `.task-result.json` (`summary`, `needsYou`, `prTitle`);
   the runner removes it, commits, pushes, opens the pull request (or comments on the open one) and PATCHes the
   card `review` / `needs_you` / `failed`. Unfinished work is pushed too.
-- **Keys:** task.ts reads its keys once and deletes them (and `GITHUB_TOKEN`, `GH_TOKEN`, `ACTIONS_*`) from
-  `process.env` before the agent starts; both workflows check out with `persist-credentials: false`. Claude Code
-  gets only `CLAUDE_CODE_OAUTH_TOKEN` and an allow list of tools (`ALLOWED_TOOLS`). Pi gets read/write/edit/bash/
-  grep/find/ls with no discovery (own system prompt, no machine AGENTS.md or extensions); its shell has none of
-  the keys. Nothing here merges or posts.
-- **Secrets:** `STUDIO_URL`, `AGENT_API_KEY`, `CLAUDE_CODE_OAUTH_TOKEN`, `OPENROUTER_API_KEY` (already set) and
-  `TASKS_GITHUB_TOKEN` (fine-grained: the repos cards can target, Contents + Pull requests read/write).
+- **Keys:** task.ts reads the runner's keys once and deletes them (and `TASK_AGENT_ENV`, `GITHUB_TOKEN`,
+  `GH_TOKEN`, `ACTIONS_*`) from `process.env` before the agent starts; both workflows check out with
+  `persist-credentials: false`. The agent can't push (no credentials in the clone) or merge.
+- **Project keys (`TASK_AGENT_ENV`, 2026-11-07):** a secret written like a .env file (the owner picks what goes
+  in: database URL, API keys...). Claude Code gets every key in it as environment variables, so the code runs
+  like on the owner's machine. Each value is `::add-mask::`ed first, because this repo's Actions logs are public.
+  Pi never gets them (its shell has no command list). The studio's brief says the keys are there and the rules:
+  read data and call APIs to check work, never change production data, post or send, never print the keys.
+- **Tools:** Claude Code has a wide allow list (`ALLOWED_TOOLS`): file tools, web, npm/npx (any tool)/node/pnpm/
+  yarn/bun/tsx, python/pip/uv, curl/wget/jq/psql/sqlite3, ffmpeg/ImageMagick, read-only git, and the usual
+  file and text commands. Anything else is refused (`--permission-prompts none`). An unrestricted shell was
+  deliberately not given (with the keys there, an allow list is the line). Pi gets read/write/edit/bash/grep/
+  find/ls with no discovery (own system prompt, no machine AGENTS.md or extensions).
+- **Secrets:** `STUDIO_URL`, `AGENT_API_KEY`, `CLAUDE_CODE_OAUTH_TOKEN`, `OPENROUTER_API_KEY` (already set),
+  `TASKS_GITHUB_TOKEN` (fine-grained: the repos cards can target, Contents + Pull requests read/write) and
+  optionally `TASK_AGENT_ENV`.
 
 ## One run, end to end
 

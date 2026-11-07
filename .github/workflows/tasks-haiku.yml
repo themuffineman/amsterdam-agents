@@ -46,6 +46,9 @@ jobs:
           # Fine-grained token for the repos cards target: Contents + Pull requests read/write.
           # task.ts removes the runner's keys from the environment before the agent starts.
           TASKS_GITHUB_TOKEN: ${{ secrets.TASKS_GITHUB_TOKEN }}
+          # The project keys the agent may use, written like a .env file (optional). Loaded into
+          # Claude Code's environment; each value is hidden in this (public) log.
+          TASK_AGENT_ENV: ${{ secrets.TASK_AGENT_ENV }}
         run: node src/task.ts haiku
       - name: Report the failure to the studio
         if: failure()

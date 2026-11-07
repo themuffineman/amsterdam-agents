@@ -65,20 +65,63 @@ const MODEL = ENGINE === "claude-code" ? config.claudeModel : config.model;
 
 // ---------------------------------------------------------------- keys
 
-/** Read once, then gone from process.env (so from every shell the agent starts). */
+/** The runner's own keys: read once, then gone from process.env (so from every shell the agent starts). */
 const KEYS = {
   studioUrl: process.env.STUDIO_URL?.replace(/\/$/, ""),
   agentKey: process.env.AGENT_API_KEY,
   github: process.env.TASKS_GITHUB_TOKEN,
   openrouter: process.env.OPENROUTER_API_KEY,
+  agentEnv: process.env.TASK_AGENT_ENV,
 };
 for (const k of Object.keys(process.env)) {
-  if (["STUDIO_URL", "AGENT_API_KEY", "TASKS_GITHUB_TOKEN", "OPENROUTER_API_KEY", "GITHUB_TOKEN", "GH_TOKEN"].includes(k) || k.startsWith("ACTIONS_")) {
+  if (
+    ["STUDIO_URL", "AGENT_API_KEY", "TASKS_GITHUB_TOKEN", "OPENROUTER_API_KEY", "TASK_AGENT_ENV", "GITHUB_TOKEN", "GH_TOKEN"].includes(k) ||
+    k.startsWith("ACTIONS_")
+  ) {
     delete process.env[k];
   }
 }
 // Pi's own shell must not see Claude's token either.
 if (ENGINE === "pi") delete process.env.CLAUDE_CODE_OAUTH_TOKEN;
+
+/**
+ * The project keys the owner gives the agents on purpose: the TASK_AGENT_ENV secret, written like
+ * a .env file (KEY=value per line, # comments, optional quotes and `export`). They go into the
+ * agent's environment, so the code finds them as process.env like on the owner's machine.
+ */
+function parseEnv(text: string | undefined): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const raw of (text ?? "").split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line || line.startsWith("#")) continue;
+    const m = line.match(/^(?:export\s+)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$/);
+    if (!m) continue;
+    let value = m[2].trim();
+    const q = value[0];
+    if ((q === '"' || q === "'") && value.endsWith(q) && value.length >= 2) value = value.slice(1, -1);
+    else value = value.replace(/\s+#.*$/, "");
+    if (q === '"') value = value.replace(/\\n/g, "\n");
+    out[m[1]] = value;
+  }
+  return out;
+}
+const AGENT_ENV = parseEnv(KEYS.agentEnv);
+// amsterdam-agents is public, and so are its Actions logs: hide every key's value in them
+// (each line of a multi-line value too) before anything can print one.
+if (process.env.GITHUB_ACTIONS) {
+  for (const value of Object.values(AGENT_ENV)) {
+    for (const part of value.split("\n")) if (part.trim().length >= 4) console.log(`::add-mask::${part.trim()}`);
+  }
+}
+// Only Claude Code gets them (claudeEnv(), next to its list of allowed commands). Pi's shell has
+// no such list, so it never gets the keys: they stay out of process.env, which it inherits.
+if (Object.keys(AGENT_ENV).length) {
+  console.log(
+    ENGINE === "claude-code"
+      ? `agent environment: ${Object.keys(AGENT_ENV).length} keys from TASK_AGENT_ENV (${Object.keys(AGENT_ENV).sort().join(", ")})`
+      : "TASK_AGENT_ENV is set but not used: the pi engine's shell has no command list, so it gets no project keys",
+  );
+}
 
 // ---------------------------------------------------------------- studio + GitHub
 
@@ -154,44 +197,38 @@ const LIMIT_ERROR = /usage limit|hit your limit|limit reached|rate.?limit|429|ov
 
 // ---------------------------------------------------------------- Claude Code engine
 
-/** What Claude Code may do without asking. Everything else is refused (--permission-prompts none). */
+/**
+ * What Claude Code may do without asking: a wide list (package managers and any npx tool,
+ * scripting languages, HTTP clients, media tools, read-only git, file and text commands).
+ * Anything not listed is refused (--permission-prompts none). It can't push: the clone has no
+ * GitHub credentials, the runner pushes.
+ */
 const ALLOWED_TOOLS = [
-  "Read",
-  "Write",
-  "Edit",
-  "Glob",
-  "Grep",
-  "WebSearch",
-  "WebFetch",
-  "TodoWrite",
-  "Bash(npm *)",
-  "Bash(npx tsc *)",
-  "Bash(npx eslint *)",
-  "Bash(npx prettier *)",
-  "Bash(npx vitest *)",
-  "Bash(npx jest *)",
-  "Bash(node *)",
-  "Bash(git status*)",
-  "Bash(git diff*)",
-  "Bash(git log*)",
-  "Bash(git show*)",
-  "Bash(ls *)",
-  "Bash(mkdir *)",
-  "Bash(cp *)",
-  "Bash(mv *)",
-  "Bash(rm *)",
-  "Bash(cat *)",
-  "Bash(head *)",
-  "Bash(tail *)",
-  "Bash(wc *)",
-  "Bash(grep *)",
-  "Bash(find *)",
+  "Read", "Write", "Edit", "MultiEdit", "Glob", "Grep", "LS", "WebSearch", "WebFetch", "TodoWrite", "NotebookEdit",
+  // JavaScript / TypeScript
+  "Bash(npm *)", "Bash(npx *)", "Bash(node *)", "Bash(pnpm *)", "Bash(yarn *)", "Bash(bun *)", "Bash(bunx *)", "Bash(tsx *)", "Bash(tsc *)",
+  // Python
+  "Bash(python *)", "Bash(python3 *)", "Bash(pip *)", "Bash(pip3 *)", "Bash(uv *)",
+  // HTTP and data
+  "Bash(curl *)", "Bash(wget *)", "Bash(jq *)", "Bash(psql *)", "Bash(sqlite3 *)",
+  // media
+  "Bash(ffmpeg *)", "Bash(ffprobe *)", "Bash(convert *)", "Bash(magick *)",
+  // git, reading only (and the runner commits anyway)
+  "Bash(git status*)", "Bash(git diff*)", "Bash(git log*)", "Bash(git show*)", "Bash(git blame*)", "Bash(git grep*)",
+  "Bash(git ls-files*)", "Bash(git rev-parse*)", "Bash(git branch*)",
+  // files and text
+  "Bash(ls *)", "Bash(pwd*)", "Bash(cd *)", "Bash(mkdir *)", "Bash(cp *)", "Bash(mv *)", "Bash(rm *)", "Bash(touch *)", "Bash(chmod *)",
+  "Bash(ln *)", "Bash(cat *)", "Bash(head *)", "Bash(tail *)", "Bash(less *)", "Bash(wc *)", "Bash(grep *)", "Bash(rg *)", "Bash(find *)",
+  "Bash(sed *)", "Bash(awk *)", "Bash(sort *)", "Bash(uniq *)", "Bash(cut *)", "Bash(tr *)", "Bash(xargs *)", "Bash(diff *)",
+  "Bash(echo *)", "Bash(printf *)", "Bash(tee *)", "Bash(date*)", "Bash(which *)", "Bash(env*)", "Bash(du *)", "Bash(df *)",
+  "Bash(tar *)", "Bash(zip *)", "Bash(unzip *)", "Bash(gzip *)", "Bash(gunzip *)", "Bash(file *)", "Bash(stat *)", "Bash(basename *)",
+  "Bash(dirname *)", "Bash(realpath *)", "Bash(sleep *)", "Bash(timeout *)", "Bash(true*)", "Bash(test *)",
 ];
 
-/** Claude Code's environment: its own token and the basics. */
+/** Claude Code's environment: the basics, its own token and the owner's TASK_AGENT_ENV keys. */
 function claudeEnv(): NodeJS.ProcessEnv {
-  const keep = ["PATH", "HOME", "USER", "LANG", "TMPDIR", "TEMP", "TMP", "USERPROFILE", "SYSTEMROOT", "APPDATA", "LOCALAPPDATA", "CLAUDE_CODE_OAUTH_TOKEN"];
-  const env: NodeJS.ProcessEnv = {};
+  const keep = ["PATH", "HOME", "USER", "LANG", "TMPDIR", "TEMP", "TMP", "USERPROFILE", "SYSTEMROOT", "APPDATA", "LOCALAPPDATA", "CHROME_PATH", "CLAUDE_CODE_OAUTH_TOKEN"];
+  const env: NodeJS.ProcessEnv = { ...AGENT_ENV };
   for (const k of keep) if (process.env[k]) env[k] = process.env[k];
   return env;
 }
