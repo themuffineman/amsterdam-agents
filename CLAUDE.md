@@ -17,7 +17,7 @@ that work together. Read this before changing anything here or adding a new camp
 | Repo | Role | Key places |
 | --- | --- | --- |
 | `amsterdam-agents` (this, public, `github.com/themuffineman/amsterdam-agents`) | **Runs** agents on a GitHub Actions cron. No prompts, no topics, no secrets in code. | `src/run.ts`, `src/tools/`, `agents/*.json`, `.github/workflows/*.yml` |
-| `amsterdam/sycamore` ("the studio", Next.js on Vercel, `https://amsterdam-sycamore.vercel.app`) | **Owns** each campaign: topic queue, prompt, quality checks, saving, analytics, the `/agents` screen. | `lib/agent-campaigns.ts`, `app/api/agent/`, `app/api/agents/`, `app/agents/page.tsx`, `lib/idea-pages/` |
+| `amsterdam/sycamore` ("the studio", Next.js on Google Cloud Run since 2026-11, `https://amsterdam-sycamore-248836792492.us-west1.run.app`; it left Vercel when that account was blocked. The workflows read this address from the `STUDIO_URL` repo secret) | **Owns** each campaign: topic queue, prompt, quality checks, saving, analytics, the `/agents` screen. | `lib/agent-campaigns.ts`, `app/api/agent/`, `app/api/agents/`, `app/agents/page.tsx`, `lib/idea-pages/` |
 | `sycamore-mono/frontend` ("the site", sycamore.to) | **Renders** the pages from its own database. Owns the page format. | `lib/idea-pages.ts`, `lib/idea-pages-db.ts`, `app/ideas/`, `components/idea-pages/` |
 
 Why the split: prompts and checks change often and the studio is where all marketing work lives, so agents stay generic
@@ -45,7 +45,7 @@ the Recreate Brief, studio `lib/motion-films/recreate-prompt.ts`, which sends th
   starts exist: (1) a run that claimed a film starts the next run itself when it ends (last step of films.yml,
   `gh workflow run` with the built-in token, `actions: write`; a run that finds nothing doesn't chain), so a queue
   drains film after film; (2) the studio's "Make film"/Redo dispatch the workflow at once, which needs
-  `GITHUB_DISPATCH_TOKEN` in Vercel (fine-grained, this repo only, Actions read/write). Without that token a
+  `GITHUB_DISPATCH_TOKEN` in the studio's Cloud Run env (fine-grained, this repo only, Actions read/write). Without that token a
   first film still waits for the schedule. `GET /api/agent/films/kick` (studio, Bearer `AGENT_API_KEY`) is an
   unused backup trigger for an outside cron (cron-job.org). A claim gets the **Motion Film Brief** in agent mode (studio `lib/motion-films/prompt.ts`, the
   same brief as the copy-paste flow) and the previous attempt's branch for a redo. The runner: branches
@@ -437,14 +437,14 @@ the studio can fix itself instead of rejecting saves a round, so prefer auto-fix
   (keys from `amsterdam/sycamore/.env.local`; the OpenRouter one is `OPEN_ROUTER_KEY` there). Local runs write real
   pages to production and count toward the day's pacing.
 - `npm run typecheck`. Node 22.19+ runs the TypeScript directly; imports use `.ts` extensions.
-- GitHub secrets: `STUDIO_URL`, `AGENT_API_KEY` (same as the studio's Vercel env), `OPENROUTER_API_KEY`,
+- GitHub secrets: `STUDIO_URL`, `AGENT_API_KEY` (same as the studio's Cloud Run env), `OPENROUTER_API_KEY`,
   `GEMINI_API_KEY` (optional, watch_video's last YouTube fallback; a free-tier key), `CLAUDE_CODE_OAUTH_TOKEN`
   (the claude-code engine; `claude setup-token`, valid a year).
 - Turn a campaign off, or change its pages per day: the studio's `/agents` screen. Disabling the workflow in GitHub
   also works, but leave the schedule alone otherwise.
 - Quality control: `/agents` lists every run with the live page and the Actions log; Rewrite requeues the topic,
   Delete unpublishes and retires it.
-- **Deploy order** when the API between runner and studio changes: push sycamore-mono/studio first, wait for Vercel,
+- **Deploy order** when the API between runner and studio changes: deploy the studio first (from `amsterdam/sycamore`: `gcloud builds submit --config cloudbuild.yaml --region us-west1 --project gen-lang-client-0973231441 .`; no auto-deploy on push),
   then push this repo. The cron picks up whatever is on `main` at the next run.
 - GitHub turns off scheduled workflows in a public repo after 60 days without a commit; re-enable from the Actions tab.
 
