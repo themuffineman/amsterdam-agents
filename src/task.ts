@@ -229,6 +229,9 @@ const ALLOWED_TOOLS = [
 function claudeEnv(): NodeJS.ProcessEnv {
   const keep = ["PATH", "HOME", "USER", "LANG", "TMPDIR", "TEMP", "TMP", "USERPROFILE", "SYSTEMROOT", "APPDATA", "LOCALAPPDATA", "CHROME_PATH", "CLAUDE_CODE_OAUTH_TOKEN"];
   const env: NodeJS.ProcessEnv = { ...AGENT_ENV };
+  // A project's .env often has its own Anthropic key. Claude Code prefers it over the subscription token,
+  // so a stale one fails every card with "Invalid API key" (and a live one would bill the API).
+  for (const k of ["ANTHROPIC_API_KEY", "ANTHROPIC_AUTH_TOKEN", "ANTHROPIC_BASE_URL"]) delete env[k];
   for (const k of keep) if (process.env[k]) env[k] = process.env[k];
   return env;
 }
