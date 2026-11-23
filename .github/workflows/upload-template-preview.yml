@@ -1,0 +1,45 @@
+# Copies a file from sycamore-mono to the public bucket that serves the Magic Edit
+# template previews (gs://androme/template-previews/), on GitHub's network: the
+# user's mobile data can't upload a few MB to Google Storage. By hand only.
+name: Upload template preview
+
+on:
+  workflow_dispatch:
+    inputs:
+      file:
+        description: "Path in sycamore-mono (main)"
+        default: "docs/previews/magic-artemis.mp4"
+      dest:
+        description: "Object name in gs://androme"
+        default: "template-previews/magic-artemis.mp4"
+
+permissions:
+  contents: read
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Fetch the file from sycamore-mono
+        env:
+          GH_TOKEN: ${{ secrets.TASKS_GITHUB_TOKEN }}
+          FILE: ${{ inputs.file }}
+        run: |
+          gh api -H "Accept: application/vnd.github.raw" "repos/themuffineman/sycamore-mono/contents/${FILE}?ref=main" > upload.bin
+          ls -l upload.bin
+
+      - name: Upload to Google Storage
+        env:
+          CREDS_B64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON_B64 }}
+          DEST: ${{ inputs.dest }}
+        run: |
+          echo "$CREDS_B64" | base64 -d > "$RUNNER_TEMP/gcs.json"
+          gcloud auth activate-service-account --key-file="$RUNNER_TEMP/gcs.json" --quiet
+          gcloud storage cp upload.bin "gs://androme/${DEST}" --content-type=video/mp4 --cache-control="public, max-age=3600"
+          rm -f "$RUNNER_TEMP/gcs.json"
+
+      - name: Check it is public
+        env:
+          DEST: ${{ inputs.dest }}
+        run: curl -fsS -o /dev/null -w "%{http_code} %{size_download} bytes\n" "https://storage.googleapis.com/androme/${DEST}"
